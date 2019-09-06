@@ -27,20 +27,14 @@ resources:
     memory: 512Mi
 fasitResources:
   used:
-    - alias: srvdokdistavstemming
-        resourceType: credential
-        propertyMap:
-          username: SERVICEUSER_USERNAME
-          password: SERVICEUSER_PASSWORD
-    - alias: administrerforsendelse_v1
-      resourceType: restservice
-    - alias: securityTokenService
-      resourceType: baseurl
-    - alias: security-token-service-token
-      resourceType: restservice
-    - alias: srvdokdist
-        resourceType: certificate
-        propertyMap:
-          keystore: SRVDOKDIST_CERT_KEYSTORE
-          keystorealias: SSRVDOKDIST_CERT_KEYSTOREALIAS
-          password: SRVDOKDIST_CERT_PASSWORD
+  - alias: srvdokdistavstemming
+    resourceType: credential
+    propertyMap:
+      username: SERVICEUSER_USERNAME
+      password: SERVICEUSER_PASSWORD
+  - alias: administrerforsendelse_v1
+    resourceType: restservice
+  - alias: securityTokenService
+    resourceType: baseurl
+  - alias: security-token-service-token
+    resourceType: restservice
