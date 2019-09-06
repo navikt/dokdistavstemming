@@ -1,0 +1,46 @@
+image: "repo.adeo.no:5443/dok/dokdistavstemming"
+replicas:
+  min: 1
+  max: 2
+  cpuThresholdPercentage: 50
+port: 8080
+team: teamdokumenthandtering
+vault:
+  enabled: true
+healthcheck:
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 30
+    failureThreshold: 10
+  readiness:
+    path: /internal/isReady
+    initialDelay: 30
+    timeout: 3
+prometheus:
+  enabled: true
+  path: /actuator/prometheus
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
+  requests:
+    memory: 512Mi
+fasitResources:
+  used:
+    - alias: srvdokdistavstemming
+        resourceType: credential
+        propertyMap:
+          username: SERVICEUSER_USERNAME
+          password: SERVICEUSER_PASSWORD
+    - alias: administrerforsendelse_v1
+      resourceType: restservice
+    - alias: securityTokenService
+      resourceType: baseurl
+    - alias: security-token-service-token
+      resourceType: restservice
+    - alias: srvdokdist
+        resourceType: certificate
+        propertyMap:
+          keystore: SRVDOKDIST_CERT_KEYSTORE
+          keystorealias: SSRVDOKDIST_CERT_KEYSTOREALIAS
+          password: SRVDOKDIST_CERT_PASSWORD
