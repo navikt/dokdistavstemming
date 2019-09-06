@@ -38,10 +38,8 @@ public class HentUekspederKvitteringForsendelseConsumer implements HentUekspeder
 	@Inject
 	public HentUekspederKvitteringForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
 													  RestTemplate restTemplate) {
-
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
 		this.restTemplate = restTemplate;
-
 	}
 
 	@Override
