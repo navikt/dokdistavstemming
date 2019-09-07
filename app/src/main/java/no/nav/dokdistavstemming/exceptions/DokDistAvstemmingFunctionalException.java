@@ -14,7 +14,6 @@ public class DokDistAvstemmingFunctionalException extends RuntimeException {
 
 	private final HttpStatus httpStatus;
 
-
 	public DokDistAvstemmingFunctionalException(String message) {
 		super(message);
 		this.httpStatus = HttpStatus.BAD_REQUEST;

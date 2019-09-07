@@ -21,6 +21,10 @@ import java.util.function.Function;
 
 import static no.nav.dokdistavstemming.metrics.MetricUtils.isFunctionalException;
 
+/**
+ * @author Joakim Bjørnstad, Jbit AS
+ */
+
 @Aspect
 @Incubating(since ="1.0.0" )
 @NonNullApi
