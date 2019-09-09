@@ -1,13 +1,17 @@
-package no.nav.dokdistavstemming.consumer;
+package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
+import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
+import no.nav.dokdistavstemming.domain.ForsendelseKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
+import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +26,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -34,12 +39,18 @@ public class HentUekspederKvitteringForsendelseConsumer implements HentUekspeder
 
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
+	public static final Duration DURATION = Duration.ofMillis(30000L);
 
 	@Inject
 	public HentUekspederKvitteringForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-													  RestTemplate restTemplate) {
+													  RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
-		this.restTemplate = restTemplate;
+		this.restTemplate = restTemplateBuilder
+				.interceptors(new CallIdInterceptor())
+				.setReadTimeout(DURATION)
+				.setConnectTimeout(DURATION)
+				.basicAuthentication(serviceuserAlias.getUsername(),serviceuserAlias.getPassword())
+				.build();;
 	}
 
 	@Override

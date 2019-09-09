@@ -32,6 +32,9 @@
         <junit5.version>5.3.2</junit5.version>
         <junit5.mockito.version>2.23.0</junit5.mockito.version>
         <resilience4j.version>0.11.0</resilience4j.version>
+        <freg-security.version>3.3.5</freg-security.version>
+        <freg.security.test.version>3.3.5</freg.security.test.version>
+        <cxf.version>3.3.0</cxf.version>
     </properties>
 
     <dependencyManagement>
@@ -45,6 +48,11 @@
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash-logback-encoder.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.freg</groupId>
+                <artifactId>freg-security-oidc</artifactId>
+                <version>${freg-security.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.papertrailapp</groupId>
@@ -61,6 +69,12 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <artifactId>freg-security-test-oidc-tools</artifactId>
+                <groupId>no.nav.freg</groupId>
+                <version>${freg.security.test.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -85,6 +99,12 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock-standalone</artifactId>
                 <version>2.19.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <artifactId>freg-security-test-oidc-tools</artifactId>
+                <groupId>no.nav.freg</groupId>
+                <version>${freg.security.test.version}</version>
                 <scope>test</scope>
             </dependency>
 

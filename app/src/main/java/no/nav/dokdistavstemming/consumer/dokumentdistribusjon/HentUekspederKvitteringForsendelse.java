@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.consumer;
+package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;

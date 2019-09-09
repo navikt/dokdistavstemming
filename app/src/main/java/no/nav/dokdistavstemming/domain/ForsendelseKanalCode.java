@@ -10,7 +10,6 @@ public enum ForsendelseKanalCode {
 	SDP,
 	SDP_PRINT,
 	E_HANDEL,
-	PRINT_DITTNAV,
 	DITTNAV,
 	TRYGDERETTEN
 }

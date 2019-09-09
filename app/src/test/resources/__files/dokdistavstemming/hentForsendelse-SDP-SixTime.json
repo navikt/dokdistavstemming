@@ -1,0 +1,40 @@
+[
+  {
+    "forsendelseId": "432ad451-c980-479c-8c7f-e3a82f65fe4c",
+    "dokumenter": [
+      {
+        "konversasjonId": "9cddebc5-1986-455c-bce4-98db43236a59",
+        "digitalDistributorId": "984661185",
+        "bestillendeFagsystem": "IT",
+        "fagomradeCode": "GRU",
+        "dokumentStatus": "OPPRETTET",
+        "mottakkerId": "***gammelt_fnr***",
+        "arkivKode": "389434888"
+      }
+    ],
+    "distribusjonKanal": "SDP",
+    "distribusjonStatus": "OPPRETTET",
+    "produksjonDato":"2019-09-03T11:03:45.786" ,
+    "distribusjonDato":"2019-09-03T11:03:45.786" ,
+    "countDokument": 1
+  },
+  {
+    "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa66147cc",
+    "dokumenter": [
+      {
+        "konversasjonId": "24c59c0e-8a41-4e21-80c9-1ae913b56af7",
+        "digitalDistributorId": "984661185",
+        "bestillendeFagsystem": "IT",
+        "fagomradeCode": "HEL",
+        "dokumentStatus": "OPPRETTET",
+        "mottakkerId": "***gammelt_fnr***",
+        "arkivKode": "389438560"
+      }
+    ],
+    "distribusjonKanal": "SDP",
+    "distribusjonStatus": "OPPRETTET",
+    "produksjonDato": "2019-09-03T11:03:45.786",
+    "distribusjonDato":"2019-09-03T11:03:45.786",
+    "countDokument": 1
+  }
+]
