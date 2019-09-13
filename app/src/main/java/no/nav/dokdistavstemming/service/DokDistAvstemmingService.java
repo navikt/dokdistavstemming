@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 
+
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
+
 @Component
 public class DokDistAvstemmingService {
 
