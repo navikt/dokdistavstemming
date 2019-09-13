@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.config.alias;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties(value="serviceuser")
+@ConfigurationProperties(value = "serviceuser")
 @Validated
 public class ServiceuserAlias {
 

@@ -17,7 +17,7 @@ public class DokDistAvstemmingForsendelse {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;
-	private ForsendelseKanalCode distribusjonKanal;
+	private DistribusjonKanalCode distribusjonKanal;
 	private String distribusjonStatus;
 	private LocalDateTime produksjonDato;
 	private LocalDateTime distribusjonDato;

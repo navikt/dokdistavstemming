@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
-import no.nav.dokdistavstemming.domain.ForsendelseKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
@@ -34,16 +33,16 @@ import java.util.List;
  */
 
 @Component
-public class HentUekspederKvitteringForsendelseConsumer implements HentUekspederKvitteringForsendelse {
+public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
 
 
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
-	public static final Duration DURATION = Duration.ofMillis(30000L);
+	private static final Duration DURATION = Duration.ofMillis(300000L);
 
 	@Inject
-	public HentUekspederKvitteringForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-													  RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
+	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
+											RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
 		this.restTemplate = restTemplateBuilder
 				.interceptors(new CallIdInterceptor())
@@ -55,14 +54,14 @@ public class HentUekspederKvitteringForsendelseConsumer implements HentUekspeder
 
 	@Override
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code","hentUekspederKvitteringForsendelse"}, percentiles = {0.5, 0.95})
-	public List<DokDistAvstemmingForsendelse> hentUekspederKvitteringForsendelse(String distribusjonKanal, Long antallTimer) {
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code","hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
+	public List<DokDistAvstemmingForsendelse> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
 		try {
 			HttpHeaders httpHeaders = createHeaders();
 			ResponseEntity<List<DokDistAvstemmingForsendelse>> responseEntity = restTemplate
-					.exchange(administrerforsendelseV1Url + String.format("/hentuekspederforsendelse/%s/%s/", distribusjonKanal, antallTimer),
+					.exchange(administrerforsendelseV1Url + String.format("/hentuekspederforsendelse/%s/%s", distribusjonKanal, antallTimer),
 							HttpMethod.GET, new HttpEntity<>(httpHeaders),
-							new ParameterizedTypeReference<List<DokDistAvstemmingForsendelse>>() {
+							new ParameterizedTypeReference<>() {
 							});
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
@@ -74,7 +73,6 @@ public class HentUekspederKvitteringForsendelseConsumer implements HentUekspeder
 		}
 
 	}
-
 
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();

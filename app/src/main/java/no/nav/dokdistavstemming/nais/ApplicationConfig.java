@@ -24,4 +24,5 @@ public class ApplicationConfig {
 	public DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokMonitoringAspect(meterRegistry);
 	}
+
 }
