@@ -38,5 +38,3 @@ fasitResources:
     resourceType: restservice
   - alias: jira.host
     resourceType: baseurl
-    propertyMap:
-      url: jira.host
