@@ -1,16 +1,13 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
-import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
-import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,25 +33,20 @@ import java.util.List;
 public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
 
 
+	private static final Duration DURATION = Duration.ofMillis(300000L);
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
-	private static final Duration DURATION = Duration.ofMillis(300000L);
 
 	@Inject
 	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-											RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
+											RestTemplate restTemplate) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
-		this.restTemplate = restTemplateBuilder
-				.interceptors(new CallIdInterceptor())
-				.setReadTimeout(DURATION)
-				.setConnectTimeout(DURATION)
-				.basicAuthentication(serviceuserAlias.getUsername(),serviceuserAlias.getPassword())
-				.build();;
+		this.restTemplate = restTemplate;
 	}
 
 	@Override
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code","hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
 	public List<DokDistAvstemmingForsendelse> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
 		try {
 			HttpHeaders httpHeaders = createHeaders();

@@ -14,5 +14,5 @@ public class Fields {
 	private Field issuetype;
 	private Field attachment;
 	private Field project;
-	private Field customfield_14811;
+	private Field customfield_60000;
 }

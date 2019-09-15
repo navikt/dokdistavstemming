@@ -57,6 +57,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.pep1.jira</groupId>
+            <artifactId>jira-spring-boot-client-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.freg</groupId>
             <artifactId>abac-spring</artifactId>
             <version>1.6.0</version>
