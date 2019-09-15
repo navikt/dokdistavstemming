@@ -59,6 +59,7 @@
         <dependency>
             <groupId>com.pep1.jira</groupId>
             <artifactId>jira-spring-boot-client-starter</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>no.nav.freg</groupId>
@@ -113,11 +114,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>5.1.9.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
         </dependency>
     </dependencies>
 
