@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import static org.mockito.Mockito.mock;
 
 @Configuration
-@Profile("itest,wiremock")
+@Profile("itest")
 @EnableConfigurationProperties({ServiceuserAlias.class})
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")
 public class ApplicationTestConfig {

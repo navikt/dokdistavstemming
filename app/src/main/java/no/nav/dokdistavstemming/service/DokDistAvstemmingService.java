@@ -82,7 +82,6 @@ public class DokDistAvstemmingService {
 						})
 						.flatMap(Collection::stream)
 						.collect(Collectors.toList());
-
 		return dokDistAvstemmingForsendelses;
 	}
 

@@ -2,7 +2,6 @@ package no.nav.dokdistavstemming.consumer.jira;
 
 import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.NonNull;
 import no.nav.dokdistavstemming.consumer.sts.STSResponse;
@@ -10,6 +9,7 @@ import no.nav.dokdistavstemming.consumer.sts.STSRestConsumer;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
+import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -57,6 +57,7 @@ public class JiraConsumer {
 
 
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
 	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
@@ -71,11 +72,13 @@ public class JiraConsumer {
 		}
 	}
 
-	public List<Attachment> addVedlagge(@NonNull String key, @NonNull Resource resource) throws JiraClientException {
+	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
+	public List<Attachment> laggeVedlagg(@NonNull String key, @NonNull Resource resource) throws JiraClientException {
 		if (key == null) {
-			throw new IllegalArgumentException("key is marked @NonNull but is null");
+			throw new IllegalArgumentException("Nøkklen er market @NonNull men det er null");
 		} else if (resource == null) {
-			throw new IllegalArgumentException("resource is marked @NonNull but is null");
+			throw new IllegalArgumentException("ressurser er market @NonNull men det er null");
 		}
 		try {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap();
@@ -84,8 +87,8 @@ public class JiraConsumer {
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity(map, headers);
 			return (List) this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<Attachment>>() {
 			}).getBody();
-		} catch (JiraClientException e){
-			throw new JiraClientException(e.getStatusCode(),e.getMessage());
+		} catch (JiraClientException e) {
+			throw new JiraClientException(e.getStatusCode(), e.getMessage());
 		}
 	}
 
