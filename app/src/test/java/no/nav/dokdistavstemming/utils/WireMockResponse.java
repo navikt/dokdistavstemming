@@ -13,21 +13,21 @@ import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 public class WireMockResponse {
 
 	public static void dokDistHappyHentUekspedereFrosendelse() throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederforsendelse/(.*?)/(.*?)"))
+		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBody(classpathToString("__files/hentForsendelse-SDP-SixTime.json"))));
 	}
 
 	public static void dokDistHappyHentEmptyUekspedereFrosendelse() throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederforsendelse/(.*?)/(.*?)"))
+		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBody(classpathToString("__files/hentuekspedereforsendelse-empty.json"))));
 	}
 
 	public static void dokDistHappyHentUekspedereFrosendelseKanalPrint() throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederforsendelse/(.*?)/(.*?)"))
+		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBody(classpathToString("__files/henteforsendelse-print-overfemdager.json"))));

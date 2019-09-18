@@ -1,5 +1,5 @@
 naisPipeline {
     applicationName = "dokdistavstemming"
     dockerfileDir = "."
-    deployEnvironmentT = "t8"
+    deployEnvironmentTQ = "t4"
 }

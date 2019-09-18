@@ -27,6 +27,11 @@ public class JiraService {
 	private static final String FEILMELDING = "En feil oppsto. Bestilling kan ikke utføres.";
 
 
+
+
+
+
+
 	private IssueInput createJiraIssueRequest(List<Attachment> attachmentList) {
 		IssueInput issueInput = new IssueInput();
 
@@ -39,6 +44,8 @@ public class JiraService {
 
 		Reporter reporter = new Reporter();
 		reporter.setName(serviceuserAlias.getUsername());
+		reporter.setKey(serviceuserAlias.getUsername());
+		reporter.setDisplayName("${spring.application.name}");
 		IssueType issueType = new IssueType();
 		issueType.setDescription("");
 		issueType.setName("");
@@ -64,7 +71,7 @@ public class JiraService {
 	}
 
 
-	@Scheduled(cron = "0011**MON-FRI")
+	@Scheduled(cron = "0 0 08 * * MON-FRI")
 	public void scheduleDokDistAvstemming() {
 
 	}

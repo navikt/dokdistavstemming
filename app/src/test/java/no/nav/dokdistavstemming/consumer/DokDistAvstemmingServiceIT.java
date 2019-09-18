@@ -3,8 +3,11 @@ package no.nav.dokdistavstemming.consumer;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
+import no.nav.dokdistavstemming.scheduler.LeaderElection;
+import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,12 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static no.nav.dokdistavstemming.utils.TestDataUtil.DISRIBUSJON_DATO;
+import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_KANAL;
+import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_KANAL_P;
+import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtil.FORSENDELSE_ID;
+import static no.nav.dokdistavstemming.utils.TestDataUtil.FORSENDELSE_ID_1;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelseKanalPrint;
 import static org.hamcrest.CoreMatchers.is;
@@ -36,9 +44,17 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 
 	@Inject
 	private DokDistAvstemmingService dokDistAvstemmingService;
+	@Inject
+	private HentUekspederForsendelse hentUekspederKvitteringForsendelse;
+	@Inject
+	private CSVProdusere csvProdusere;
+	@Inject
+	private LeaderElection leaderElection;
+
 
 	@BeforeEach
 	public void setUp() {
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse,csvProdusere,leaderElection);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
@@ -49,8 +65,8 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederforsendelse/SDP/6")));
-		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
+		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1));
 	}
 
 
@@ -58,7 +74,16 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
 		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederforsendelse/PRINT/120")));
+		List<DokDistAvstemmingForsendelse> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
+		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
+		assertThat(result.get(0).getDistribusjonKanal().name(),is(DISTRIBUSJON_KANAL_P));
+		assertThat(result.get(0).getCountDokument(),is(10L));
+		assertThat(result.get(0).getDistribusjonDato().toString(),is(DISRIBUSJON_DATO));
+
 	}
+
+
 
 }
