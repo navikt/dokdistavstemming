@@ -41,10 +41,10 @@ fasitResources:
     propertyMap:
       url: jira.host
   - alias: srvJiraDokDistAvstemming
-      resourceType: credential
-      propertyMap:
-        username: jira.username
-        password: jira.password
+    resourceType: credential
+    propertyMap:
+      username: jira.username
+      password: jira.password
   - alias: dokdisavstemming-oidc
     resourceType: openIdConnect
     propertyMap:
