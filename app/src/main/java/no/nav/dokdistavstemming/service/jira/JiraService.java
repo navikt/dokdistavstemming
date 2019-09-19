@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.service.jira;
 
 
-import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Component;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
@@ -13,20 +12,17 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @Slf4j
 public class JiraService {
 
-	private static ServiceuserAlias serviceuserAlias;
 	private static final String BROWSE = "/browse";
-
 	private static final String FEILMELDING = "En feil oppsto. Bestilling kan ikke utføres.";
+	private static ServiceuserAlias serviceuserAlias;
 	private JiraConsumer jiraConsumer;
 
 	public JiraService(JiraConsumer jiraConsumer) {
@@ -34,13 +30,13 @@ public class JiraService {
 	}
 
 
-	public void createSakJira(){
+	public void createSakJira() {
 
 		try {
 			jiraConsumer.oppretteJiraSak(createJiraIssueRequest());
 
-		} catch (DokDistAvstemmingFunctionalException e){
-			throw new DokDistAvstemmingFunctionalException(String.format("Dokdistavstemming feilet til å opprette jirasak med feilmelding=%s",e.getMessage()));
+		} catch (DokDistAvstemmingFunctionalException e) {
+			throw new DokDistAvstemmingFunctionalException(String.format("Dokdistavstemming feilet til å opprette jirasak med feilmelding=%s", e.getMessage()));
 		}
 	}
 
@@ -79,7 +75,6 @@ public class JiraService {
 		return issueInput;
 
 	}
-
 
 
 }

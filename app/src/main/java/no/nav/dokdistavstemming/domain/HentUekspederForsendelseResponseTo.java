@@ -27,7 +27,6 @@ public class HentUekspederForsendelseResponseTo {
 
 	@Data
 	@Builder
-	@JsonIgnoreProperties
 	public static class DokumentInfoTo {
 		private final String konversasjonId;
 		private final String digitalDistributorId;

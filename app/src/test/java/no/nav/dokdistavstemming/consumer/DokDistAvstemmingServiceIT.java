@@ -4,6 +4,7 @@ package no.nav.dokdistavstemming.consumer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
+import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.scheduler.LeaderElection;
@@ -63,7 +64,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
-		List<HentUekspederForsendelseResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
+		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1));
 	}
@@ -72,8 +73,8 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<HentUekspederForsendelseResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
-		List<HentUekspederForsendelseResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
 		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
 		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
