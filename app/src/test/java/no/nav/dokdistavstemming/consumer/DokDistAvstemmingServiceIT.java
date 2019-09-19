@@ -4,7 +4,7 @@ package no.nav.dokdistavstemming.consumer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
+import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.scheduler.LeaderElection;
 import no.nav.dokdistavstemming.service.CSVProdusere;
@@ -25,7 +25,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.dokdistavstemming.utils.TestDataUtil.DISRIBUSJON_DATO;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_KANAL;
 import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_KANAL_P;
 import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtil.FORSENDELSE_ID;
@@ -64,7 +63,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
-		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
+		List<HentUekspederForsendelseResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1));
 	}
@@ -73,8 +72,8 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
-		List<DokDistAvstemmingForsendelse> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		List<HentUekspederForsendelseResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		List<HentUekspederForsendelseResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
 		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
 		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));

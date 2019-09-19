@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
+import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
@@ -51,34 +51,35 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 				.setReadTimeout(DURATION)
 				.setConnectTimeout(DURATION)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.build();;
+				.build();
+		;
 	}
 
 	@Override
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
-	public List<DokDistAvstemmingForsendelse> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
-		MDC.put(MDCConstants.MDC_CONSUMER_ID,"hentUekspederForsendelse");
+	public List<HentUekspederForsendelseResponseTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
+		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
 			log.info(String.format("%s mottat kall til å hente uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
-					MDC.get(MDCConstants.MDC_CONSUMER_ID),distribusjonKanal,antallTimer));
-			ResponseEntity<List<DokDistAvstemmingForsendelse>> responseEntity = restTemplate
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
+			ResponseEntity<List<HentUekspederForsendelseResponseTo>> responseEntity = restTemplate
 					.exchange(administrerforsendelseV1Url + String.format("/henteuekspederforsendelse/%s/%s", distribusjonKanal, antallTimer),
 							HttpMethod.GET, new HttpEntity<>(httpHeaders),
 							new ParameterizedTypeReference<>() {
 							});
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
-					MDC.get(MDCConstants.MDC_CONSUMER_ID),distribusjonKanal,antallTimer));
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
 			log.warn(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
-					MDC.get(MDCConstants.MDC_CONSUMER_ID),e.getStatusCode(), e.getMessage()));
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
 			throw new DokDistAvstemmingFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
-			log.warn(String.format("%s Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s",e.getStatusCode(), e.getResponseBodyAsString()));
+			log.warn(String.format("%s Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
 			throw new DokDistAvstemmingTechnicalException(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}

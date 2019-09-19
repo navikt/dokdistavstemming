@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.service;
 
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
+import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.scheduler.LeaderElection;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -38,24 +38,24 @@ public class DokDistAvstemmingService {
 		this.leaderElection = leaderElection;
 	}
 
-	public List<DokDistAvstemmingForsendelse> hentUekspederForsendelserService(DistribusjonKanalCode distribusjonKanalCode) {
+	public List<HentUekspederForsendelseResponseTo> hentUekspederForsendelserService(DistribusjonKanalCode distribusjonKanalCode) {
 		Long period = (PRINT.equals(distribusjonKanalCode) || SDP_PRINT.equals(distribusjonKanalCode)) ? ANTALL_DAGER : ANTALL_TIMER;
 		return hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanalCode.name(), period);
 	}
 
 
-	@Scheduled(cron = "0 42 13 * * MON-FRI")
+	@Scheduled(cron = "0 33 20 * * MON-FRI")
 	public void scheduleDokDistAvstemming() throws IOException {
 		if (leaderElection.isLeader()) {
 			//csvProdusere.oppretteCsvObject(dokDistAvstemmingPrintJiraSak());
-			csvProdusere.oppretteCsvObject(dokDistAvstemmingUtenPrintJiraSak());
+			dokDistAvstemmingPrintJiraSak();
 		}
 
 	}
 
 	// all those should create a task
-	public List<DokDistAvstemmingForsendelse> dokDistAvstemmingUtenPrintJiraSak() {
-		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendelses =
+	public List<HentUekspederForsendelseResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
+		List<HentUekspederForsendelseResponseTo> hentUekspederForsendelsResponseTos =
 				Arrays.stream(DistribusjonKanalCode.values())
 						.filter(new Predicate<DistribusjonKanalCode>() {
 							@Override
@@ -65,23 +65,23 @@ public class DokDistAvstemmingService {
 						})
 						.map(this::hentUekspederForsendelserService)
 						.distinct()
-						.filter(new Predicate<List<DokDistAvstemmingForsendelse>>() {
+						.filter(new Predicate<List<HentUekspederForsendelseResponseTo>>() {
 							@Override
-							public boolean test(List<DokDistAvstemmingForsendelse> dokDistList) {
+							public boolean test(List<HentUekspederForsendelseResponseTo> dokDistList) {
 								return dokDistList != null && !dokDistList.isEmpty();
 							}
 						})
 						.flatMap(Collection::stream)
 						.collect(Collectors.toList());
 
-		return dokDistAvstemmingForsendelses;
+		return hentUekspederForsendelsResponseTos;
 	}
 
 	//print og sdp_print samme sak
 
 
-	public List<DokDistAvstemmingForsendelse> dokDistAvstemmingPrintJiraSak() {
-		List<DokDistAvstemmingForsendelse> dokDistAvstemmingForsendelses =
+	public List<HentUekspederForsendelseResponseTo> dokDistAvstemmingPrintJiraSak() {
+		List<HentUekspederForsendelseResponseTo> hentUekspederForsendelsResponseTos =
 				Arrays.stream(DistribusjonKanalCode.values())
 						.filter(new Predicate<DistribusjonKanalCode>() {
 							@Override
@@ -91,15 +91,15 @@ public class DokDistAvstemmingService {
 						})
 						.map(this::hentUekspederForsendelserService)
 						.distinct()
-						.filter(new Predicate<List<DokDistAvstemmingForsendelse>>() {
+						.filter(new Predicate<List<HentUekspederForsendelseResponseTo>>() {
 							@Override
-							public boolean test(List<DokDistAvstemmingForsendelse> dokDistList) {
+							public boolean test(List<HentUekspederForsendelseResponseTo> dokDistList) {
 								return dokDistList != null && !dokDistList.isEmpty();
 							}
 						})
 						.flatMap(Collection::stream)
 						.collect(Collectors.toList());
-		return dokDistAvstemmingForsendelses;
+		return hentUekspederForsendelsResponseTos;
 	}
 
 

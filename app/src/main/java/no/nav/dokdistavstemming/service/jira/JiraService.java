@@ -11,6 +11,8 @@ import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
+import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
+import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +27,25 @@ public class JiraService {
 	private static final String BROWSE = "/browse";
 
 	private static final String FEILMELDING = "En feil oppsto. Bestilling kan ikke utføres.";
+	private JiraConsumer jiraConsumer;
+
+	public JiraService(JiraConsumer jiraConsumer) {
+		this.jiraConsumer = jiraConsumer;
+	}
 
 
+	public void createSakJira(){
+
+		try {
+			jiraConsumer.oppretteJiraSak(createJiraIssueRequest());
+
+		} catch (DokDistAvstemmingFunctionalException e){
+			throw new DokDistAvstemmingFunctionalException(String.format("Dokdistavstemming feilet til å opprette jirasak med feilmelding=%s",e.getMessage()));
+		}
+	}
 
 
-
-
-
-	private IssueInput createJiraIssueRequest(List<Attachment> attachmentList) {
+	private IssueInput createJiraIssueRequest() {
 		IssueInput issueInput = new IssueInput();
 
 		Project project = new Project();
@@ -40,11 +53,9 @@ public class JiraService {
 		project.setName("Team Dokument");
 
 		Component component = new Component();
-		component.setName("DokDistAvstemming");
+		component.setName("dokdistfordeling");
 
 		Reporter reporter = new Reporter();
-		reporter.setName(serviceuserAlias.getUsername());
-		reporter.setKey(serviceuserAlias.getUsername());
 		reporter.setDisplayName("${spring.application.name}");
 		IssueType issueType = new IssueType();
 		issueType.setDescription("");
@@ -60,9 +71,8 @@ public class JiraService {
 				.components(Collections.singletonList(component))
 				.reporter(reporter)
 				.issuetype(issueType)
-				.summary("")
+				.summary("Endre PDF sammeligning rammeverk til Apache PDFBox")
 				.priority(priority)
-				.attachment(attachmentList)
 				.fixVersions(new String[]{"dokdistavstemming"})
 				.build();
 		issueInput.setFields(issueFields);
@@ -71,9 +81,5 @@ public class JiraService {
 	}
 
 
-	@Scheduled(cron = "0 0 08 * * MON-FRI")
-	public void scheduleDokDistAvstemming() {
-
-	}
 
 }

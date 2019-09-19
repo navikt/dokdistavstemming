@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DokDistAvstemmingForsendelse {
+public class HentUekspederForsendelseResponseTo {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;
@@ -26,6 +27,7 @@ public class DokDistAvstemmingForsendelse {
 
 	@Data
 	@Builder
+	@JsonIgnoreProperties
 	public static class DokumentInfoTo {
 		private final String konversasjonId;
 		private final String digitalDistributorId;
@@ -36,7 +38,6 @@ public class DokDistAvstemmingForsendelse {
 		private final String arkivKode;
 
 	}
-
 
 
 }

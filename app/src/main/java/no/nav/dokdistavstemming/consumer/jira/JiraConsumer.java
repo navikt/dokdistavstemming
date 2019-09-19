@@ -97,6 +97,7 @@ public class JiraConsumer {
 		STSResponse response = stsRestConsumer.getServiceuserOIDCToken().getBody();
 		String oidcBearerToken = "Bearer " + response.getAccessToken();
 		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-Atlassian-Token", "no-check");
 		headers.setContentType(mediaType);
 		headers.add(HttpHeaders.AUTHORIZATION, oidcBearerToken);
 		return headers;
