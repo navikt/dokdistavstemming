@@ -73,8 +73,8 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
-		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingPrintJiraSak();
+		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
+		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
 		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
 		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));

@@ -8,10 +8,8 @@ import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
-import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +24,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -37,26 +34,21 @@ import java.util.List;
 @Slf4j
 public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
 
-
-	private static final Duration DURATION = Duration.ofMillis(300000L);
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
+	private final ServiceuserAlias serviceuserAlias;
 
 	@Inject
 	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-											RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
+											RestTemplate restTemplate, ServiceuserAlias serviceuserAlias) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
-		this.restTemplate = restTemplateBuilder
-				.interceptors(new CallIdInterceptor())
-				.setReadTimeout(DURATION)
-				.setConnectTimeout(DURATION)
-				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.build();
-		;
+		this.restTemplate = restTemplate;
+		this.serviceuserAlias = serviceuserAlias;
+
 	}
 
 	@Override
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
 	public List<HentUekspederForsendelseResponseTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
 		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
@@ -66,8 +58,7 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 			ResponseEntity<List<HentUekspederForsendelseResponseTo>> responseEntity = restTemplate
 					.exchange(administrerforsendelseV1Url + String.format("/henteuekspederforsendelse/%s/%s", distribusjonKanal, antallTimer),
-							HttpMethod.GET, new HttpEntity<>(httpHeaders),
-							new ParameterizedTypeReference<>() {
+							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<List<HentUekspederForsendelseResponseTo>>() {
 							});
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));

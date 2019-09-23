@@ -57,7 +57,7 @@ public class DokDistAvstemmingService {
 	public void scheduleDokDistAvstemming() throws IOException {
 		if (leaderElection.isLeader()) {
 			//csvProdusere.oppretteCsvObject(dokDistAvstemmingPrintJiraSak());
-			dokDistAvstemmingPrintJiraSak();
+			dokDistAvstemmingUekspederrKanalPrint();
 		}
 
 	}
@@ -89,7 +89,7 @@ public class DokDistAvstemmingService {
 	//print og sdp_print samme sak
 
 
-	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingPrintJiraSak() {
+	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingUekspederrKanalPrint() {
 		List<DokDistAvStemmingResponseTo> hentUekspederForsendelsResponseTos =
 				Arrays.stream(DistribusjonKanalCode.values())
 						.filter(new Predicate<DistribusjonKanalCode>() {

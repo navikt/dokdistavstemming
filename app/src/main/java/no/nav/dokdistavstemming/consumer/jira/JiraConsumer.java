@@ -4,8 +4,7 @@ import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.NonNull;
-import no.nav.dokdistavstemming.consumer.sts.STSResponse;
-import no.nav.dokdistavstemming.consumer.sts.STSRestConsumer;
+import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
@@ -45,14 +44,14 @@ public class JiraConsumer {
 	private final String jiraBaseUri;
 	private final String apiBaseUri;
 	private final RestTemplate restTemplate;
-	private final STSRestConsumer stsRestConsumer;
+	private final ServiceuserAlias serviceuserAlias;
 
 
-	public JiraConsumer(@Value("${jira.host.url}") String jiraBaseUri, RestTemplate restTemplate, STSRestConsumer stsRestConsumer) {
+	public JiraConsumer(@Value("${jira.host.url}") String jiraBaseUri, RestTemplate restTemplate, ServiceuserAlias serviceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
 		this.restTemplate = restTemplate;
-		this.stsRestConsumer = stsRestConsumer;
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
+		this.serviceuserAlias = serviceuserAlias;
 	}
 
 
@@ -94,13 +93,12 @@ public class JiraConsumer {
 
 
 	protected HttpHeaders createSecurityHeaders(MediaType mediaType) {
-		STSResponse response = stsRestConsumer.getServiceuserOIDCToken().getBody();
-		String oidcBearerToken = "Bearer " + response.getAccessToken();
 		HttpHeaders headers = new HttpHeaders();
+		headers.setBasicAuth(serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
 		headers.add("X-Atlassian-Token", "no-check");
 		headers.setContentType(mediaType);
-		headers.add(HttpHeaders.AUTHORIZATION, oidcBearerToken);
 		return headers;
 	}
+
 
 }

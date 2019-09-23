@@ -135,5 +135,24 @@ public class TestDataUtils {
 						.build());
 	}
 
+	public static HentUekspederForsendelseResponseTo createDokDistAvstemmingForsendels() {
+		return HentUekspederForsendelseResponseTo.builder()
+				.forsendelseId(DISTRIBUSJON_ID)
+				.distribusjonKanal(DISTRIBUSJON_KANAL)
+				.distribusjonStatus(DISTRIBUSJON_STATUS)
+				.produksjonDato(PRODUKSJON_DATO)
+				.distribusjonDato(DISTRIBUSJON_DATO)
+				.countDokument(1L)
+				.dokumenter(Arrays.asList(HentUekspederForsendelseResponseTo.DokumentInfoTo.builder()
+						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
+						.dokumentStatus(DOKUMENT_STATUS)
+						.mottakkerId(MOTTAKER_ID)
+						.konversasjonId(KONVERSASJON_ID)
+						.arkivKode(ARKIV_KODE)
+						.fagomradeCode(FAGOMRADE_CODE)
+						.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID)
+						.build()))
+				.build();
+	}
 
 }

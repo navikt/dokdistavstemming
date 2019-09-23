@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(value = {ServiceuserAlias.class})
 @EnableAspectJAutoProxy
 @EnableRetry
+@EnableScheduling
 public class ApplicationConfig {
 
 	@Bean

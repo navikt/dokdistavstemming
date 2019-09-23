@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming.service.jira;
 
 
 import com.pep1.jira.client.domain.issue.Component;
+import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Priority;
@@ -12,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.mdc.MDCConstants;
+import no.nav.dokdistavstemming.metrics.Monitor;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -29,14 +33,18 @@ public class JiraService {
 		this.jiraConsumer = jiraConsumer;
 	}
 
-
-	public void createSakJira() {
-
+	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
+	public void createJiraSak() {
+		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		try {
-			jiraConsumer.oppretteJiraSak(createJiraIssueRequest());
+			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ",MDC.get(MDCConstants.MDC_REQUEST_ID)));
+			Issue issue=jiraConsumer.oppretteJiraSak(createJiraIssueRequest());
+			log.info(String.format("%s /n %s /n %s",issue.getId(),issue.getKey(),issue.getSelf()));
 
 		} catch (DokDistAvstemmingFunctionalException e) {
-			throw new DokDistAvstemmingFunctionalException(String.format("Dokdistavstemming feilet til å opprette jirasak med feilmelding=%s", e.getMessage()));
+			log.warn(String.format("%s ",e.getMessage()));
+			throw new DokDistAvstemmingFunctionalException(String.format("Dokdistavstemming feilet til å opprette jirasak med feilmelding=%s",
+					e.getMessage()));
 		}
 	}
 
@@ -54,8 +62,8 @@ public class JiraService {
 		Reporter reporter = new Reporter();
 		reporter.setDisplayName("${spring.application.name}");
 		IssueType issueType = new IssueType();
-		issueType.setDescription("");
-		issueType.setName("");
+		issueType.setDescription("Represents a Test");
+		issueType.setName("Test");
 
 
 		Priority priority = new Priority();
@@ -63,13 +71,9 @@ public class JiraService {
 
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
-				.labels(new String[]{"dokdistavstemming"})
-				.components(Collections.singletonList(component))
-				.reporter(reporter)
 				.issuetype(issueType)
 				.summary("Endre PDF sammeligning rammeverk til Apache PDFBox")
 				.priority(priority)
-				.fixVersions(new String[]{"dokdistavstemming"})
 				.build();
 		issueInput.setFields(issueFields);
 		return issueInput;
