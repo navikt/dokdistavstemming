@@ -39,7 +39,7 @@ public class NaisContract {
 
 	@Inject
 	public NaisContract(MeterRegistry meterRegistry, List<AbstractDependencyCheck> abstractDependencyCheckList,
-						@Value("${spring.application.name}") String appNavn, @Value("${APP_VERSION:0}") String versjon) {
+						@Value("${application.name}") String appNavn, @Value("${application.version}") String versjon) {
 		Gauge.builder("dok_app_is_ready", isReady, AtomicInteger::get).register(meterRegistry);
 		this.abstractDependencyCheckList = new ArrayList<>(abstractDependencyCheckList);
 		this.appNavn = appNavn;
