@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
+
 @Data
 @Builder
 public class DokDistAvStemmingResponseTo {

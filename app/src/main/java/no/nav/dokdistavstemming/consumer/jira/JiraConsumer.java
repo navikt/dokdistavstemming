@@ -4,6 +4,7 @@ import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.NonNull;
+import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
@@ -44,14 +45,14 @@ public class JiraConsumer {
 	private final String jiraBaseUri;
 	private final String apiBaseUri;
 	private final RestTemplate restTemplate;
-	private final ServiceuserAlias serviceuserAlias;
+	private final JiraServiceuserAlias jiraServiceuserAlias;
 
 
-	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplate restTemplate, ServiceuserAlias serviceuserAlias) {
+	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplate restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
 		this.restTemplate = restTemplate;
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
-		this.serviceuserAlias = serviceuserAlias;
+		this.jiraServiceuserAlias = jiraServiceuserAlias;
 	}
 
 
@@ -94,7 +95,7 @@ public class JiraConsumer {
 
 	protected HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBasicAuth(serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
+		headers.setBasicAuth(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword());
 		headers.add("X-Atlassian-Token", "no-check");
 		headers.setContentType(mediaType);
 		return headers;

@@ -41,8 +41,8 @@ fasitResources:
     propertyMap:
       url: jira.v1
   - alias: srvjiradokdistavstemming
-      resourceType: credential
-      propertyMap:
-        username: jira_username
-        password: jira_password
+    resourceType: credential
+    propertyMap:
+      username: jira_username
+      password: jira_password
 
