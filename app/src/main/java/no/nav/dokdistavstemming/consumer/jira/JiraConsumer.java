@@ -48,7 +48,7 @@ public class JiraConsumer {
 	private final JiraServiceuserAlias jiraServiceuserAlias;
 
 
-	public JiraConsumer(@Value("${jira.host.url}") String jiraBaseUri, RestTemplate restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
+	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplate restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
 		this.restTemplate = restTemplate;
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
