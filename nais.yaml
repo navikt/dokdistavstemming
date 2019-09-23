@@ -36,8 +36,13 @@ fasitResources:
     resourceType: baseurl
   - alias: security-token-service-token
     resourceType: restservice
-  - alias: jira.host
+  - alias: jira_v1
     resourceType: baseurl
     propertyMap:
-      url: jira.host
+      url: jira.v1
+  - alias: srvjiradokdistavstemming
+      resourceType: credential
+      propertyMap:
+        username: jira_username
+        password: jira_password
 
