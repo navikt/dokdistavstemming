@@ -6,7 +6,6 @@ import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.map.DokDistAvStemmingResponseToMapper;
-import no.nav.dokdistavstemming.scheduler.LeaderElection;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,12 +31,10 @@ public class DokDistAvstemmingService {
 	private static final Long ANTALL_DAGER = 120L; // 120 timer er 5 dager
 	private final HentUekspederForsendelse hentUekspederForsendelse;
 	private final CSVProdusere csvProdusere;
-	private final LeaderElection leaderElection;
 
-	public DokDistAvstemmingService(HentUekspederForsendelse hentUekspederForsendelse, CSVProdusere csvProdusere, LeaderElection leaderElection) {
+	public DokDistAvstemmingService(HentUekspederForsendelse hentUekspederForsendelse, CSVProdusere csvProdusere) {
 		this.hentUekspederForsendelse = hentUekspederForsendelse;
 		this.csvProdusere = csvProdusere;
-		this.leaderElection = leaderElection;
 	}
 
 	public List<DokDistAvStemmingResponseTo> hentUekspederForsendelserService(DistribusjonKanalCode distribusjonKanalCode) {
@@ -52,15 +49,6 @@ public class DokDistAvstemmingService {
 
 	}
 
-
-	@Scheduled(cron = "0 33 20 * * MON-FRI")
-	public void scheduleDokDistAvstemming() throws IOException {
-		if (leaderElection.isLeader()) {
-			//csvProdusere.oppretteCsvObject(dokDistAvstemmingPrintJiraSak());
-			dokDistAvstemmingUekspederrKanalPrint();
-		}
-
-	}
 
 	// all those should create a task
 	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {

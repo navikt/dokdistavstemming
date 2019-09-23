@@ -5,9 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
-import no.nav.dokdistavstemming.scheduler.LeaderElection;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,13 +46,11 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	private HentUekspederForsendelse hentUekspederKvitteringForsendelse;
 	@Inject
 	private CSVProdusere csvProdusere;
-	@Inject
-	private LeaderElection leaderElection;
 
 
 	@BeforeEach
 	public void setUp() {
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse,csvProdusere,leaderElection);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse,csvProdusere);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();

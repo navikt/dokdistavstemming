@@ -60,7 +60,6 @@ public class JiraService {
 		component.setName("dokdistfordeling");
 
 		Reporter reporter = new Reporter();
-		reporter.setDisplayName("${spring.application.name}");
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Represents a Test");
 		issueType.setName("Test");

@@ -28,8 +28,8 @@ fasitResources:
   - alias: srvdokdistavstemming
     resourceType: credential
     propertyMap:
-      username: SERVICEUSER_USERNAME
-      password: SERVICEUSER_PASSWORD
+      username: serviceuser_username
+      password: serviceuser_password
   - alias: administrerforsendelse_v1
     resourceType: restservice
   - alias: securityTokenService
