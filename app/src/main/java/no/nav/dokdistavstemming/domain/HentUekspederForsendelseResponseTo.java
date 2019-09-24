@@ -21,7 +21,7 @@ public class HentUekspederForsendelseResponseTo {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;
-	private DistribusjonKanalCode distribusjonKanal;
+	private String distribusjonKanal;
 	private String distribusjonStatus;
 	private LocalDateTime produksjonDato;
 	private LocalDateTime distribusjonDato;

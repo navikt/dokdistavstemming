@@ -44,7 +44,7 @@ public class DokDistAvStemmingResponseToMapperTest {
 		assertThat(dokDistAvStemmingResponseTo.getArkivKode(), is(ARKIV_KODE));
 		assertThat(dokDistAvStemmingResponseTo.getFagomradeCode(), is(FAGOMRADE_CODE));
 
-		assertThat(dokDistAvStemmingResponseTo.getDistribusjonKanal(), is(DISTRIBUSJON_KANAL));
+		assertThat(dokDistAvStemmingResponseTo.getDistribusjonKanal(), is(DISTRIBUSJON_KANAL.name()));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
 		assertThat(dokDistAvStemmingResponseTo.getProduksjonDato(), is(PRODUKSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonDato(), is(DISTRIBUSJON_DATO));

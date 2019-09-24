@@ -3,6 +3,7 @@ package no.nav.dokdistavstemming.service;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
+import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

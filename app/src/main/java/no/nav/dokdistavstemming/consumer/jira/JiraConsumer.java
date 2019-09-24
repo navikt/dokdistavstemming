@@ -1,17 +1,18 @@
 package no.nav.dokdistavstemming.consumer.jira;
 
 import com.pep1.jira.client.domain.issue.Attachment;
-import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
-import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -36,21 +39,27 @@ import java.util.List;
  */
 
 @Component
+@Slf4j
 public class JiraConsumer {
 
 	private static final String ISSUE_CREATE = "/rest/api/2/issue";
 	private static final String ATTACHMENTS = "/attachments";
 
 
-	private final String jiraBaseUri;
+	public final String jiraBaseUri;
 	private final String apiBaseUri;
 	private final RestTemplate restTemplate;
 	private final JiraServiceuserAlias jiraServiceuserAlias;
+	private static final Duration DURATION = Duration.ofMillis(30000L);
 
 
-	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplate restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
+	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
-		this.restTemplate = restTemplate;
+		this.restTemplate = restTemplate
+				.basicAuthentication(jiraServiceuserAlias.getUsername(),jiraServiceuserAlias.getPassword())
+				.setConnectTimeout(DURATION)
+				.setReadTimeout(DURATION)
+				.build();
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
 		this.jiraServiceuserAlias = jiraServiceuserAlias;
 	}
@@ -58,15 +67,18 @@ public class JiraConsumer {
 
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
-	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
+	public JiraResponse oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
-			ResponseEntity<Issue> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST, new HttpEntity<>(issueInputRequest, headers), Issue.class);
+			ResponseEntity<JiraResponse> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST,
+					new HttpEntity<>(issueInputRequest, headers), JiraResponse.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
+			log.warn(String.format("Kall mot jira-sak feilet: %s", e.getMessage()));
 			throw new DokDistAvstemmingFunctionalException(
-					String.format("Kall mot jira-sak feilet: %s", e.getStatusCode(), e.getMessage()), e);
+					String.format("Kall mot jira-sak status:%s ,feilet: %s", e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
+			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres",e.getMessage()));
 			throw new DokDistAvstemmingTechnicalException(
 					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
 		}
@@ -74,21 +86,21 @@ public class JiraConsumer {
 
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
-	public List<Attachment> laggeVedlagg(@NonNull String key, @NonNull Resource resource) throws JiraClientException {
+	public Attachment laggeVedlagg(@NonNull String key, @NonNull File file) throws JiraClientException {
 		if (key == null) {
 			throw new IllegalArgumentException("Nøkklen er market @NonNull men det er null");
-		} else if (resource == null) {
+		} else if (file == null) {
 			throw new IllegalArgumentException("ressurser er market @NonNull men det er null");
 		}
 		try {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap();
-			map.add("file", resource);
+			map.add("file", new FileSystemResource(file));
 			HttpHeaders headers = createSecurityHeaders(MediaType.MULTIPART_FORM_DATA);
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity(map, headers);
-			return (List) this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<Attachment>>() {
-			}).getBody();
+			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, Attachment.class).getBody();
 		} catch (JiraClientException e) {
-			throw new JiraClientException(e.getStatusCode(), e.getMessage());
+			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres",e.getMessage()));
+			throw new JiraClientException(e.getStatusCode(),String.format("En feil oppsto. Bestilling kan ikke utføres",e.getMessage()));
 		}
 	}
 

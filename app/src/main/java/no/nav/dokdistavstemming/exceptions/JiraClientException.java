@@ -12,4 +12,6 @@ public class JiraClientException extends HttpClientErrorException {
 	public JiraClientException(HttpStatus httpStatus, String  errorMessage) {
 		super(httpStatus,errorMessage);
 	}
+
+
 }

@@ -29,7 +29,6 @@ public class DokDistAvStemmingResponseToMapper {
 				.mottakkerId(dokumentInfoTo.getMottakkerId())
 				.countDokument(uekspederForsendelseResponseTo.getCountDokument())
 				.build();
-
 	}
 
 

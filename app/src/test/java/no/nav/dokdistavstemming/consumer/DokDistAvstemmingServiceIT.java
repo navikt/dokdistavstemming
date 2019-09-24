@@ -7,7 +7,7 @@ import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForse
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.service.CSVProdusere;
-import no.nav.dokdistavstemming.service.DokDistAvstemmingService;
+import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,7 +74,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
 		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
-		assertThat(result.get(0).getDistribusjonKanal().name(),is(DISTRIBUSJON_KANAL_P));
+		assertThat(result.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_P));
 		assertThat(result.get(0).getCountDokument(),is(10L));
 		assertThat(result.get(0).getDistribusjonDato().toString(),is(DISRIBUSJON_DATO));
 

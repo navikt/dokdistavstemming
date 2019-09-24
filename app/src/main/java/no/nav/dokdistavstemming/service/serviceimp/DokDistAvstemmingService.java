@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service;
+package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
@@ -6,13 +6,17 @@ import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.map.DokDistAvStemmingResponseToMapper;
+import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,8 +53,17 @@ public class DokDistAvstemmingService {
 
 	}
 
+	public  List<File> henteDokDistFil() {
 
-	// all those should create a task
+		if(dokDistAvstemmingUekspederrKanalPrint().isEmpty() || dokDistAvstemmingUekspederrKanalPrint().isEmpty()){
+			throw new DokDistAvstemmingFunctionalException("");
+		}
+
+		return  Arrays.asList(csvProdusere.oppretteCsvObject(dokDistAvstemmingUtenPrintJiraSak()),
+				csvProdusere.oppretteCsvObject(dokDistAvstemmingUekspederrKanalPrint()));
+	}
+
+
 	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
 		List<DokDistAvStemmingResponseTo> hentUekspederForsendelsResponseTos =
 				Arrays.stream(DistribusjonKanalCode.values())

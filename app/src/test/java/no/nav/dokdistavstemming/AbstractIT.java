@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.nais.ApplicationConfig;
-import no.nav.dokdistavstemming.service.DokDistAvstemmingService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;

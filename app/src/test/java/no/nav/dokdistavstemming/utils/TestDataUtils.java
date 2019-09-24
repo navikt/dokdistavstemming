@@ -87,10 +87,11 @@ public class TestDataUtils {
 	public static List<HentUekspederForsendelseResponseTo> createDokDistAvstemmingForsendelses() {
 		return Arrays.asList(HentUekspederForsendelseResponseTo.builder()
 						.forsendelseId(DISTRIBUSJON_ID)
-						.distribusjonKanal(DISTRIBUSJON_KANAL)
+						.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS)
 						.produksjonDato(PRODUKSJON_DATO)
 						.distribusjonDato(DISTRIBUSJON_DATO)
+						.countDokument(1L)
 						.dokumenter(Arrays.asList(HentUekspederForsendelseResponseTo.DokumentInfoTo.builder()
 										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
 										.dokumentStatus(DOKUMENT_STATUS)
@@ -102,10 +103,11 @@ public class TestDataUtils {
 										.build()))
 						.build(),
 				HentUekspederForsendelseResponseTo.builder().forsendelseId(DISTRIBUSJON_ID_2)
-						.distribusjonKanal(DISTRIBUSJON_KANAL_2)
+						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
 						.produksjonDato(PRODUKSJON_DATO_2)
 						.distribusjonDato(DISTRIBUSJON_DATO_2)
+						.countDokument(1L)
 						.dokumenter(Arrays.asList(HentUekspederForsendelseResponseTo.DokumentInfoTo.builder()
 								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
 								.dokumentStatus(DOKUMENT_STATUS_2)
@@ -118,7 +120,7 @@ public class TestDataUtils {
 						.build(),
 				HentUekspederForsendelseResponseTo.builder()
 						.forsendelseId(DISTRIBUSJON_ID_3)
-						.distribusjonKanal(DISTRIBUSJON_KANAL_3)
+						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
 						.produksjonDato(OPPRETTET_DATO_3)
 						.distribusjonDato(DISTRIBUSJON_DATO_3)
@@ -138,7 +140,7 @@ public class TestDataUtils {
 	public static HentUekspederForsendelseResponseTo createDokDistAvstemmingForsendels() {
 		return HentUekspederForsendelseResponseTo.builder()
 				.forsendelseId(DISTRIBUSJON_ID)
-				.distribusjonKanal(DISTRIBUSJON_KANAL)
+				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
 				.produksjonDato(PRODUKSJON_DATO)
 				.distribusjonDato(DISTRIBUSJON_DATO)

@@ -1,11 +1,13 @@
 package no.nav.dokdistavstemming.service;
 
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public interface CSVProdusere {
 
-	void oppretteCsvObject(List<HentUekspederForsendelseResponseTo> hentUekspederForsendelserResponseTo) throws IOException;
+	File oppretteCsvObject(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo);
+
 }

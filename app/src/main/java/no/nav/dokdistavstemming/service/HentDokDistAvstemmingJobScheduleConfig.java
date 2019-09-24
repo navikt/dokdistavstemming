@@ -1,10 +1,12 @@
 package no.nav.dokdistavstemming.service;
 
-import no.nav.dokdistavstemming.service.jira.JiraService;
+import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -24,8 +26,15 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-		scheduledTaskRegistrar.addCronTask(() -> jiraService.createJiraSak(),
-				"0 46 12 * * MON-FRI");
+
+
+			scheduledTaskRegistrar.addCronTask(() -> dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint(),
+					"0 41 21 * * MON-FRI");
+
+			scheduledTaskRegistrar.addCronTask(() -> jiraService.createJiraSak(),
+					"0 10 14 * * MON-FRI");
+
+
 	}
 
 }

@@ -21,7 +21,7 @@ public class DokDistAvStemmingResponseTo {
 	private String mottakkerId;
 	private String arkivKode;
 	private String forsendelseId;
-	private DistribusjonKanalCode distribusjonKanal;
+	private String distribusjonKanal;
 	private String distribusjonStatus;
 	private LocalDateTime produksjonDato;
 	private LocalDateTime distribusjonDato;
