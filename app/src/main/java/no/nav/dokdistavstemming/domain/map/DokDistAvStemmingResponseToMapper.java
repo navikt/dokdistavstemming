@@ -1,8 +1,13 @@
 package no.nav.dokdistavstemming.domain.map;
 
 
+import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+import no.nav.dokdistavstemming.utils.ConverterUtils;
+
+import static no.nav.dokdistavstemming.utils.ConverterUtils.*;
+import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToLocalDateTime;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -10,24 +15,24 @@ import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
 public class DokDistAvStemmingResponseToMapper {
 
 
-	public DokDistAvStemmingResponseTo map(HentUekspederForsendelseResponseTo uekspederForsendelseResponseTo) {
+	public DokDistAvStemmingResponseTo map(HentUekspederForsendelseResponseTo uekspederResponseTo) {
 
-		HentUekspederForsendelseResponseTo.DokumentInfoTo dokumentInfoTo = uekspederForsendelseResponseTo.getDokumenter().get(0);
+		HentUekspederForsendelseResponseTo.DokumentInfoTo dokumentInfoTo = uekspederResponseTo.getDokumenter().get(0);
 
 		return DokDistAvStemmingResponseTo.builder()
-				.forsendelseId(uekspederForsendelseResponseTo.getForsendelseId())
+				.forsendelseId(uekspederResponseTo.getForsendelseId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
 				.arkivKode(dokumentInfoTo.getArkivKode())
-				.distribusjonDato(uekspederForsendelseResponseTo.getDistribusjonDato())
-				.produksjonDato(uekspederForsendelseResponseTo.getProduksjonDato())
-				.distribusjonKanal(uekspederForsendelseResponseTo.getDistribusjonKanal())
-				.distribusjonStatus(uekspederForsendelseResponseTo.getDistribusjonStatus())
+				.distribusjonDato(convertStringToLocalDateTime(uekspederResponseTo.getDistribusjonDato()))
+				.produksjonDato(convertStringToLocalDateTime(uekspederResponseTo.getProduksjonDato()))
+				.distribusjonKanal(stringToEnum(uekspederResponseTo.getDistribusjonKanal(), DistribusjonKanalCode.class))
+				.distribusjonStatus(uekspederResponseTo.getDistribusjonStatus())
 				.dokumentStatus(dokumentInfoTo.getDokumentStatus())
 				.bestillendeFagsystem(dokumentInfoTo.getBestillendeFagsystem())
 				.fagomradeCode(dokumentInfoTo.getFagomradeCode())
 				.digitalDistributorId(dokumentInfoTo.getDigitalDistributorId())
 				.mottakkerId(dokumentInfoTo.getMottakkerId())
-				.countDokument(uekspederForsendelseResponseTo.getCountDokument())
+				.countDokument(uekspederResponseTo.getCountDokument())
 				.build();
 	}
 

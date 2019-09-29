@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import com.pep1.jira.client.domain.issue.Attachment;
-import com.pep1.jira.client.domain.issue.Component;
+import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Priority;
@@ -11,29 +11,29 @@ import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
-import no.nav.dokdistavstemming.consumer.jira.JiraResponse;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 @Slf4j
 public class JiraService {
 
 	private static final String BROWSE = "/browse";
-	private static final String FEILMELDING = "En feil oppsto. Bestilling kan ikke utføres.";
-	private static final String BROWSER = "/browser";
+
 	private JiraConsumer jiraConsumer;
 	private DokDistAvstemmingService dokDistAvstemmingService;
+
 
 	public JiraService(JiraConsumer jiraConsumer, DokDistAvstemmingService dokDistAvstemmingService) {
 		this.jiraConsumer = jiraConsumer;
@@ -41,23 +41,26 @@ public class JiraService {
 	}
 
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
-	public JiraSakResponseTo createJiraSak(){
+	public JiraSakResponseTo createJiraSak() throws Exception {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		IssueInput issueInput = createJiraSaksRequest();
-		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
 		validateInput(issueInput);
 
 		try {
+			List<File> fils = dokDistAvstemmingService.henteDokDistFil();
 			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
-			JiraResponse issue = jiraConsumer.oppretteJiraSak(issueInput);
-			List<Attachment> attachments = fils.stream().map(fil -> jiraConsumer.laggeVedlagg(issue.getKey(),fil))
-				.collect(Collectors.toList());
-			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s selv=%s",
+			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
+			List<Attachment> attachments = fils.stream().map(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil))
+					.collect(Collectors.toList());
+			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
-			return JiraSakResponseTo.builder()
-					.message(!issue.equals(null) ? String.format("%s%s%s", jiraConsumer.jiraBaseUri, BROWSER, issue.getKey()) : null)
+			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
+					.message(!issue.equals(null) ? String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()) : null)
 					.build();
+
+			log.info(String.format("DokDistAvstemming opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
+			return jiraSakResponseTo;
 
 		} catch (DokDistAvstemmingFunctionalException e) {
 			log.warn(String.format("%s til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
@@ -70,7 +73,7 @@ public class JiraService {
 
 	private void validateInput(IssueInput issueInput) {
 		if (!isGyldigInput(issueInput)) {
-			log.error(String.format("En eller flere nødvendige felter i mangler eller er null. projectKey=%s, saksTypeNavn=%s",
+			log.error(String.format("En eller flere nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
 					issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
 			throw new DokDistAvstemmingFunctionalException(String.format("Bestilling kan ikke utføres, nødvendige felter i mangler eller er null. projectKey=%s, saksTypeNavn=%s",
 					issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
@@ -82,16 +85,14 @@ public class JiraService {
 	}
 
 
-
-
-	private IssueInput createJiraSaksRequest() {
+	public IssueInput createJiraSaksRequest() {
 		IssueInput issueInput = new IssueInput();
 
 		Project project = new Project();
 		project.setKey("MMA");
 		project.setName("Team Dokument");
 
-		Component component = new Component();
+		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
 		component.setName("DokDistAvstemming, DokumentDistribusjon");
 
 		Reporter reporter = new Reporter();
@@ -117,6 +118,23 @@ public class JiraService {
 		issueInput.setFields(issueFields);
 		return issueInput;
 
+	}
+
+	private String getHostFraUrl(String stringUrl) {
+		String hostFraUrl = "";
+		try {
+
+			URL url = new URL(stringUrl);
+			hostFraUrl = url.getProtocol() + "://" + url.getHost();
+
+		} catch (MalformedURLException e) {
+			try {
+				throw new MalformedURLException("");
+			} catch (MalformedURLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return hostFraUrl;
 	}
 
 }

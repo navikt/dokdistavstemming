@@ -1,6 +1,8 @@
 package no.nav.dokdistavstemming.consumer.jira;
 
+import com.pep1.jira.client.JIRAClient;
 import com.pep1.jira.client.domain.issue.Attachment;
+import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +58,7 @@ public class JiraConsumer {
 	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
 		this.restTemplate = restTemplate
-				.basicAuthentication(jiraServiceuserAlias.getUsername(),jiraServiceuserAlias.getPassword())
+				.basicAuthentication(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword())
 				.setConnectTimeout(DURATION)
 				.setReadTimeout(DURATION)
 				.build();
@@ -67,11 +69,10 @@ public class JiraConsumer {
 
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
-	public JiraResponse oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
+	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
-			ResponseEntity<JiraResponse> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST,
-					new HttpEntity<>(issueInputRequest, headers), JiraResponse.class);
+			ResponseEntity<Issue> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST, new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
 			log.warn(String.format("Kall mot jira-sak feilet: %s", e.getMessage()));
@@ -105,7 +106,7 @@ public class JiraConsumer {
 	}
 
 
-	protected HttpHeaders createSecurityHeaders(MediaType mediaType) {
+	public HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBasicAuth(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword());
 		headers.add("X-Atlassian-Token", "no-check");

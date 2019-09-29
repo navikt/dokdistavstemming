@@ -34,6 +34,8 @@
         <resilience4j.version>0.11.0</resilience4j.version>
         <cxf.version>3.3.0</cxf.version>
         <pep1-jira-client.version>0.4</pep1-jira-client.version>
+        <jackson.version>2.9.0</jackson.version>
+        <opencsv.version>4.3.1</opencsv.version>
     </properties>
 
     <dependencyManagement>
@@ -53,11 +55,28 @@
                 <artifactId>logback-syslog4j</artifactId>
                 <version>${logback-syslog4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>${opencsv.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-csv</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.pep1.jira</groupId>
@@ -89,6 +108,7 @@
                 <version>1.2.5.RELEASE</version>
                 <scope>test</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock-standalone</artifactId>

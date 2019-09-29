@@ -1,10 +1,14 @@
 package no.nav.dokdistavstemming.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.dokdistavstemming.utils.CustomDeserializer;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,14 +21,15 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreType
 public class HentUekspederForsendelseResponseTo {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
-	private LocalDateTime produksjonDato;
-	private LocalDateTime distribusjonDato;
+	private String produksjonDato;
+	private String distribusjonDato;
 	private Long countDokument;
 
 

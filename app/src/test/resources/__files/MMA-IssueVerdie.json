@@ -16,12 +16,6 @@
         "name":"Dokumentdistribusjon"
       }
     ],
-    "reporter": {
-      "name": "A155956",
-      "key": "a155956",
-      "emailAddress": "Tsigab.Angosom.Gebremedhin@nav.no",
-      "displayName": "Tsigab Angosom Gebremedhin"
-    },
 
     "issuetype": {
       "description": "Represents a Test",

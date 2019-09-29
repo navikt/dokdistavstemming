@@ -23,11 +23,11 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.DISRIBUSJON_DATO;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_KANAL_P;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.DISTRIBUSJON_STATUS;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.FORSENDELSE_ID;
-import static no.nav.dokdistavstemming.utils.TestDataUtil.FORSENDELSE_ID_1;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.DISRIBUSJON_DATO_J;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_P_J;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1_J;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_J;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelseKanalPrint;
 import static org.hamcrest.CoreMatchers.is;
@@ -62,7 +62,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
-		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1));
+		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1_J));
 	}
 
 
@@ -72,11 +72,11 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
 		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
 		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID));
-		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
-		assertThat(result.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_P));
+		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID_J));
+		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_J));
+		assertThat(result.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_P_J));
 		assertThat(result.get(0).getCountDokument(),is(10L));
-		assertThat(result.get(0).getDistribusjonDato().toString(),is(DISRIBUSJON_DATO));
+		assertThat(result.get(0).getDistribusjonDato().toString(),is(DISRIBUSJON_DATO_J));
 
 	}
 

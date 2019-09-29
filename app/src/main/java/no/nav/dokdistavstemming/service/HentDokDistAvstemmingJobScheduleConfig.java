@@ -1,11 +1,16 @@
 package no.nav.dokdistavstemming.service;
 
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelseConsumer;
+import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
+import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+
+import java.io.IOException;
 
 
 /**
@@ -16,25 +21,27 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @EnableScheduling
 public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigurer {
 
-	private JiraService jiraService;
-	private DokDistAvstemmingService dokDistAvstemmingService;
 
-	public HentDokDistAvstemmingJobScheduleConfig(JiraService jiraService, DokDistAvstemmingService dokDistAvstemmingService) {
-		this.jiraService = jiraService;
+	private final DokDistAvstemmingService dokDistAvstemmingService;
+	private final JiraService jiraService;
+	private final HentUekspederForsendelseConsumer hentUekspederForsendelseConsumer;
+
+	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService,
+												  HentUekspederForsendelseConsumer hentUekspederForsendelseConsumer) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
+		this.jiraService = jiraService;
+		this.hentUekspederForsendelseConsumer = hentUekspederForsendelseConsumer;
 	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+		scheduledTaskRegistrar.addCronTask(() ->
+						hentUekspederForsendelseConsumer.hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(),6L),
+				"30 39 18 * * 0");
 
-
-			scheduledTaskRegistrar.addCronTask(() -> dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint(),
-					"0 41 21 * * MON-FRI");
-
-			scheduledTaskRegistrar.addCronTask(() -> jiraService.createJiraSak(),
-					"0 10 14 * * MON-FRI");
 
 
 	}
+
 
 }

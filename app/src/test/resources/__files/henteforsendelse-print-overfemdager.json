@@ -14,8 +14,8 @@
     ],
     "distribusjonKanal": "PRINT",
     "distribusjonStatus": "OVERSENDT",
-    "produksjonDato": "2019-09-03T11:03:45.786",
-    "distribusjonDato":"2019-09-03T11:03:45.786",
+    "produksjonDato": "2019-09-03 11:03:45",
+    "distribusjonDato":"2019-09-03 11:03:45",
     "countDokument": 10
   },  {
   "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
@@ -32,8 +32,8 @@
   ],
   "distribusjonKanal": "PRINT",
   "distribusjonStatus": "OVERSENDT",
-  "produksjonDato": "2019-09-03T11:03:45.786",
-  "distribusjonDato":"2019-09-03T11:03:45.786",
+  "produksjonDato": "2019-09-03 11:03:45",
+  "distribusjonDato":"2019-09-03 11:03:45",
   "countDokument": 1
 }
 ]

@@ -1,23 +1,18 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import io.reactivex.internal.schedulers.IoScheduler;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.service.CSVProdusere;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -25,49 +20,34 @@ import java.util.List;
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
 
-@Component
+@Service
+@Slf4j
 public class CSVProdusereImpl implements CSVProdusere {
 
 	private final static String CSV_FILTER_NAME = "csvFilter";
 
 	@Override
-	public File oppretteCsvObject(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo){
-
-		HashSet<String> columnNames = new HashSet<String>();
+	public File rulesToCsv(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo) throws IOException {
 		CsvMapper csvMapper = new CsvMapper();
-		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvStemmingResponseTo.class).withHeader().withLineSeparator("\r\n");
+		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvStemmingResponseTo.class).withHeader().withColumnSeparator(';');
+		csvMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		File createCsvFile = File.createTempFile("produced", ".csv");
+		FileOutputStream outputStream = new FileOutputStream(createCsvFile);
 
-		for (CsvSchema.Column column : csvSchema) {
-			columnNames.add(column.getName());
+		try (SequenceWriter csvWriter = csvMapper
+				.addMixIn(DokDistAvStemmingResponseTo.class, DokDistAvStemmingResponseTo.class)
+				.writerWithDefaultPrettyPrinter()
+				.with(csvSchema)
+				.with(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss"))
+				.forType(DokDistAvStemmingResponseTo.class)
+				.writeValues(outputStream)) {
+			for (Object dokDistObject : dokDistAvStemmingResponseTo) {
+				csvWriter.write(dokDistObject);
+			}
 		}
 
-		SimpleBeanPropertyFilter csvReponseFilter =
-				new SimpleBeanPropertyFilter.FilterExceptFilter(columnNames);
-		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_NAME, csvReponseFilter);
-
-		csvMapper.setFilterProvider(filterProvider);
-		csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
-
-		try{
-			ObjectWriter objectWriter = csvMapper.writer(csvSchema);
-			File produced = File.createTempFile("produced", ".csv");
-			FileOutputStream fos = new FileOutputStream(produced);
-			objectWriter.writeValue(produced, dokDistAvStemmingResponseTo);
-			return produced;
-
-		} catch (IOException e){
-			throw  new DokDistAvstemmingFunctionalException("");
-		}
-
-
-
+		return createCsvFile;
 	}
 
 
-	private class CsvAnnotationIntrospector extends JacksonAnnotationIntrospector {
-		@Override
-		public Object findFilterId(Annotated a) {
-			return CSV_FILTER_NAME;
-		}
-	}
 }
