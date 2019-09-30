@@ -36,8 +36,8 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 		scheduledTaskRegistrar.addCronTask(() ->
-						hentUekspederForsendelseConsumer.hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(),6L),
-				"30 39 18 * * 0");
+						hentUekspederForsendelseConsumer.hentUekspederForsendelse(DistribusjonKanalCode.PRINT.name(),120L),
+				"30 08 00 * * MON-FRI");
 
 
 
