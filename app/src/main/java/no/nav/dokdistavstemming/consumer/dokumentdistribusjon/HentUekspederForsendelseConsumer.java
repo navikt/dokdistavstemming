@@ -39,18 +39,12 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 	public static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
-	private final ServiceuserAlias serviceuserAlias;
 
 	@Inject
 	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-											RestTemplateBuilder restTemplateBuilder, ServiceuserAlias serviceuserAlias) {
+											RestTemplate restTemplate) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
-		this.serviceuserAlias = serviceuserAlias;
-		this.restTemplate = restTemplateBuilder
-				.setReadTimeout(DURATION)
-				.setConnectTimeout(DURATION)
-				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.build();
+		this.restTemplate = restTemplate;
 	}
 
 

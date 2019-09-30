@@ -24,7 +24,6 @@ import java.util.List;
 @Slf4j
 public class CSVProdusereImpl implements CSVProdusere {
 
-	private final static String CSV_FILTER_NAME = "csvFilter";
 
 	@Override
 	public File rulesToCsv(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo) throws IOException {
@@ -45,7 +44,6 @@ public class CSVProdusereImpl implements CSVProdusere {
 				csvWriter.write(dokDistObject);
 			}
 		}
-
 		return createCsvFile;
 	}
 

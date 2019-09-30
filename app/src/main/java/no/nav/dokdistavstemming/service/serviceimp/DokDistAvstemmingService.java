@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
@@ -27,6 +28,7 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
  */
 
 @Component
+@Slf4j
 public class DokDistAvstemmingService {
 
 	private static final Long ANTALL_TIMER = 6L;
@@ -50,9 +52,10 @@ public class DokDistAvstemmingService {
 	}
 
 	public List<File> henteDokDistFil() throws Exception {
-		if (dokDistAvstemmingUekspederrKanalPrint().isEmpty() || dokDistAvstemmingUekspederrKanalPrint().isEmpty()) {
-			throw new DokDistAvstemmingFunctionalException("");
+		if (dokDistAvstemmingUekspederrKanalPrint().equals(null) && dokDistAvstemmingUekspederrKanalPrint().equals(null)) {
+			throw new DokDistAvstemmingFunctionalException("Fant ikke dokdistavstemming list");
 		}
+		log.info(String.format("Har mottat kall til å opprette  CSV fil fra dokdistavstemming list"));
 		return Arrays.asList(csvProdusere.rulesToCsv(dokDistAvstemmingUtenPrintJiraSak()));
 	}
 
@@ -83,7 +86,7 @@ public class DokDistAvstemmingService {
 						.filter(new Predicate<DistribusjonKanalCode>() {
 							@Override
 							public boolean test(DistribusjonKanalCode distribusjonKanal) {
-								return distribusjonKanal.equals(PRINT) && distribusjonKanal.equals(SDP_PRINT);
+								return distribusjonKanal.equals(PRINT) || distribusjonKanal.equals(SDP_PRINT);
 							}
 						})
 						.map(this::hentUekspederForsendelserService)

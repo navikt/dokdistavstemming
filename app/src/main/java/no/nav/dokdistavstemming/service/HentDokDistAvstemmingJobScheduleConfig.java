@@ -35,12 +35,17 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+
 		scheduledTaskRegistrar.addCronTask(() ->
-						hentUekspederForsendelseConsumer.hentUekspederForsendelse(DistribusjonKanalCode.PRINT.name(),120L),
-				"30 08 00 * * MON-FRI");
 
-
-
+				{
+					try {
+						jiraService.createJiraSak();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				},
+				"30 09 15 * * MON-FRI");
 	}
 
 

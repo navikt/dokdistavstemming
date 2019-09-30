@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,11 +51,12 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse,csvProdusere);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
 		MDC.put(MDCConstants.MDC_CALL_ID, CALL_ID);
+
 	}
 
 	@Test
@@ -69,17 +71,26 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<DokDistAvStemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
 		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
-		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-		assertThat(result.get(0).getForsendelseId(),is(FORSENDELSE_ID_J));
-		assertThat(result.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_J));
-		assertThat(result.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_P_J));
-		assertThat(result.get(0).getCountDokument(),is(10L));
-		assertThat(result.get(0).getDistribusjonDato().toString(),is(DISRIBUSJON_DATO_J));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
+		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
+		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J));
+		assertThat(result.get(0).getCountDokument(), is(10L));
+		assertThat(result.get(0).getDistribusjonDato().toString(), is(DISRIBUSJON_DATO_J));
 
 	}
 
+	@Test
+	public void shouldOppretteCSVFilList() throws Exception {
+
+		dokDistHappyHentUekspedereFrosendelseKanalPrint();
+		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
+		File csvFiler = csvProdusere.rulesToCsv(result);
+		assertThat(csvFiler.isFile(),is(true));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+
+	}
 
 
 }

@@ -8,10 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.swing.*;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,7 +36,7 @@ public class DokDistAvstemmingServiceTest {
 		csvProdusere = mock(CSVProdusere.class);
 
 		argument = ArgumentCaptor.forClass(Long.class);
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse,csvProdusere);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere);
 	}
 
 	@Test

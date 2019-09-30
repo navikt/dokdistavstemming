@@ -44,14 +44,18 @@ public class JiraService {
 	public JiraSakResponseTo createJiraSak() throws Exception {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
+		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
+		if(fils.equals(null)){
+			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke csv filer",MDC.get(MDCConstants.MDC_REQUEST_ID)));
+		}
 		IssueInput issueInput = createJiraSaksRequest();
 		validateInput(issueInput);
 
 		try {
-			List<File> fils = dokDistAvstemmingService.henteDokDistFil();
+
 			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
-			List<Attachment> attachments = fils.stream().map(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil))
+			fils.stream().map(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil))
 					.collect(Collectors.toList());
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
