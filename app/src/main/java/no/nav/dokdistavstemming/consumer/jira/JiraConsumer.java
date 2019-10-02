@@ -87,7 +87,7 @@ public class JiraConsumer {
 
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
-	public Attachment laggeVedlagg(@NonNull String key, @NonNull File file) throws JiraClientException {
+	public String laggeVedlagg(@NonNull String key, @NonNull File file) throws JiraClientException {
 		if (key == null) {
 			throw new IllegalArgumentException("Nøkklen er market @NonNull men det er null");
 		} else if (file == null) {
@@ -98,7 +98,7 @@ public class JiraConsumer {
 			map.add("file", new FileSystemResource(file));
 			HttpHeaders headers = createSecurityHeaders(MediaType.MULTIPART_FORM_DATA);
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity(map, headers);
-			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, Attachment.class).getBody();
+			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, String.class).getBody();
 		} catch (JiraClientException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres",e.getMessage()));
 			throw new JiraClientException(e.getStatusCode(),String.format("En feil oppsto. Bestilling kan ikke utføres",e.getMessage()));

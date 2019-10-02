@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @ToString
 public class DokDistAvStemmingResponseTo {
 
+	private String forsendelseId;
 	private String konversasjonId;
 	private String digitalDistributorId;
 	private String bestillendeFagsystem;
@@ -25,7 +26,6 @@ public class DokDistAvStemmingResponseTo {
 	private String dokumentStatus;
 	private String mottakkerId;
 	private String arkivKode;
-	private String forsendelseId;
 	private DistribusjonKanalCode distribusjonKanal;
 	private String distribusjonStatus;
 	@JsonSerialize(using = LocalDateSerializer.class)

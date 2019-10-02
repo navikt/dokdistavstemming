@@ -1,8 +1,9 @@
 package no.nav.dokdistavstemming.service;
 
-import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
+import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,6 +12,5 @@ import java.util.List;
 
 public interface CSVProdusere {
 
-	File rulesToCsv(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo) throws Exception;
-
+	File oppretteCsvFil(List<DokDistAvstemmingUtenPrintTo> dokDistAvstemmingForsendelser) throws IOException;
 }

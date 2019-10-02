@@ -9,7 +9,7 @@ public enum DistribusjonKanalCode {
 	PRINT,
 	SDP,
 	SDP_PRINT,
-	//E_HANDEL,
-	//DITTNAV,
-	//TRYGDERETTEN
+	E_HANDEL,
+	DITTNAV,
+	TRYGDERETTEN
 }

@@ -4,6 +4,7 @@ package no.nav.dokdistavstemming.domain.map;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
 import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.utils.ConverterUtils;
 
 import static no.nav.dokdistavstemming.utils.ConverterUtils.*;
@@ -16,6 +17,10 @@ public class DokDistAvStemmingResponseToMapper {
 
 
 	public DokDistAvStemmingResponseTo map(HentUekspederForsendelseResponseTo uekspederResponseTo) {
+
+		if (uekspederResponseTo.equals(null) && uekspederResponseTo.getDokumenter().equals(null)) {
+			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
+		}
 
 		HentUekspederForsendelseResponseTo.DokumentInfoTo dokumentInfoTo = uekspederResponseTo.getDokumenter().get(0);
 

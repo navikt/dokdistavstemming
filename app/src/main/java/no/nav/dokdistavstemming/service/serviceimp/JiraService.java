@@ -19,11 +19,10 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -45,8 +44,8 @@ public class JiraService {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
-		if(fils.equals(null)){
-			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke csv filer",MDC.get(MDCConstants.MDC_REQUEST_ID)));
+		if (fils.equals(null)) {
+			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke csv filer", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 		}
 		IssueInput issueInput = createJiraSaksRequest();
 		validateInput(issueInput);
@@ -55,8 +54,7 @@ public class JiraService {
 
 			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
-			fils.stream().map(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil))
-					.collect(Collectors.toList());
+			fils.stream().forEach(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil));
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
@@ -97,7 +95,7 @@ public class JiraService {
 		project.setName("Team Dokument");
 
 		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
-		component.setName("DokDistAvstemming, DokumentDistribusjon");
+		component.setName("Dokumentdistribusjon");
 
 		Reporter reporter = new Reporter();
 		reporter.setDisplayName("DokDistAvstemming Applikajonen");
@@ -115,6 +113,7 @@ public class JiraService {
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
 				.issuetype(issueType)
+				.components(Collections.singletonList(component))
 				.summary("DOKUMENTDISTRIBUSJON: Utsendelse av dokumenter/brev er forsinket")
 				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
 				.priority(priority)

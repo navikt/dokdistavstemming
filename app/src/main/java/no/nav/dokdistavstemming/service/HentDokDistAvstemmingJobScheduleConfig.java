@@ -45,7 +45,7 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 						e.printStackTrace();
 					}
 				},
-				"30 09 15 * * MON-FRI");
+				"30 15 16 * * MON-FRI");
 	}
 
 

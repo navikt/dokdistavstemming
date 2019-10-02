@@ -1,18 +1,25 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
-import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
+import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
+import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.service.CSVProdusere;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -20,32 +27,48 @@ import java.util.List;
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
 
-@Service
+@Component
 @Slf4j
 public class CSVProdusereImpl implements CSVProdusere {
 
 
-	@Override
-	public File rulesToCsv(List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo) throws IOException {
-		CsvMapper csvMapper = new CsvMapper();
-		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvStemmingResponseTo.class).withHeader().withColumnSeparator(';');
-		csvMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		File createCsvFile = File.createTempFile("produced", ".csv");
-		FileOutputStream outputStream = new FileOutputStream(createCsvFile);
+	private final static String CSV_FILTER_FIL = "dokdistcvs";
 
-		try (SequenceWriter csvWriter = csvMapper
-				.addMixIn(DokDistAvStemmingResponseTo.class, DokDistAvStemmingResponseTo.class)
-				.writerWithDefaultPrettyPrinter()
-				.with(csvSchema)
-				.with(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss"))
-				.forType(DokDistAvStemmingResponseTo.class)
-				.writeValues(outputStream)) {
-			for (Object dokDistObject : dokDistAvStemmingResponseTo) {
-				csvWriter.write(dokDistObject);
-			}
+	@Monitor(value = "dokdist_request", extraTags = {"process_code", "oppretteCsvFil"}, percentiles = {0.5, 0.95})
+	public File oppretteCsvFil(List<DokDistAvstemmingUtenPrintTo> dokDistAvstemmingForsendelser) throws IOException {
+
+		if(dokDistAvstemmingForsendelser.isEmpty() || dokDistAvstemmingForsendelser.equals(null)){
+			throw new DokDistAvstemmingFunctionalException("Fant ikke dokdistavstemming til å lage fil");
 		}
-		return createCsvFile;
+
+		HashSet<String> kolonneNavn = new HashSet<>();
+		CsvMapper csvMapper = new CsvMapper();
+		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvstemmingUtenPrintTo.class).withHeader().withLineSeparator("\r\n");
+
+		for (CsvSchema.Column kolonne : csvSchema) {
+			kolonneNavn.add(kolonne.getName());
+		}
+
+		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
+
+		File produced = File.createTempFile("dokdistavstemming-", ".csv", null);
+		FileOutputStream fos = new FileOutputStream(produced);
+		log.info(String.format(" mottal kall til å convertere list til fil med filnavn=%s",produced.getName()));
+		csvMapper.setFilterProvider(filterProvider);
+		csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
+		ObjectWriter objectWriter = csvMapper.writer(csvSchema);
+		objectWriter.writeValue(fos, dokDistAvstemmingForsendelser);
+
+		return produced;
+
 	}
 
 
+	private static class CsvAnnotationIntrospector extends JacksonAnnotationIntrospector {
+		@Override
+		public Object findFilterId(Annotated a) {
+			return CSV_FILTER_FIL;
+		}
+	}
 }

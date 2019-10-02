@@ -16,7 +16,7 @@ public class ConverterUtils {
 	public static LocalDateTime convertStringToLocalDateTime(String parameter) {
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		return LocalDateTime.parse(parameter, dateTimeFormatter);
+		return parameter==null?null:LocalDateTime.parse(parameter, dateTimeFormatter);
 	}
 
 	public static <T extends Enum<T>> T stringToEnum(String value, Class<T> clazz) {

@@ -71,7 +71,7 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 			throw new DokDistAvstemmingFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
-			log.warn(String.format("%s Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
+			log.warn(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
 			throw new DokDistAvstemmingTechnicalException(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}

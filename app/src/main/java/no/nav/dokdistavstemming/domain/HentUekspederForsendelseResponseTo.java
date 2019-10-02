@@ -17,7 +17,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreType
 public class HentUekspederForsendelseResponseTo {
 
 	private String forsendelseId;

@@ -19,7 +19,6 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.FAGOMRADE_CODE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.MOTTAKER_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
-import static no.nav.dokdistavstemming.utils.TestUtils.convertDateTimeToString;
 import static no.nav.dokdistavstemming.utils.TestUtils.convertStringToLocalDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -27,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 public class DokDistAvStemmingResponseToMapperTest {
 
 	private DokDistAvStemmingResponseToMapper mapper = new DokDistAvStemmingResponseToMapper();
+
 
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
@@ -63,6 +63,8 @@ public class DokDistAvStemmingResponseToMapperTest {
 		assertThat(dokDistAvStemmingResponseTo.getCountDokument(), is(1L));
 
 	}
+
+
 
 
 }
