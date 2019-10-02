@@ -4,11 +4,9 @@ package no.nav.dokdistavstemming.service.serviceimp;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
-import no.nav.dokdistavstemming.domain.map.DokDistAvStemmingResponseToMapper;
-import no.nav.dokdistavstemming.domain.map.MapperDokDist;
-import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
+import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +14,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
@@ -41,114 +38,57 @@ public class DokDistAvstemmingService {
 		this.csvProdusere = csvProdusere;
 	}
 
-	public List<DokDistAvStemmingResponseTo> hentUekspederForsendelserService(DistribusjonKanalCode distribusjonKanalCode) {
-		Long period = (PRINT.equals(distribusjonKanalCode) || SDP_PRINT.equals(distribusjonKanalCode)) ? ANTALL_DAGER : ANTALL_TIMER;
-		DokDistAvStemmingResponseToMapper dokDistAvStemmingResponseToMapper = new DokDistAvStemmingResponseToMapper();
-		List<HentUekspederForsendelseResponseTo> hentUekspederForsendelseList = hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanalCode.name(), period);
-
-
-		return hentUekspederForsendelseList.parallelStream()
-				.filter(hentUekspederForsendelse -> !hentUekspederForsendelse.equals(null) &&
-						!hentUekspederForsendelse.getDokumenter().equals(null))
-				.map(dokDistAvStemmingResponseToMapper::map)
-				.collect(Collectors.toList());
-
-	}
-
-	public List<HentUekspederForsendelseResponseTo> hentUekspederForsendelserService1(String distribusjonKanal) {
+	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelserService(String distribusjonKanal) {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
-		List<HentUekspederForsendelseResponseTo> hentUekspederForsendelseResponseTos = hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanal, period);
-
-		return hentUekspederForsendelseResponseTos.stream()
+		List<DokDistAvstemmingRequestTo> dokDistAvstemmingRequestTos = hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanal, period);
+		return dokDistAvstemmingRequestTos.stream()
 				.filter(hentUekspederForsendelse -> hentUekspederForsendelse.getDokumenter().size() != 0)
 				.collect(Collectors.toList());
 
 	}
 
-
 	public List<File> henteDokDistFil() throws Exception {
 		log.info(String.format("Har mottat kall til å opprette  CSV fil fra dokdistavstemming list"));
-		return Arrays.asList(csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrint()),
-				csvProdusere.oppretteCsvFil(dokDistAvstemmingKanalPrint()));
+		return Arrays.asList(csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak()),
+				csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederrKanalPrint()));
 	}
 
 
-	public List<DokDistAvstemmingUtenPrintTo> dokDistAvstemmingUtenPrint(){
-		List<String> distribusjonKanaler = Arrays.asList("SDP","E_HANDEL","DITTNAV","TRYGDERETTEN");
-		MapperDokDist mapperDokDist = new MapperDokDist();
+	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
+
+		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
+
+		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
+				.filter(distribusjonKanal -> PRINT != distribusjonKanal && SDP_PRINT != distribusjonKanal)
+				.distinct()
+				.collect(Collectors.toList());
+
 		return distribusjonKanaler.stream()
-				.map(distribusjonKanal-> hentUekspederForsendelserService1(distribusjonKanal))
+				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
 				.distinct()
 				.flatMap(Collection::stream)
-				.filter(hentUekspederForsendelse -> hentUekspederForsendelse!=null)
-				.map(hentUekspederForsendelse ->mapperDokDist.mapDokDistUtenPrint(hentUekspederForsendelse))
+				.filter(hentUekspederForsendelse -> hentUekspederForsendelse != null)
+				.map(hentUekspederForsendelse -> dokDistAvstemmingMapper.mapDokDistUtenPrint(hentUekspederForsendelse))
 				.collect(Collectors.toList());
 
 	}
 
+	//dokDistAvstemmingKanalPrint
 
+	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUekspederrKanalPrint() {
+		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
 
-	public List<DokDistAvstemmingUtenPrintTo> dokDistAvstemmingKanalPrint(){
-		List<String> distribusjonKanaler = Arrays.asList("PRINT");
-		MapperDokDist mapperDokDist = new MapperDokDist();
+		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
+				.filter(distribusjonKanal -> PRINT.equals(distribusjonKanal))
+				.collect(Collectors.toList());
 		return distribusjonKanaler.stream()
-				.map(distribusjonKanal-> hentUekspederForsendelserService1(distribusjonKanal))
+				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
 				.distinct()
 				.flatMap(Collection::stream)
-				.filter(hentUekspederForsendelse -> hentUekspederForsendelse!=null)
-				.map(hentUekspederForsendelse ->mapperDokDist.mapDokDistPrint(hentUekspederForsendelse))
+				.filter(hentUekspederForsendelse -> hentUekspederForsendelse != null)
+				.map(hentUekspederForsendelse -> dokDistAvstemmingMapper.mapDokDistPrint(hentUekspederForsendelse))
 				.collect(Collectors.toList());
 
-	}
-
-
-
-
-
-
-
-
-	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
-
-		List<DokDistAvStemmingResponseTo> hentUekspederForsendelsResponseTos =
-				Arrays.stream(DistribusjonKanalCode.values())
-						.filter(distribusjonKanal -> !distribusjonKanal.equals(PRINT) && !distribusjonKanal.equals(SDP_PRINT))
-						.map(this::hentUekspederForsendelserService)
-						.distinct()
-						.filter(new Predicate<List<DokDistAvStemmingResponseTo>>() {
-							@Override
-							public boolean test(List<DokDistAvStemmingResponseTo> dokDistList) {
-								return dokDistList != null && !dokDistList.isEmpty();
-							}
-						})
-						.flatMap(Collection::stream)
-						.collect(Collectors.toList());
-
-		return hentUekspederForsendelsResponseTos;
-	}
-
-	//print og sdp_print samme sak
-
-	public List<DokDistAvStemmingResponseTo> dokDistAvstemmingUekspederrKanalPrint() {
-		List<DokDistAvStemmingResponseTo> hentUekspederForsendelsResponseTos =
-				Arrays.stream(DistribusjonKanalCode.values())
-						.filter(new Predicate<DistribusjonKanalCode>() {
-							@Override
-							public boolean test(DistribusjonKanalCode distribusjonKanal) {
-								return distribusjonKanal.equals(PRINT) || distribusjonKanal.equals(SDP_PRINT);
-							}
-						})
-						.map(this::hentUekspederForsendelserService)
-						.distinct()
-						.filter(new Predicate<List<DokDistAvStemmingResponseTo>>() {
-							@Override
-							public boolean test(List<DokDistAvStemmingResponseTo> dokDistList) {
-								return dokDistList != null && !dokDistList.isEmpty();
-							}
-						})
-						.flatMap(Collection::stream)
-						.collect(Collectors.toList());
-		return hentUekspederForsendelsResponseTos;
 	}
 
 

@@ -1,13 +1,12 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
-import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
-import no.nav.dokdistavstemming.domain.map.DokDistAvStemmingResponseToMapper;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
+import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,16 +26,16 @@ class CSVProdusereImplTest {
 
 	@Test
 	public void shouldProdusereCSVFil() {
-		DokDistAvStemmingResponseToMapper mapper = new DokDistAvStemmingResponseToMapper();
-		List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingForsendelses().stream()
-				.map(hentUekspederForsendelse -> mapper.map(hentUekspederForsendelse))
+		DokDistAvstemmingMapper mapper = new DokDistAvstemmingMapper();
+		List<DokDistAvstemmingResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
+				.map(hentUekspederForsendelse -> mapper.mapDokDistUtenPrint(hentUekspederForsendelse))
 				.collect(Collectors.toList());
 
 	}
 
 	@Test
 	public void shouldOppretteCsvObjectOpenCsv() throws Exception {
-		DokDistAvStemmingResponseToMapper mapper = new DokDistAvStemmingResponseToMapper();
+		DokDistAvstemmingMapper mapper = new DokDistAvstemmingMapper();
 		/*List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingForsendelses().stream()
 				.map(hentUekspederForsendelse -> mapper.map(hentUekspederForsendelse))
 				.collect(Collectors.toList());

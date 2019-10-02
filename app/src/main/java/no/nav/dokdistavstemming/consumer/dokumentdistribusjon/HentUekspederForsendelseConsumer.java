@@ -2,15 +2,13 @@ package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -51,15 +49,15 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 	@Override
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
-	public List<HentUekspederForsendelseResponseTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
+	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
 		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
 			log.info(String.format("%s mottat kall til å hente uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
-			ResponseEntity<List<HentUekspederForsendelseResponseTo>> responseEntity = restTemplate
+			ResponseEntity<List<DokDistAvstemmingRequestTo>> responseEntity = restTemplate
 					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
-							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<List<HentUekspederForsendelseResponseTo>>() {
+							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<List<DokDistAvstemmingRequestTo>>() {
 							});
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));

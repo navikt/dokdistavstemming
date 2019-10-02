@@ -1,13 +1,9 @@
 package no.nav.dokdistavstemming.domain;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
-import no.nav.dokdistavstemming.utils.LocalDateSerializer;
-
-import java.time.LocalDateTime;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -16,21 +12,19 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @ToString
-public class DokDistAvStemmingResponseTo {
+public class DokDistAvstemmingResponseTo {
 
 	private String forsendelseId;
 	private String konversasjonId;
+	private String arkivKode;
 	private String digitalDistributorId;
 	private String bestillendeFagsystem;
 	private String fagomradeCode;
 	private String dokumentStatus;
 	private String mottakkerId;
-	private String arkivKode;
-	private DistribusjonKanalCode distribusjonKanal;
+	private String distribusjonKanal;
 	private String distribusjonStatus;
-	@JsonSerialize(using = LocalDateSerializer.class)
-	private LocalDateTime produksjonDato;
-	@JsonSerialize(using = LocalDateSerializer.class)
-	private LocalDateTime distribusjonDato;
+	private String produksjonDato;
+	private String distribusjonDato;
 	private Long countDokument;
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HentUekspederForsendelseResponseTo {
+public class DokDistAvstemmingRequestTo {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;

@@ -1,23 +1,24 @@
 package no.nav.dokdistavstemming.domain.map;
 
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
 import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
+public class DokDistAvstemmingMapper {
 
-public class MapperDokDist {
 
-
-	public DokDistAvstemmingUtenPrintTo mapDokDistPrint(HentUekspederForsendelseResponseTo forsendelseResponse) {
+	public DokDistAvstemmingResponseTo mapDokDistPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
 
 		if (forsendelseResponse.equals(null) && forsendelseResponse.getDokumenter().equals(null)) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 
-		return DokDistAvstemmingUtenPrintTo.builder()
+		return DokDistAvstemmingResponseTo.builder()
 				.forsendelseId(forsendelseResponse.getForsendelseId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
 				.produksjonDato(forsendelseResponse.getProduksjonDato() == null ? null : forsendelseResponse.getProduksjonDato())
@@ -28,19 +29,19 @@ public class MapperDokDist {
 				.build();
 	}
 
-	public DokDistAvstemmingUtenPrintTo mapDokDistUtenPrint(HentUekspederForsendelseResponseTo forsendelseResponse) {
+	public DokDistAvstemmingResponseTo mapDokDistUtenPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
 
 		if (forsendelseResponse.equals(null) && forsendelseResponse.getDokumenter().equals(null)) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 
-		HentUekspederForsendelseResponseTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
+		DokDistAvstemmingRequestTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
 
 		if (dokumentInfoTo.equals(null)) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 
-		return DokDistAvstemmingUtenPrintTo.builder()
+		return DokDistAvstemmingResponseTo.builder()
 				.forsendelseId(forsendelseResponse.getForsendelseId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
 				.arkivKode(dokumentInfoTo.getArkivKode() == null ? null : dokumentInfoTo.getArkivKode())
@@ -61,4 +62,5 @@ public class MapperDokDist {
 	private boolean isDistribusjonKanalPrint(String distribusjonKanal) {
 		return distribusjonKanal.equalsIgnoreCase("PRINT") || distribusjonKanal.equalsIgnoreCase("SDP_PRINT");
 	}
+
 }

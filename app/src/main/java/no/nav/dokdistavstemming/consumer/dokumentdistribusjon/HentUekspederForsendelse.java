@@ -1,12 +1,12 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
-import no.nav.dokdistavstemming.domain.HentUekspederForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 
 import java.util.List;
 
 public interface HentUekspederForsendelse {
 
-	List<HentUekspederForsendelseResponseTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer);
+	List<DokDistAvstemmingRequestTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer);
 
 }

@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.service;
 
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvStemmingResponseTo;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ public class DokDistAvstemmingServiceTest {
 
 	@Test
 	void shouldCallHentUekspederForsendelse() {
-		List<DokDistAvStemmingResponseTo> result = dokDistAvstemmingService.hentUekspederForsendelserService(DistribusjonKanalCode.SDP);
+		List<DokDistAvstemmingRequestTo> result = dokDistAvstemmingService.hentUekspederForsendelserService(DistribusjonKanalCode.SDP.name());
 		verify(hentUekspederForsendelse).hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(), 6L);
 		verify(hentUekspederForsendelse).hentUekspederForsendelse(anyString(), argument.capture());
 		assertThat(argument.getValue().longValue(), is(6L));
