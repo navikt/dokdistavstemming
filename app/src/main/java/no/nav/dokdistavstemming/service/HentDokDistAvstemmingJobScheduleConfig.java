@@ -19,9 +19,11 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigurer {
 
 	private final DokDistAvstemmingService dokDistAvstemmingService;
+	private final JiraService jiraService;
 
-	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService) {
+	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
+		this.jiraService = jiraService;
 	}
 
 	@Override
@@ -31,13 +33,13 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 
 				{
 					try {
-						dokDistAvstemmingService.henteDokDistFil();
+						jiraService.createJiraSak();
 					} catch (Exception e) {
 						log.error(String.format("createJiraSak feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
 
 					}
 				},
-				"30 00 09 * * MON-FRI");
+				"30 05 15 * * MON-FRI");
 	}
 
 

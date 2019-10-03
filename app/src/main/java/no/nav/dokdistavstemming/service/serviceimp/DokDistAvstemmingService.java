@@ -61,12 +61,13 @@ public class DokDistAvstemmingService {
 		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
 
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
-				.filter(distribusjonKanal -> PRINT != distribusjonKanal && SDP_PRINT != distribusjonKanal)
+				.filter(distribusjonKanal -> PRINT != distribusjonKanal)
 				.distinct()
 				.collect(Collectors.toList());
 
 		return distribusjonKanaler.stream()
 				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
+				.filter(dokDistAvstemmingRequestTos ->dokDistAvstemmingRequestTos!=null)
 				.distinct()
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)

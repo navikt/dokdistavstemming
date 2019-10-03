@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
-			return responseEntity.getBody();
+			return responseEntity.getBody()== null? Collections.EMPTY_LIST:responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
 			log.warn(String.format("%s Kall mot  DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));

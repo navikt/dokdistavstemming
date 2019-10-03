@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.time.Duration;
+import java.util.Collections;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -82,9 +83,9 @@ public class JiraConsumer {
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
 	public String laggeVedlagg(@NonNull String key, @NonNull File file) throws JiraClientException {
 		if (key == null) {
-			throw new IllegalArgumentException("Saken Key er null og kan ikke vedlagge fil til ");
+			throw new IllegalArgumentException("MMA Key er null og kan ikke vedlagge fil til jira saken");
 		} else if (file == null) {
-			throw new IllegalArgumentException("Fant ikke fil ressurser og det er null ");
+			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
 		}
 		try {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap();
