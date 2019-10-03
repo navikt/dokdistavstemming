@@ -1,7 +1,8 @@
-package no.nav.dokdistavstemming.consumer;
+package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingForsendelse;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
@@ -22,6 +23,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -29,43 +31,50 @@ import java.util.List;
  */
 
 @Component
-public class HentUekspederKvitteringForsendelseConsumer implements HentUekspederKvitteringForsendelse {
+@Slf4j
+public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
 
-
+	public static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
 
 	@Inject
-	public HentUekspederKvitteringForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-													  RestTemplate restTemplate) {
-
+	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
+											RestTemplate restTemplate) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
 		this.restTemplate = restTemplate;
-
 	}
 
+
 	@Override
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code","hentUekspederKvitteringForsendelse"}, percentiles = {0.5, 0.95})
-	public List<DokDistAvstemmingForsendelse> hentUekspederKvitteringForsendelse(String distribusjonKanal, Long antallTimer) {
+	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
+	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
+		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
-			ResponseEntity<List<DokDistAvstemmingForsendelse>> responseEntity = restTemplate
-					.exchange(administrerforsendelseV1Url + String.format("/hentuekspederforsendelse/%s/%s/", distribusjonKanal, antallTimer),
-							HttpMethod.GET, new HttpEntity<>(httpHeaders),
-							new ParameterizedTypeReference<List<DokDistAvstemmingForsendelse>>() {
+			log.info(String.format("%s mottat kall til å hente uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
+			ResponseEntity<List<DokDistAvstemmingRequestTo>> responseEntity = restTemplate
+					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
+							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<List<DokDistAvstemmingRequestTo>>() {
 							});
+			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
+
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
+			log.warn(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
 			throw new DokDistAvstemmingFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
+			log.warn(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
 			throw new DokDistAvstemmingTechnicalException(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 
 	}
-
 
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();

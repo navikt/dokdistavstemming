@@ -15,13 +15,15 @@ public class RestTemplateConfig {
 	public static final Duration DURATION = Duration.ofMillis(30000L);
 
 	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias){
+	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
 
 		return restTemplateBuilder
 				.interceptors(new CallIdInterceptor())
 				.setReadTimeout(DURATION)
 				.setConnectTimeout(DURATION)
-				.basicAuthentication(serviceuserAlias.getUsername(),serviceuserAlias.getPassword())
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
 	}
+
+
 }

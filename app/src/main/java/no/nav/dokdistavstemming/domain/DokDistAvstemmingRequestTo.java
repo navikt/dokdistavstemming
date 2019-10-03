@@ -1,26 +1,30 @@
 package no.nav.dokdistavstemming.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DokDistAvstemmingForsendelse {
+public class DokDistAvstemmingRequestTo {
 
 	private String forsendelseId;
 	private List<DokumentInfoTo> dokumenter;
-	private ForsendelseKanalCode distribusjonKanal;
+	private String distribusjonKanal;
 	private String distribusjonStatus;
-	private LocalDateTime produksjonDato;
-	private LocalDateTime distribusjonDato;
+	private String produksjonDato;
+	private String distribusjonDato;
 	private Long countDokument;
 
 
@@ -36,7 +40,6 @@ public class DokDistAvstemmingForsendelse {
 		private final String arkivKode;
 
 	}
-
 
 
 }

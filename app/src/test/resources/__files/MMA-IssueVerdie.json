@@ -1,0 +1,36 @@
+{
+  "fields": {
+
+    "project": {
+      "key": "MMA",
+      "name": "Team Dokument"
+    },
+
+
+    "labels": [
+      "dokdistavstemming"
+
+    ],
+    "components": [
+      {
+        "name":"Dokumentdistribusjon"
+      }
+    ],
+
+    "issuetype": {
+      "description": "Represents a Test",
+      "name": "Test"
+    },
+    "summary": "Dokdistavstemming sdp uekspedert dokument",
+    "fixVersions": [
+      {
+        "name": "dokumentdistribusjon:8.1.1"
+      }
+    ],
+
+    "priority": {
+      "name": "Medium"
+    }
+
+  }
+}

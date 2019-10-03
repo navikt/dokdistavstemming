@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.config.alias;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,10 +16,9 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties(value="serviceuser")
+@ConfigurationProperties("serviceuser")
 @Validated
 public class ServiceuserAlias {
-
 	@NotEmpty
 	private String username;
 	@NotEmpty
@@ -32,5 +30,4 @@ public class ServiceuserAlias {
 		System.setProperty("no.nav.modig.security.systemuser.password", password);
 		System.setProperty("no.nav.modig.sercuriy.appcert.issuer", username);
 	}
-
 }
