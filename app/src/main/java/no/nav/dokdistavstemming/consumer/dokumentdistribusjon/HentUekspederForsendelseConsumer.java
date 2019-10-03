@@ -57,24 +57,25 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 			ResponseEntity<List<DokDistAvstemmingRequestTo>> responseEntity = restTemplate
 					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
-							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<List<DokDistAvstemmingRequestTo>>() {
+							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<>() {
 							});
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			log.warn(String.format("%s Kall mot  DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
 			throw new DokDistAvstemmingFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
-			log.warn(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
-			throw new DokDistAvstemmingTechnicalException(String.format("Tjenesten DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmedling=%s",
+			log.warn(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
+			throw new DokDistAvstemmingTechnicalException(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk.  status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 
 	}
+
 
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();

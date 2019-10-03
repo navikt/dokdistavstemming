@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelseConsumer;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.springframework.context.annotation.Configuration;
@@ -19,16 +18,10 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Slf4j
 public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigurer {
 
-
 	private final DokDistAvstemmingService dokDistAvstemmingService;
-	private final JiraService jiraService;
-	private final HentUekspederForsendelseConsumer hentUekspederForsendelseConsumer;
 
-	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService,
-												  HentUekspederForsendelseConsumer hentUekspederForsendelseConsumer) {
+	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
-		this.jiraService = jiraService;
-		this.hentUekspederForsendelseConsumer = hentUekspederForsendelseConsumer;
 	}
 
 	@Override
@@ -38,12 +31,13 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 
 				{
 					try {
-						jiraService.createJiraSak();
+						dokDistAvstemmingService.henteDokDistFil();
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.error(String.format("createJiraSak feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
+
 					}
 				},
-				"30 15 09 * * MON-FRI");
+				"30 00 09 * * MON-FRI");
 	}
 
 
