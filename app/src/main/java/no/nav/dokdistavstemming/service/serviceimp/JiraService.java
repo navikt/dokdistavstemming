@@ -105,6 +105,8 @@ public class JiraService {
 		reporter.setKey("srvjiradokdistavstemming");
 		reporter.setDisplayName("DokDistAvstemming AutoReport");
 
+
+
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
 		issueType.setName("Test");

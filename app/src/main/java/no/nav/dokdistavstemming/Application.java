@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming;
 import no.nav.dokdistavstemming.config.DokDistAvstemmingConfig;
 import no.nav.dokdistavstemming.nais.ApplicationConfig;
 import no.nav.dokdistavstemming.nais.NaisContract;
-import no.nav.dokdistavstemming.service.HentDokDistAvstemmingJobScheduleConfig;
+import no.nav.dokdistavstemming.scheduler.DokDistAvstemmingScheduleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 @Import(value = {
 		ApplicationConfig.class,
 		NaisContract.class,
-		HentDokDistAvstemmingJobScheduleConfig.class,
+		DokDistAvstemmingScheduleConfig.class,
 		DokDistAvstemmingConfig.class
 })
 

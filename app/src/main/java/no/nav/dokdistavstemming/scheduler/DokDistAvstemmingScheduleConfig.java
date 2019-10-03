@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service;
+package no.nav.dokdistavstemming.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 
@@ -16,12 +17,14 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 @Slf4j
-public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigurer {
+public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
+
+	private final int POOL_SIZE = 10;
 
 	private final DokDistAvstemmingService dokDistAvstemmingService;
 	private final JiraService jiraService;
 
-	public HentDokDistAvstemmingJobScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService) {
+	public DokDistAvstemmingScheduleConfig(DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
 		this.jiraService = jiraService;
 	}
@@ -29,8 +32,15 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 
-		scheduledTaskRegistrar.addCronTask(() ->
+		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 
+		taskScheduler.setPoolSize(POOL_SIZE);
+		taskScheduler.setThreadNamePrefix("dokdistavstemming-scheduled-task-pool-");
+		taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+		taskScheduler.initialize();
+
+		scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
+		scheduledTaskRegistrar.addCronTask(() ->
 				{
 					try {
 						jiraService.createJiraSak();
@@ -39,7 +49,7 @@ public class HentDokDistAvstemmingJobScheduleConfig implements SchedulingConfigu
 
 					}
 				},
-				"30 05 15 * * MON-FRI");
+				"30 00 09 * * MON-FRI");
 	}
 
 
