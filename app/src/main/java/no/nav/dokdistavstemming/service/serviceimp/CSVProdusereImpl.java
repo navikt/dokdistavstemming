@@ -40,7 +40,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteCsvFil");
 
-		if (dokDistAvstemmingForsendelser.isEmpty() || dokDistAvstemmingForsendelser==null) {
+		if (dokDistAvstemmingForsendelser.isEmpty() || dokDistAvstemmingForsendelser == null) {
 			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon forsendelse og kan ikke produsere CSV fil",
 					MDC.get(MDCConstants.MDC_REQUEST_ID)));
 		}

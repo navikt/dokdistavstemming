@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
 
-import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
@@ -44,7 +43,7 @@ public class JiraService {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
-		if (fils==null ) {
+		if (fils == null) {
 			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon kke opprette jira sak",
 					MDC.get(MDCConstants.MDC_REQUEST_ID)));
 		}
@@ -59,7 +58,7 @@ public class JiraService {
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-					.message(issue==null? null:String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
+					.message(issue == null ? null : String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
 
 			log.info(String.format("DokDistAvstemming opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
@@ -135,9 +134,9 @@ public class JiraService {
 
 		} catch (MalformedURLException e) {
 			try {
-				throw new MalformedURLException(String.format("Fant ikke host url med feilmelding=%s",e.getMessage()));
+				throw new MalformedURLException(String.format("Fant ikke host url med feilmelding=%s", e.getMessage()));
 			} catch (MalformedURLException ex) {
-				log.error(String.format("Fant ikke host url med feilmelding=%s",ex.getMessage()));
+				log.error(String.format("Fant ikke host url med feilmelding=%s", ex.getMessage()));
 			}
 		}
 		return hostFraUrl;

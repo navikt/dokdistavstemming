@@ -47,7 +47,7 @@ public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
 
 					}
 				},
-				"30 05 09-15 * * MON-FRI");
+				"30 00 08,16 * * MON-FRI");
 	}
 
 

@@ -52,16 +52,14 @@ public class DokDistAvstemmingService {
 		this.hentUekspederForsendelse = hentUekspederForsendelse;
 		this.csvProdusere = csvProdusere;
 		this.metricUtils = metricUtils;
-		this.uekspederCounterKanalPRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","PRINT");
-		this.uekspederCounterKanalSDP = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","SDP");
-		this.uekspederCounterKanalSPD_PRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","SPD_PRINT");
-		this.uekspederCounterKanalE_HANDEL = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","E_HANDEL");
-		this.uekspederCounterKanalPRINT_DITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","PRINT_DITTNAV");
-		this.uekspederCounterKanalDITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","DITTNAV");
-		this.uekspederCounterKanalTRYGDERETTEN = metricUtils.initFunctionalCounter("Uekspeder Frosendelse","TRYGDERETTEN");
+		this.uekspederCounterKanalPRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "PRINT");
+		this.uekspederCounterKanalSDP = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SDP");
+		this.uekspederCounterKanalSPD_PRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SPD_PRINT");
+		this.uekspederCounterKanalE_HANDEL = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "E_HANDEL");
+		this.uekspederCounterKanalPRINT_DITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "PRINT_DITTNAV");
+		this.uekspederCounterKanalDITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "DITTNAV");
+		this.uekspederCounterKanalTRYGDERETTEN = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "TRYGDERETTEN");
 	}
-
-
 
 
 	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelserService(String distribusjonKanal) {
@@ -98,7 +96,7 @@ public class DokDistAvstemmingService {
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
-					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(),DistribusjonKanalCode.class));
+					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(), DistribusjonKanalCode.class));
 					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
 							dokDistAvstemming.getDistribusjonKanal(), dokDistAvstemming.getArkivKode()));
 					return dokDistAvstemming;
@@ -131,8 +129,8 @@ public class DokDistAvstemmingService {
 	}
 
 
-	private void incrementFunctionalMetrics(DistribusjonKanalCode distribusjonKanal){
-		if(distribusjonKanal==null){
+	private void incrementFunctionalMetrics(DistribusjonKanalCode distribusjonKanal) {
+		if (distribusjonKanal == null) {
 			return;
 		}
 		switch (distribusjonKanal) {
