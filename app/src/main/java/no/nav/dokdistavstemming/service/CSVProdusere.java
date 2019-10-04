@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.service;
 
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
 
 import java.io.File;
 import java.io.IOException;

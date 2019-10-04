@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DokDistAvstemmingRequestTo {
 
-	private String forsendelseId;
+	private String distribusjonId;
 	private List<DokumentInfoTo> dokumenter;
 	private String distribusjonKanal;
 	private String distribusjonStatus;

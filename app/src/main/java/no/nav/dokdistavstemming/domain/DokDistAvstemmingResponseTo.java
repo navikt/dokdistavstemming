@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 public class DokDistAvstemmingResponseTo {
 
-	private String forsendelseId;
+	private String distribusjonId;
 	private String konversasjonId;
 	private String arkivKode;
 	private String digitalDistributorId;

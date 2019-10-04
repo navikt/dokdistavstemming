@@ -67,13 +67,13 @@ public class DokDistAvstemmingService {
 
 		return distribusjonKanaler.stream()
 				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
-				.filter(dokDistAvstemmingRequestTos ->dokDistAvstemmingRequestTos!=null)
+				.filter(Objects::nonNull)
 				.distinct()
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
-					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getForsendelseId(),
+					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
 							dokDistAvstemming.getDistribusjonKanal(), dokDistAvstemming.getArkivKode()));
 					return dokDistAvstemming;
 
@@ -96,7 +96,7 @@ public class DokDistAvstemmingService {
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
-					log.info(String.format("Fant uekspedert forsendelse, distribusjonId=%s distribusjonKanalCode=%s", uekspederForsendelse.getForsendelseId(), uekspederForsendelse.getDistribusjonKanal()));
+					log.info(String.format("Fant uekspedert forsendelse, distribusjonId=%s distribusjonKanalCode=%s", uekspederForsendelse.getDistribusjonId(), uekspederForsendelse.getDistribusjonKanal()));
 					return dokDistAvstemmingMapper.mapDokDistPrint(uekspederForsendelse);
 				})
 				.collect(Collectors.toList());

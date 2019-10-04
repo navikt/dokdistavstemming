@@ -85,7 +85,7 @@ public class TestDataUtils {
 
 	public static List<DokDistAvstemmingRequestTo> createDokDistAvstemmingRequestList() {
 		return Arrays.asList(DokDistAvstemmingRequestTo.builder()
-						.forsendelseId(DISTRIBUSJON_ID)
+						.distribusjonId(DISTRIBUSJON_ID)
 						.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS)
 						.produksjonDato(PRODUKSJON_DATO)
@@ -101,7 +101,7 @@ public class TestDataUtils {
 								.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID)
 								.build()))
 						.build(),
-				DokDistAvstemmingRequestTo.builder().forsendelseId(DISTRIBUSJON_ID_2)
+				DokDistAvstemmingRequestTo.builder().distribusjonId(DISTRIBUSJON_ID_2)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
 						.produksjonDato(PRODUKSJON_DATO_2)
@@ -118,7 +118,7 @@ public class TestDataUtils {
 								.build()))
 						.build(),
 				DokDistAvstemmingRequestTo.builder()
-						.forsendelseId(DISTRIBUSJON_ID_3)
+						.distribusjonId(DISTRIBUSJON_ID_3)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
 						.produksjonDato(convertDateTimeToString(OPPRETTET_DATO_3))
@@ -138,7 +138,7 @@ public class TestDataUtils {
 
 	public static DokDistAvstemmingRequestTo createDokDistAvstemmingRequestTo() {
 		return DokDistAvstemmingRequestTo.builder()
-				.forsendelseId(DISTRIBUSJON_ID)
+				.distribusjonId(DISTRIBUSJON_ID)
 				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
 				.produksjonDato(PRODUKSJON_DATO)

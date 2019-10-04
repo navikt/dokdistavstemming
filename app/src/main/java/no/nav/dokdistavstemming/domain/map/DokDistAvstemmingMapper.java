@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming.domain.map;
 
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.domain.to.DokDistAvstemmingUtenPrintTo;
 import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 
 /**
@@ -19,7 +18,7 @@ public class DokDistAvstemmingMapper {
 		}
 
 		return DokDistAvstemmingResponseTo.builder()
-				.forsendelseId(forsendelseResponse.getForsendelseId())
+				.distribusjonId(forsendelseResponse.getDistribusjonId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
 				.produksjonDato(forsendelseResponse.getProduksjonDato() == null ? null : forsendelseResponse.getProduksjonDato())
 				.distribusjonKanal(forsendelseResponse.getDistribusjonKanal())
@@ -42,7 +41,7 @@ public class DokDistAvstemmingMapper {
 		}
 
 		return DokDistAvstemmingResponseTo.builder()
-				.forsendelseId(forsendelseResponse.getForsendelseId())
+				.distribusjonId(forsendelseResponse.getDistribusjonId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
 				.arkivKode(dokumentInfoTo.getArkivKode() == null ? null : dokumentInfoTo.getArkivKode())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())

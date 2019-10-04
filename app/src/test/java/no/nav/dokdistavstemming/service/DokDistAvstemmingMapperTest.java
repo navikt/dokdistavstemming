@@ -47,7 +47,7 @@ public class DokDistAvstemmingMapperTest {
 
 
 	public void assertDokDistAvStemmingResponseToMapperPrint(DokDistAvstemmingResponseTo dokDistAvStemmingResponseTo) {
-		assertThat(dokDistAvStemmingResponseTo.getForsendelseId(), is(DISTRIBUSJON_ID));
+		assertThat(dokDistAvStemmingResponseTo.getDistribusjonId(), is(DISTRIBUSJON_ID));
 		assertThat(dokDistAvStemmingResponseTo.getBestillendeFagsystem(), is(BESTILLENDE_FAGSYSTEM));
 		assertThat(dokDistAvStemmingResponseTo.getDokumentStatus(), is(DOKUMENT_STATUS));
 		assertThat(dokDistAvStemmingResponseTo.getMottakkerId(), is(MOTTAKER_ID));
