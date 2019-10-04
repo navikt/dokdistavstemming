@@ -40,7 +40,7 @@ public class JiraService {
 	}
 
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
-	public JiraSakResponseTo createJiraSak() throws Exception {
+	public JiraSakResponseTo oppretteMMAJiraSak() throws Exception {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
@@ -93,7 +93,7 @@ public class JiraService {
 
 		Project project = new Project();
 		project.setKey("MMA");
-		project.setName("Team Dokument");
+		project.setName("Team Dokumentløsninger");
 
 		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
 		component.setName("Dokumentdistribusjon");
@@ -103,17 +103,11 @@ public class JiraService {
 		reporter.setEmailAddress("tsigab.angosom.gebremedhin@nav.no");
 		reporter.setName("srvjiradokdistavstemming");
 		reporter.setKey("srvjiradokdistavstemming");
-		reporter.setDisplayName("DokDistAvstemming AutoReport");
-
 
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Test");
-		Attachment attachment = new Attachment();
-		File file = new File("__files/hentuekspedereforsendelse-empty.json");
-
-		attachment.setFilename(file.getAbsoluteFile().getName());
+		issueType.setName("Oppgave");
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
