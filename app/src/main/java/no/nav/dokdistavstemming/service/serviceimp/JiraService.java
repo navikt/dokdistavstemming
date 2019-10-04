@@ -16,6 +16,7 @@ import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -41,7 +42,7 @@ public class JiraService {
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
 	public JiraSakResponseTo oppretteMMAJiraSak() throws Exception {
 
-		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
+		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
 		if (fils == null) {
 			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon kke opprette jira sak",
@@ -92,7 +93,7 @@ public class JiraService {
 
 		Project project = new Project();
 		project.setKey("MMA");
-		project.setName("Team Dokumentløsninger");
+		project.setName("Team Dokument");
 
 		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
 		component.setName("Dokumentdistribusjon");
@@ -102,11 +103,13 @@ public class JiraService {
 		reporter.setEmailAddress("tsigab.angosom.gebremedhin@nav.no");
 		reporter.setName("srvjiradokdistavstemming");
 		reporter.setKey("srvjiradokdistavstemming");
+		reporter.setDisplayName("DokDistAvstemming AutoReport");
 
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Oppgave");
+		issueType.setName("Test");
+
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
