@@ -21,8 +21,6 @@ import static no.nav.dokdistavstemming.utils.TestUtils.convertDateTimeToString;
 public class TestDataUtils {
 
 
-	public static final Long DOKUMENTINFO_ID = 1110L;
-	public static final Long DISTRIBUSJONINFO_ID = 1111L;
 	public static final String KONVERSASJON_ID = "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb26131";
 	public static final String DISTRIBUSJON_ID = "7882d37e-34f7-11e9-b677-d663bd953d61";
 	public static final String BESTILLENDE_FAGSYSTEM = "ARENA";
@@ -49,10 +47,6 @@ public class TestDataUtils {
 	public static final String DOKUMENT_STATUS_2 = "OPPRETTET";
 	public static final String DISTRIBUSJON_STATUS_2 = "OPPRETTET";
 	public static final DistribusjonKanalCode DISTRIBUSJON_KANAL_2 = DistribusjonKanalCode.SDP;
-	public static final Long VARSELID_2 = 2222L;
-	public static final String EPOSTADDRESS_2 = "epostaddress2@nav.no";
-	public static final Long DOKUMENTINFO_ID_3 = 1333L;
-	public static final Long DISTRIBUSJONINFO_ID_3 = 1333L;
 	public static final String KONVERSASJON_ID_3 = "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb26143";
 	public static final String DISTRIBUSJON_ID_3 = "7882d37e-34f7-11e9-b677-d663bd953d63";
 	public static final String BESTILLENDE_FAGSYSTEM_3 = "ARENA";
@@ -65,27 +59,21 @@ public class TestDataUtils {
 	public static final String DOKUMENT_STATUS_3 = "OVERSENDT";
 	public static final String DISTRIBUSJON_STATUS_3 = "OVERSENDT";
 	public static final DistribusjonKanalCode DISTRIBUSJON_KANAL_3 = DistribusjonKanalCode.SDP;
-	public static final Long VARSELID_3 = 2333L;
-	public static final String EPOSTADDRESS_3 = "epostaddress3@nav.no";
 	public static String FORSENDELSE_ID_J = "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c";
 	public static String FORSENDELSE_ID_1_J = "ea0dea1f-3904-4239-8a5f-c3fa3af29896";
-	public static String DISTRIBUSJON_KANAL_J = "SDP";
 	public static String DISTRIBUSJON_STATUS_J = "OVERSENDT";
-	public static String PRODUCTSJON_DATAO_J = "2019-09-03T11:03:45";
 	public static String DISRIBUSJON_DATO_J = "2019-09-03T11:03:45";
-	public static Long COUNT_DOKUMENT_J = 1l;
 	public static DistribusjonKanalCode DISTRIBUSJON_KANAL_P_J = DistribusjonKanalCode.PRINT;
 	public static String DIGITAL_DISTRIBUTOR_ID_2 = "984661183";
 
-	public static final String USERNAME = "srvuser";
-	public static final String ***passord=gammelt_passord***";
+
 	public static final String SAK_ID = "533815";
 	public static final String KEY = "MMA-43";
 	public static final String SELF = "https://jira-q1.adeo.no/rest/api/2/issue/533815";
 
 	public static List<DokDistAvstemmingRequestTo> createDokDistAvstemmingRequestList() {
 		return Arrays.asList(DokDistAvstemmingRequestTo.builder()
-						.forsendelseId(DISTRIBUSJON_ID)
+						.distribusjonId(DISTRIBUSJON_ID)
 						.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS)
 						.produksjonDato(PRODUKSJON_DATO)
@@ -101,7 +89,7 @@ public class TestDataUtils {
 								.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID)
 								.build()))
 						.build(),
-				DokDistAvstemmingRequestTo.builder().forsendelseId(DISTRIBUSJON_ID_2)
+				DokDistAvstemmingRequestTo.builder().distribusjonId(DISTRIBUSJON_ID_2)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
 						.produksjonDato(PRODUKSJON_DATO_2)
@@ -118,7 +106,7 @@ public class TestDataUtils {
 								.build()))
 						.build(),
 				DokDistAvstemmingRequestTo.builder()
-						.forsendelseId(DISTRIBUSJON_ID_3)
+						.distribusjonId(DISTRIBUSJON_ID_3)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
 						.produksjonDato(convertDateTimeToString(OPPRETTET_DATO_3))
@@ -138,7 +126,7 @@ public class TestDataUtils {
 
 	public static DokDistAvstemmingRequestTo createDokDistAvstemmingRequestTo() {
 		return DokDistAvstemmingRequestTo.builder()
-				.forsendelseId(DISTRIBUSJON_ID)
+				.distribusjonId(DISTRIBUSJON_ID)
 				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
 				.produksjonDato(PRODUKSJON_DATO)

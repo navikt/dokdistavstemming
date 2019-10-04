@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,17 +32,8 @@ class CSVProdusereImplTest {
 				.map(hentUekspederForsendelse -> mapper.mapDokDistUtenPrint(hentUekspederForsendelse))
 				.collect(Collectors.toList());
 
-	}
-
-	@Test
-	public void shouldOppretteCsvObjectOpenCsv() throws Exception {
-		DokDistAvstemmingMapper mapper = new DokDistAvstemmingMapper();
-		/*List<DokDistAvStemmingResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingForsendelses().stream()
-				.map(hentUekspederForsendelse -> mapper.map(hentUekspederForsendelse))
-				.collect(Collectors.toList());
-		File file = csvProdusereImp.rulesToCsv(dokDistAvStemmingResponseTo);
-
-		assertThat(file.isFile(), is(true));*/
 
 	}
+
+
 }

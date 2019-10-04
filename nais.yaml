@@ -22,7 +22,7 @@ resources:
     cpu: 2000m
     memory: 2048Mi
   requests:
-    memory: 512Mi
+    memory: 1024Mi
 fasitResources:
   used:
   - alias: srvdokdistavstemming

@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
+import no.nav.dokdistavstemming.metrics.MetricUtils;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,11 +48,13 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	private HentUekspederForsendelse hentUekspederKvitteringForsendelse;
 	@Inject
 	private CSVProdusere csvProdusere;
+	@Inject
+	private MetricUtils metricUtils;
 
 
 	@BeforeEach
 	public void setUp() {
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere, metricUtils);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
@@ -64,7 +67,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<DokDistAvstemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
-		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1_J));
+		assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(FORSENDELSE_ID_1_J));
 	}
 
 
@@ -73,7 +76,7 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 		dokDistHappyHentUekspedereFrosendelseKanalPrint();
 		List<DokDistAvstemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederrKanalPrint();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
+		assertThat(result.get(0).getDistribusjonId(), is(FORSENDELSE_ID_J));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
 		assertThat(result.get(0).getCountDokument(), is(10L));

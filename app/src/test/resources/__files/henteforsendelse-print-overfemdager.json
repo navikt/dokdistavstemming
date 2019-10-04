@@ -1,6 +1,6 @@
 [
   {
-    "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
+    "distribusjonId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
     "dokumenter": [
       {
         "konversasjonId": "24c59c0e-8a41-4e21-80c9-1ae913b56a61",
@@ -18,7 +18,7 @@
     "distribusjonDato":"2019-09-03T11:03:45",
     "countDokument": 10
   },  {
-  "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
+  "distribusjonId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
   "dokumenter": [
     {
       "konversasjonId": "24c59c0e-8a41-4e21-80c9-1ae913b56a61",

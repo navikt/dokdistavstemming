@@ -26,6 +26,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
         </dependency>
@@ -67,7 +71,6 @@
         <dependency>
             <groupId>no.nav.freg</groupId>
             <artifactId>freg-security-oidc</artifactId>
-            <version>3.1.0</version>
         </dependency>
 
         <dependency>
@@ -147,11 +150,7 @@
             <version>3.0.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.3.0.Final</version>
-        </dependency>
+
     </dependencies>
 
     <build>

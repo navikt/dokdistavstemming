@@ -3,6 +3,7 @@ package no.nav.dokdistavstemming.service;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
+import no.nav.dokdistavstemming.metrics.MetricUtils;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.inject.Inject;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -29,14 +31,17 @@ public class DokDistAvstemmingServiceTest {
 	private HentUekspederForsendelse hentUekspederForsendelse;
 	private CSVProdusere csvProdusere;
 
+	private MetricUtils metricUtils;
+
 
 	@BeforeEach
 	public void setUp() {
 		hentUekspederForsendelse = mock(HentUekspederForsendelse.class);
 		csvProdusere = mock(CSVProdusere.class);
+		metricUtils=mock(MetricUtils.class);
 
 		argument = ArgumentCaptor.forClass(Long.class);
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere,metricUtils);
 	}
 
 	@Test

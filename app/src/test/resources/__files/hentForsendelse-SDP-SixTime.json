@@ -1,6 +1,6 @@
 [
   {
-    "forsendelseId": "ea0dea1f-3904-4239-8a5f-c3fa3af29896",
+    "distribusjonId": "ea0dea1f-3904-4239-8a5f-c3fa3af29896",
     "dokumenter": [
       {
         "konversasjonId": "e65eeff6-38e6-4eca-bda6-609842ea7129",
@@ -19,7 +19,7 @@
     "countDokument": 1
   },
   {
-    "forsendelseId": "810f567d-192b-4531-9a90-914fee360dce",
+    "distribusjonId": "810f567d-192b-4531-9a90-914fee360dce",
     "dokumenter": [
       {
         "konversasjonId": "ee9ebe2d-00f6-4ded-923d-8da681269d15",
@@ -38,7 +38,7 @@
     "countDokument": 1
   },
   {
-    "forsendelseId": "5054bf0c-8000-48b6-8898-bcca7732fb2a",
+    "distribusjonId": "5054bf0c-8000-48b6-8898-bcca7732fb2a",
     "dokumenter": [
       {
         "konversasjonId": "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb2613c",
@@ -57,7 +57,7 @@
     "countDokument": 1
   },
   {
-    "forsendelseId": "40549a31-1787-45ce-a31e-60b159b801eb",
+    "distribusjonId": "40549a31-1787-45ce-a31e-60b159b801eb",
     "dokumenter": [
       {
         "konversasjonId": "66248da8-dbc6-4d15-8fa7-e22c078e9a65",

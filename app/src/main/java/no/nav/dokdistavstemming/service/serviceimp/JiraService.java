@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
 
-import com.pep1.jira.client.domain.issue.Attachment;
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
@@ -40,12 +39,13 @@ public class JiraService {
 	}
 
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
-	public JiraSakResponseTo createJiraSak() throws Exception {
+	public JiraSakResponseTo oppretteMMAJiraSak() throws Exception {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
-		if (fils.equals(null)) {
-			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke csv filer", MDC.get(MDCConstants.MDC_REQUEST_ID)));
+		if (fils == null) {
+			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon kke opprette jira sak",
+					MDC.get(MDCConstants.MDC_REQUEST_ID)));
 		}
 		IssueInput issueInput = createJiraSaksRequest();
 		validateInput(issueInput);
@@ -54,11 +54,11 @@ public class JiraService {
 
 			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
-			fils.stream().forEach(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil));
+			fils.forEach(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil));
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-					.message(!issue.equals(null) ? String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()) : null)
+					.message(issue == null ? null : String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
 
 			log.info(String.format("DokDistAvstemming opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
@@ -87,25 +87,26 @@ public class JiraService {
 	}
 
 
-	public IssueInput createJiraSaksRequest() {
+	private IssueInput createJiraSaksRequest() {
 		IssueInput issueInput = new IssueInput();
 
 		Project project = new Project();
 		project.setKey("MMA");
-		project.setName("Team Dokument");
+		project.setName("Team Dokumentløsninger");
 
 		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
 		component.setName("Dokumentdistribusjon");
 
 		Reporter reporter = new Reporter();
 		reporter.setDisplayName("DokDistAvstemming Applikajonen");
+		reporter.setEmailAddress("tsigab.angosom.gebremedhin@nav.no");
+		reporter.setName("srvjiradokdistavstemming");
+		reporter.setKey("srvjiradokdistavstemming");
+
+
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Test");
-		Attachment attachment = new Attachment();
-		File file = new File("__files/hentuekspedereforsendelse-empty.json");
-
-		attachment.setFilename(file.getAbsoluteFile().getName());
+		issueType.setName("Oppgave");
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
@@ -113,6 +114,7 @@ public class JiraService {
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
 				.issuetype(issueType)
+				.reporter(reporter)
 				.components(Collections.singletonList(component))
 				.summary("DOKUMENTDISTRIBUSJON: Utsendelse av dokumenter/brev er forsinket")
 				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
@@ -132,9 +134,9 @@ public class JiraService {
 
 		} catch (MalformedURLException e) {
 			try {
-				throw new MalformedURLException("");
+				throw new MalformedURLException(String.format("Fant ikke host url med feilmelding=%s", e.getMessage()));
 			} catch (MalformedURLException ex) {
-				ex.printStackTrace();
+				log.error(String.format("Fant ikke host url med feilmelding=%s", ex.getMessage()));
 			}
 		}
 		return hostFraUrl;
