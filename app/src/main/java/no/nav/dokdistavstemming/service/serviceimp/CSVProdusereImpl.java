@@ -47,7 +47,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
-		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvstemmingResponseTo.class).withHeader().withLineSeparator("\r\n");
+		CsvSchema csvSchema = csvMapper.schemaFor(DokDistAvstemmingResponseTo.class).withHeader().withColumnSeparator(';');
 
 		for (CsvSchema.Column kolonne : csvSchema) {
 			kolonneNavn.add(kolonne.getName());
