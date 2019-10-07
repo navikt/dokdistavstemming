@@ -12,6 +12,8 @@ import java.util.List;
 
 public class ConverterUtils {
 
+	private ConverterUtils() {
+	}
 
 	public static LocalDateTime convertStringToLocalDateTime(String parameter) {
 

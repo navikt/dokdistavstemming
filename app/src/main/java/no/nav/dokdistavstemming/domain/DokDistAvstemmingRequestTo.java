@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

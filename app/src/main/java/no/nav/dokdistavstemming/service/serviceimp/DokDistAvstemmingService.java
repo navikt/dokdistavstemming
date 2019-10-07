@@ -36,7 +36,6 @@ public class DokDistAvstemmingService {
 	private static final Long ANTALL_DAGER = 120L; // 120 timer er 5 dager
 	private final HentUekspederForsendelse hentUekspederForsendelse;
 	private final CSVProdusere csvProdusere;
-	private final MetricUtils metricUtils;
 
 	private final Counter uekspederCounterKanalPRINT;
 	private final Counter uekspederCounterKanalSDP;
@@ -51,7 +50,6 @@ public class DokDistAvstemmingService {
 									MetricUtils metricUtils) {
 		this.hentUekspederForsendelse = hentUekspederForsendelse;
 		this.csvProdusere = csvProdusere;
-		this.metricUtils = metricUtils;
 		this.uekspederCounterKanalPRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "PRINT");
 		this.uekspederCounterKanalSDP = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SDP");
 		this.uekspederCounterKanalSPD_PRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SPD_PRINT");
@@ -66,7 +64,7 @@ public class DokDistAvstemmingService {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
 		List<DokDistAvstemmingRequestTo> dokDistAvstemmingRequestTos = hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanal, period);
 		return dokDistAvstemmingRequestTos.stream()
-				.filter(hentUekspederForsendelse -> hentUekspederForsendelse.getDokumenter().size() != 0)
+				.filter(uekspederForsendelse -> !uekspederForsendelse.getDokumenter().isEmpty())
 				.collect(Collectors.toList());
 
 	}
@@ -98,7 +96,7 @@ public class DokDistAvstemmingService {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
 					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(), DistribusjonKanalCode.class));
 					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
-							dokDistAvstemming.getDistribusjonKanal(), dokDistAvstemming.getArkivKode()));
+							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonKanal()));
 					return dokDistAvstemming;
 
 				})

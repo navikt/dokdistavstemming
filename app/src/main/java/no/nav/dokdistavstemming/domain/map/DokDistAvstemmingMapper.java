@@ -10,13 +10,11 @@ import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
  */
 public class DokDistAvstemmingMapper {
 
-
 	public DokDistAvstemmingResponseTo mapDokDistPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
 
-		if (forsendelseResponse.equals(null) && forsendelseResponse.getDokumenter().equals(null)) {
+		if (forsendelseResponse==null && forsendelseResponse.getDokumenter()==null) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
-
 		return DokDistAvstemmingResponseTo.builder()
 				.distribusjonId(forsendelseResponse.getDistribusjonId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
@@ -30,13 +28,13 @@ public class DokDistAvstemmingMapper {
 
 	public DokDistAvstemmingResponseTo mapDokDistUtenPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
 
-		if (forsendelseResponse.equals(null) && forsendelseResponse.getDokumenter().equals(null)) {
+		if (forsendelseResponse==null && forsendelseResponse.getDokumenter()==null) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 
 		DokDistAvstemmingRequestTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
 
-		if (dokumentInfoTo.equals(null)) {
+		if (dokumentInfoTo==null) {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 
@@ -59,7 +57,7 @@ public class DokDistAvstemmingMapper {
 	}
 
 	private boolean isDistribusjonKanalPrint(String distribusjonKanal) {
-		return distribusjonKanal.equalsIgnoreCase("PRINT") || distribusjonKanal.equalsIgnoreCase("SDP_PRINT");
+		return "PRINT".equalsIgnoreCase(distribusjonKanal) || "SDP_PRINT".equalsIgnoreCase(distribusjonKanal);
 	}
 
 }

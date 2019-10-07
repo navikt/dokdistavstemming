@@ -5,7 +5,6 @@ import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Priority;
-import com.pep1.jira.client.domain.issue.Reporter;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,8 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -41,7 +40,7 @@ public class JiraService {
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
 	public JiraSakResponseTo oppretteMMAJiraSak() throws Exception {
 
-		MDC.put(MDCConstants.MDC_REQUEST_ID, "createJiraSak");
+		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
 		if (fils == null) {
 			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon kke opprette jira sak",
@@ -90,23 +89,19 @@ public class JiraService {
 	private IssueInput createJiraSaksRequest() {
 		IssueInput issueInput = new IssueInput();
 
-		Project project = new Project();
-		project.setKey("MMA");
-		project.setName("Team Dokumentløsninger");
+		Project project = jiraConsumer.hentProjekt("MMA");
+		List<com.pep1.jira.client.domain.issue.Component> componenter = project.getComponents().stream()
+				.filter(dokdistComp -> dokdistComp.getName().equalsIgnoreCase("Dokumentdistribusjon"))
+				.collect(Collectors.toList());
 
 		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
 		component.setName("Dokumentdistribusjon");
-
-		Reporter reporter = new Reporter();
-		reporter.setDisplayName("DokDistAvstemming Applikajonen");
-		reporter.setEmailAddress("tsigab.angosom.gebremedhin@nav.no");
-		reporter.setName("srvjiradokdistavstemming");
-		reporter.setKey("srvjiradokdistavstemming");
 
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
 		issueType.setName("Oppgave");
+
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
@@ -114,8 +109,7 @@ public class JiraService {
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
 				.issuetype(issueType)
-				.reporter(reporter)
-				.components(Collections.singletonList(component))
+				.components(componenter)
 				.summary("DOKUMENTDISTRIBUSJON: Utsendelse av dokumenter/brev er forsinket")
 				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
 				.priority(priority)

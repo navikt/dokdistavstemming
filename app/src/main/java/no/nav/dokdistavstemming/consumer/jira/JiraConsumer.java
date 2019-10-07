@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming.consumer.jira;
 
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
+import com.pep1.jira.client.domain.project.Project;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
@@ -21,6 +22,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +32,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.time.Duration;
-import java.util.Collections;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -41,6 +42,7 @@ import java.util.Collections;
 public class JiraConsumer {
 
 	private static final String ISSUE_CREATE = "/rest/api/2/issue";
+	private static final String PROJECT_HENT = "/rest/api/2/project";
 	private static final String ATTACHMENTS = "/attachments";
 	private static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String jiraBaseUri;
@@ -66,7 +68,8 @@ public class JiraConsumer {
 	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
-			ResponseEntity<Issue> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST, new HttpEntity<>(issueInputRequest, headers), Issue.class);
+			ResponseEntity<Issue> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST,
+					new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
 			log.warn(String.format("Kall mot jira feilet med url=%s, feilet: %s", apiBaseUri, e.getMessage()));
@@ -96,7 +99,27 @@ public class JiraConsumer {
 		} catch (JiraClientException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
 					file.getName(), e.getMessage()));
-			throw new JiraClientException(e.getStatusCode(), String.format("En feil oppsto. Bestilling kan ikke utføres med fielmelding=%s", e.getMessage()));
+			throw new JiraClientException(e.getStatus(), e.getErrorMessage());
+		}
+	}
+
+
+	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjektFields"}, percentiles = {0.5, 0.95})
+	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
+
+		if (projectKey == null) {
+			throw new DokDistAvstemmingFunctionalException(String.format("Fant ikke projekt key med projectKey=%s", projectKey));
+		}
+
+		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		try {
+			ResponseEntity<Project> responseEntity = restTemplate.exchange(jiraBaseUri + String.format("%s/%s", PROJECT_HENT, projectKey),
+					HttpMethod.GET, new HttpEntity<>(headers), Project.class);
+
+			return responseEntity.getBody();
+		} catch (JiraClientException e) {
+			throw new JiraClientException(String.format("Feil, fant ikke project med projectKey=%s", projectKey));
 		}
 	}
 
