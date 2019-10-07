@@ -14,6 +14,7 @@ import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -43,8 +44,11 @@ public class JiraService {
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
 		if (fils == null) {
-			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon kke opprette jira sak",
-					MDC.get(MDCConstants.MDC_REQUEST_ID)));
+			log.info("Det er ikke noen avvik forsendelse fra dokumentdistribusjon og dokdistavstemming har ikke opprettet jira sak");
+			return JiraSakResponseTo.builder()
+					.message("Ingen fil og opprettet ikke jira sak")
+					.httpStatusCode(HttpStatus.NO_CONTENT.value())
+					.build();
 		}
 		IssueInput issueInput = createJiraSaksRequest();
 		validateInput(issueInput);

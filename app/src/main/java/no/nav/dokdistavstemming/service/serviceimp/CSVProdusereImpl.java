@@ -10,7 +10,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.service.CSVProdusere;
@@ -39,11 +38,6 @@ public class CSVProdusereImpl implements CSVProdusere {
 	public File oppretteCsvFil(List<DokDistAvstemmingResponseTo> dokDistAvstemmingForsendelser) throws IOException {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteCsvFil");
-
-		if (dokDistAvstemmingForsendelser.isEmpty() || dokDistAvstemmingForsendelser == null) {
-			throw new DokDistAvstemmingFunctionalException(String.format("%s Fant ikke avvik fra dokumentdistribusjon forsendelse og kan ikke produsere CSV fil",
-					MDC.get(MDCConstants.MDC_REQUEST_ID)));
-		}
 
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
