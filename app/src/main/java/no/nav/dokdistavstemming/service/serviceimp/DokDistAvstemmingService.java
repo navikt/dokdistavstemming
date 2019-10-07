@@ -14,6 +14,7 @@ import no.nav.dokdistavstemming.utils.ConverterUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -70,9 +71,16 @@ public class DokDistAvstemmingService {
 	}
 
 	public List<File> henteDokDistFil() throws Exception {
-		log.info("Har mottat kall til å opprette  CSV fil fra dokdist forsendelse list");
-		return Arrays.asList(csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak()),
-				csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederrKanalPrint()));
+		log.info("Har mottat kall til å opprette  CSV fil fra uekspedert forsendelse");
+
+		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak());
+		File csvFilPrintKanal =csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederrKanalPrint());
+
+		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal,csvFilSDPKanal);
+
+		return produsereCSVFiler.stream()
+				.filter(csvFil -> isFilExistOgNotNull(csvFil))
+				.collect(Collectors.toList());
 
 	}
 
@@ -154,6 +162,11 @@ public class DokDistAvstemmingService {
 				uekspederCounterKanalTRYGDERETTEN.increment();
 				break;
 		}
+	}
+
+	private boolean isFilExistOgNotNull(File fil){
+
+		return fil.exists() && fil.length()>0;
 	}
 
 }
