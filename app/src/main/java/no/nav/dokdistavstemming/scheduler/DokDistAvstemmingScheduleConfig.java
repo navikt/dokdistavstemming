@@ -23,12 +23,10 @@ public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
 	private final int POOL_SIZE = 10;
 
 	private final DokDistAvstemmingService dokDistAvstemmingService;
-	private final JiraService jiraService;
 	private final String cronSchedule;
 
-	public DokDistAvstemmingScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler, DokDistAvstemmingService dokDistAvstemmingService, JiraService jiraService) {
+	public DokDistAvstemmingScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler, DokDistAvstemmingService dokDistAvstemmingService) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
-		this.jiraService = jiraService;
 		this.cronSchedule=cronScheduler;
 	}
 
@@ -46,7 +44,7 @@ public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
 		scheduledTaskRegistrar.addCronTask(() ->
 				{
 					try {
-						jiraService.oppretteMMAJiraSak();
+						dokDistAvstemmingService.henteDokDistFil();
 					} catch (Exception e) {
 						log.error(String.format("createJiraSak feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
 

@@ -57,7 +57,7 @@ public class DokDistAvstemmingMapper {
 	}
 
 	private boolean isDistribusjonKanalPrint(String distribusjonKanal) {
-		return distribusjonKanal.equalsIgnoreCase("PRINT") || distribusjonKanal.equalsIgnoreCase("SDP_PRINT");
+		return "PRINT".equalsIgnoreCase(distribusjonKanal) || "SDP_PRINT".equalsIgnoreCase(distribusjonKanal);
 	}
 
 }
