@@ -98,7 +98,7 @@ public class DokDistAvstemmingService {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
 					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(), DistribusjonKanalCode.class));
 					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
-							dokDistAvstemming.getDistribusjonKanal(), dokDistAvstemming.getArkivKode()));
+							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonKanal()));
 					return dokDistAvstemming;
 
 				})
