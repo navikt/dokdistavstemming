@@ -21,7 +21,7 @@ public class DokDistAvstemmingMapper {
 				.produksjonDato(forsendelseResponse.getProduksjonDato() == null ? null : forsendelseResponse.getProduksjonDato())
 				.distribusjonKanal(forsendelseResponse.getDistribusjonKanal())
 				.distribusjonStatus(forsendelseResponse.getDistribusjonStatus())
-				.dokumentStatus(forsendelseResponse.getDistribusjonStatus())
+				.dokumentStatus(forsendelseResponse.getDokumenter().get(0).getDokumentStatus()==null?null:forsendelseResponse.getDokumenter().get(0).getDokumentStatus())
 				.countDokument(forsendelseResponse.getCountDokument())
 				.build();
 	}

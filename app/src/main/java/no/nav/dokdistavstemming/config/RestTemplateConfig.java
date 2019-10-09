@@ -13,7 +13,7 @@ import java.time.Duration;
 @Configuration
 public class RestTemplateConfig {
 
-	public static final Duration DURATION_READTIMEOUT = Duration.ofMillis(120000L);
+	public static final Duration DURATION_READTIMEOUT = Duration.ofMillis(180000L);
 	public static final Duration DURATION = Duration.ofMillis(30000l);
 
 

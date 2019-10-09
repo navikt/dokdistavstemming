@@ -21,7 +21,7 @@
       "description": "Represents a Test",
       "name": "Test"
     },
-    "summary": "Dokdistavstemming sdp uekspedert dokument",
+    "summary": "DokumentDistribusjon: avvik dokument forsendelse ",
     "fixVersions": [
       {
         "name": "dokumentdistribusjon:8.1.1"

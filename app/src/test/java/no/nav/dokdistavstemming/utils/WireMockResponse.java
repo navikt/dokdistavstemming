@@ -39,7 +39,7 @@ public class WireMockResponse {
 		stubFor(post(urlMatching("/rest/api/2/issue"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_VALUE)
-						.withBody("{response: ok}")));
+						.withBody("")));
 	}
 
 
