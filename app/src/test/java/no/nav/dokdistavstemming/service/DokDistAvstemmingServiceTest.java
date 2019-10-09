@@ -48,9 +48,9 @@ public class DokDistAvstemmingServiceTest {
 	@Test
 	void shouldCallHentUekspederForsendelse() {
 		List<DokDistAvstemmingRequestTo> result = dokDistAvstemmingService.hentUekspederForsendelserService(DistribusjonKanalCode.SDP.name());
-		verify(hentUekspederForsendelse).hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(), 6L);
+		verify(hentUekspederForsendelse).hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(), 24L);
 		verify(hentUekspederForsendelse).hentUekspederForsendelse(anyString(), argument.capture());
-		assertThat(argument.getValue().longValue(), is(6L));
+		assertThat(argument.getValue().longValue(), is(24L));
 	}
 
 
