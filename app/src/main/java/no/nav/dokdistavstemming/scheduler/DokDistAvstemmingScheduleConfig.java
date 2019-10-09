@@ -25,9 +25,12 @@ public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
 	private final DokDistAvstemmingService dokDistAvstemmingService;
 	private final String cronSchedule;
 
-	public DokDistAvstemmingScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler, DokDistAvstemmingService dokDistAvstemmingService) {
+
+	public DokDistAvstemmingScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
+										   DokDistAvstemmingService dokDistAvstemmingService) {
 		this.dokDistAvstemmingService = dokDistAvstemmingService;
 		this.cronSchedule=cronScheduler;
+
 	}
 
 	@Override

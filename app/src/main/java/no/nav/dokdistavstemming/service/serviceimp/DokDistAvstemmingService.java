@@ -14,7 +14,6 @@ import no.nav.dokdistavstemming.utils.ConverterUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -33,8 +32,8 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 @Slf4j
 public class DokDistAvstemmingService {
 
-	private static final Long ANTALL_TIMER = 6L;
-	private static final Long ANTALL_DAGER = 120L; // 120 timer er 5 dager
+	private static final Long ANTALL_TIMER = 24L;
+	private static final Long ANTALL_DAGER = 144L; // 144 timer er 6 dager
 	private final HentUekspederForsendelse hentUekspederForsendelse;
 	private final CSVProdusere csvProdusere;
 
@@ -74,7 +73,7 @@ public class DokDistAvstemmingService {
 		log.info("Har mottat kall til å opprette  CSV fil fra uekspedert forsendelse");
 
 		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak());
-		File csvFilPrintKanal =csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederrKanalPrint());
+		File csvFilPrintKanal =csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederKanalPrint());
 
 		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal,csvFilSDPKanal);
 
@@ -103,8 +102,8 @@ public class DokDistAvstemmingService {
 				.map(uekspederForsendelse -> {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
 					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(), DistribusjonKanalCode.class));
-					log.info(String.format("Fant uekspedert forsendelse med  distribusjonId=%s, arkivKode=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
-							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonKanal()));
+					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
+							dokDistAvstemming.getArkivKode(),dokDistAvstemming.getDistribusjonStatus(), dokDistAvstemming.getDistribusjonKanal()));
 					return dokDistAvstemming;
 
 				})
@@ -114,7 +113,7 @@ public class DokDistAvstemmingService {
 
 	//dokDistAvstemmingKanalPrint
 
-	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUekspederrKanalPrint() {
+	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUekspederKanalPrint() {
 		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
 
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
@@ -127,7 +126,8 @@ public class DokDistAvstemmingService {
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
 					incrementFunctionalMetrics(PRINT);
-					log.info(String.format("Fant uekspedert forsendelse, distribusjonId=%s distribusjonKanalCode=%s", uekspederForsendelse.getDistribusjonId(), uekspederForsendelse.getDistribusjonKanal()));
+					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,dokStatus=%s,distribusjonKanal=%s",
+							uekspederForsendelse.getDistribusjonId(),uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDokumenter().get(0).getDokumentStatus(),uekspederForsendelse.getDistribusjonKanal()));
 					return dokDistAvstemmingMapper.mapDokDistPrint(uekspederForsendelse);
 				})
 				.collect(Collectors.toList());
