@@ -59,7 +59,6 @@ public class CSVProdusereImpl implements CSVProdusere {
 		objectWriter.writeValue(fos, dokDistAvstemmingForsendelser);
 
 		return produced;
-
 	}
 
 

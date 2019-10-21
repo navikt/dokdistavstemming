@@ -28,10 +28,8 @@ import java.util.stream.Collectors;
 public class JiraService {
 
 	private static final String BROWSE = "/browse";
-
 	private JiraConsumer jiraConsumer;
 	private DokDistAvstemmingService dokDistAvstemmingService;
-
 
 	public JiraService(JiraConsumer jiraConsumer, DokDistAvstemmingService dokDistAvstemmingService) {
 		this.jiraConsumer = jiraConsumer;
@@ -98,14 +96,9 @@ public class JiraService {
 				.filter(dokdistComp -> dokdistComp.getName().equalsIgnoreCase("Dokumentdistribusjon"))
 				.collect(Collectors.toList());
 
-		com.pep1.jira.client.domain.issue.Component component = new com.pep1.jira.client.domain.issue.Component();
-		component.setName("Dokumentdistribusjon");
-
-
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
 		issueType.setName("Oppgave");
-
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
@@ -126,10 +119,8 @@ public class JiraService {
 	private String getHostFraUrl(String stringUrl) {
 		String hostFraUrl = "";
 		try {
-
 			URL url = new URL(stringUrl);
 			hostFraUrl = url.getProtocol() + "://" + url.getHost();
-
 		} catch (MalformedURLException e) {
 			try {
 				throw new MalformedURLException(String.format("Fant ikke host url med feilmelding=%s", e.getMessage()));
@@ -139,5 +130,4 @@ public class JiraService {
 		}
 		return hostFraUrl;
 	}
-
 }

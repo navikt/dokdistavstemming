@@ -35,7 +35,6 @@ import java.util.List;
 @Slf4j
 public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
 
-	public static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
 
@@ -74,7 +73,6 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 			throw new DokDistAvstemmingTechnicalException(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk.  status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
-
 	}
 
 

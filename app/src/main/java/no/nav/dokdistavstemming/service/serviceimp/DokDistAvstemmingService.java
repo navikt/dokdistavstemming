@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
@@ -12,12 +13,14 @@ import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
@@ -39,7 +42,6 @@ public class DokDistAvstemmingService {
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 
-
 	public DokDistAvstemmingService(HentUekspederForsendelse hentUekspederForsendelse, CSVProdusere csvProdusere,
 									MeterRegistry meterRegistry) {
 		this.hentUekspederForsendelse = hentUekspederForsendelse;
@@ -53,7 +55,6 @@ public class DokDistAvstemmingService {
 		return dokDistAvstemmingRequestTos.stream()
 				.filter(uekspederForsendelse -> !uekspederForsendelse.getDokumenter().isEmpty())
 				.collect(Collectors.toList());
-
 	}
 
 	public List<File> henteDokDistFil() throws Exception {
@@ -70,6 +71,8 @@ public class DokDistAvstemmingService {
 
 	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
 		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
+		long start = System.currentTimeMillis();
+
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
 				.filter(distribusjonKanal -> PRINT != distribusjonKanal)
 				.distinct()
@@ -86,10 +89,22 @@ public class DokDistAvstemmingService {
 							dokDistAvstemming.getDistribusjonStatus());
 					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getDistribusjonId(),
 							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonStatus(),dokDistAvstemming.getDistribusjonDato(), dokDistAvstemming.getDistribusjonKanal()));
+
+					Timer.builder("måler_forsinkelser").description("duration mellom")
+							.tag("kanal",dokDistAvstemming.getDistribusjonKanal())
+							.tags("status",dokDistAvstemming.getDistribusjonStatus())
+							.register(meterRegistry)
+							.record(System.currentTimeMillis()-start, TimeUnit.SECONDS);
 					return dokDistAvstemming;
 
 				})
 				.collect(Collectors.toSet());
+
+
+
+
+
+
 		return new ArrayList<>(uekspederFrosendelseUtenPrint);
 	}
 
@@ -119,8 +134,6 @@ public class DokDistAvstemmingService {
 	}
 
 
-
-
 	private void incrementFunctionalMetrics(String distribusjonKanal,String distribusjonDato, String distribusjonStatus) {
 		if (distribusjonKanal == null) {
 			return;
@@ -129,7 +142,6 @@ public class DokDistAvstemmingService {
 				"distribusjonKanal",distribusjonKanal==null?null:distribusjonKanal,
 				"distribusjonDato",distribusjonDato==null?null:distribusjonDato,
 				"distribusjonStatus",distribusjonStatus==null?null:distribusjonStatus).increment();
-
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {
