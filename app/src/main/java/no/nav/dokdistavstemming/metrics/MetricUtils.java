@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class MetricUtils {
 
 	public static final String DOK_REQUEST_FUNCTIONAL_EXCEPTION_COUNTER = "dok_request_functional_exception_counter";
-	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
+	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_counter";
 	public static final String TAG_BESKRIVELSE = "beskrivelse";
 	private static final String TAG_KANAL_KODE ="distribusjonKanal";
 

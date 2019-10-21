@@ -1,5 +1,6 @@
 package no.nav.dokdistavstemming.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
@@ -32,17 +33,17 @@ public class DokDistAvstemmingServiceTest {
 	private HentUekspederForsendelse hentUekspederForsendelse;
 	private CSVProdusere csvProdusere;
 
-	private MetricUtils metricUtils;
+	private MeterRegistry meterRegistry;
 
 
 	@BeforeEach
 	public void setUp() {
 		hentUekspederForsendelse = mock(HentUekspederForsendelse.class);
 		csvProdusere = mock(CSVProdusere.class);
-		metricUtils=mock(MetricUtils.class);
+		meterRegistry=mock(MeterRegistry.class);
 
 		argument = ArgumentCaptor.forClass(Long.class);
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere,metricUtils);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere,meterRegistry);
 	}
 
 	@Test

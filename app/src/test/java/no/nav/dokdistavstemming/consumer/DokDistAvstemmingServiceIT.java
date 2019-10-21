@@ -2,11 +2,11 @@ package no.nav.dokdistavstemming.consumer;
 
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
-import no.nav.dokdistavstemming.metrics.MetricUtils;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,6 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUe
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelseKanalPrint;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureWireMock(port = 0)
@@ -50,12 +49,12 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Inject
 	private CSVProdusere csvProdusere;
 	@Inject
-	private MetricUtils metricUtils;
+	private MeterRegistry meterRegistry;
 
 
 	@BeforeEach
 	public void setUp() {
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere, metricUtils);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere, meterRegistry);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();

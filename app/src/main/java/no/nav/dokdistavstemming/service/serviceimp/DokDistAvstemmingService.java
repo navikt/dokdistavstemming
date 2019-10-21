@@ -1,23 +1,23 @@
 package no.nav.dokdistavstemming.service.serviceimp;
 
 
-import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
 import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
-import no.nav.dokdistavstemming.metrics.MetricUtils;
 import no.nav.dokdistavstemming.service.CSVProdusere;
-import no.nav.dokdistavstemming.utils.ConverterUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
@@ -34,31 +34,18 @@ public class DokDistAvstemmingService {
 
 	private static final Long ANTALL_TIMER = 24L;
 	private static final Long ANTALL_DAGER = 144L; // 144 timer er 6 dager
+	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
 	private final HentUekspederForsendelse hentUekspederForsendelse;
 	private final CSVProdusere csvProdusere;
-
-	private final Counter uekspederCounterKanalPRINT;
-	private final Counter uekspederCounterKanalSDP;
-	private final Counter uekspederCounterKanalSPD_PRINT;
-	private final Counter uekspederCounterKanalE_HANDEL;
-	private final Counter uekspederCounterKanalPRINT_DITTNAV;
-	private final Counter uekspederCounterKanalDITTNAV;
-	private final Counter uekspederCounterKanalTRYGDERETTEN;
+	private final MeterRegistry meterRegistry;
 
 
 	public DokDistAvstemmingService(HentUekspederForsendelse hentUekspederForsendelse, CSVProdusere csvProdusere,
-									MetricUtils metricUtils) {
+									MeterRegistry meterRegistry) {
 		this.hentUekspederForsendelse = hentUekspederForsendelse;
 		this.csvProdusere = csvProdusere;
-		this.uekspederCounterKanalPRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "PRINT");
-		this.uekspederCounterKanalSDP = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SDP");
-		this.uekspederCounterKanalSPD_PRINT = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "SPD_PRINT");
-		this.uekspederCounterKanalE_HANDEL = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "E_HANDEL");
-		this.uekspederCounterKanalPRINT_DITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "PRINT_DITTNAV");
-		this.uekspederCounterKanalDITTNAV = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "DITTNAV");
-		this.uekspederCounterKanalTRYGDERETTEN = metricUtils.initFunctionalCounter("Uekspeder Frosendelse", "TRYGDERETTEN");
+		this.meterRegistry = meterRegistry;
 	}
-
 
 	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelserService(String distribusjonKanal) {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
@@ -73,27 +60,21 @@ public class DokDistAvstemmingService {
 		log.info("Har mottat kall til å opprette  CSV fil fra uekspedert forsendelse");
 
 		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak());
-		File csvFilPrintKanal =csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederKanalPrint());
-
-		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal,csvFilSDPKanal);
-
+		File csvFilPrintKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederKanalPrint());
+		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal, csvFilSDPKanal);
 		return produsereCSVFiler.stream()
 				.filter(csvFil -> isFilExistOgNotNull(csvFil))
 				.collect(Collectors.toList());
-
 	}
 
 
 	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
-
 		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
-
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
 				.filter(distribusjonKanal -> PRINT != distribusjonKanal)
 				.distinct()
 				.collect(Collectors.toList());
-
-		return distribusjonKanaler.stream()
+		Set<DokDistAvstemmingResponseTo> uekspederFrosendelseUtenPrint = distribusjonKanaler.stream()
 				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
 				.filter(Objects::nonNull)
 				.distinct()
@@ -101,14 +82,15 @@ public class DokDistAvstemmingService {
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
-					incrementFunctionalMetrics(ConverterUtils.stringToEnum(dokDistAvstemming.getDistribusjonKanal(), DistribusjonKanalCode.class));
-					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s distribusjonKanalCode=%s", dokDistAvstemming.getDistribusjonId(),
-							dokDistAvstemming.getArkivKode(),dokDistAvstemming.getDistribusjonStatus(), dokDistAvstemming.getDistribusjonKanal()));
+					incrementFunctionalMetrics(dokDistAvstemming.getDistribusjonKanal(),dokDistAvstemming.getDistribusjonDato(),
+							dokDistAvstemming.getDistribusjonStatus());
+					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getDistribusjonId(),
+							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonStatus(),dokDistAvstemming.getDistribusjonDato(), dokDistAvstemming.getDistribusjonKanal()));
 					return dokDistAvstemming;
 
 				})
-				.collect(Collectors.toList());
-
+				.collect(Collectors.toSet());
+		return new ArrayList<>(uekspederFrosendelseUtenPrint);
 	}
 
 	//dokDistAvstemmingKanalPrint
@@ -119,54 +101,39 @@ public class DokDistAvstemmingService {
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
 				.filter(distribusjonKanal -> PRINT == distribusjonKanal)
 				.collect(Collectors.toList());
-		return distribusjonKanaler.stream()
+		Set<DokDistAvstemmingResponseTo> uekspederFrosendelsePrint = distribusjonKanaler.stream()
 				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
-				.distinct()
 				.flatMap(Collection::stream)
+				.distinct()
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
-					incrementFunctionalMetrics(PRINT);
-					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,dokStatus=%s,distribusjonKanal=%s",
-							uekspederForsendelse.getDistribusjonId(),uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDokumenter().get(0).getDokumentStatus(),uekspederForsendelse.getDistribusjonKanal()));
+					incrementFunctionalMetrics(uekspederForsendelse.getDistribusjonKanal(),uekspederForsendelse.getDistribusjonDato(),
+							uekspederForsendelse.getDistribusjonStatus());
+					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,distribusjonDato=%s,distribusjonKanal=%s",
+							uekspederForsendelse.getDistribusjonId(), uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDistribusjonDato(), uekspederForsendelse.getDistribusjonKanal()));
 					return dokDistAvstemmingMapper.mapDokDistPrint(uekspederForsendelse);
 				})
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 
+		return new ArrayList<>(uekspederFrosendelsePrint);
 	}
 
 
-	private void incrementFunctionalMetrics(DistribusjonKanalCode distribusjonKanal) {
+
+
+	private void incrementFunctionalMetrics(String distribusjonKanal,String distribusjonDato, String distribusjonStatus) {
 		if (distribusjonKanal == null) {
 			return;
 		}
-		switch (distribusjonKanal) {
-			case PRINT:
-				uekspederCounterKanalPRINT.increment();
-				break;
-			case SDP:
-				uekspederCounterKanalSDP.increment();
-				break;
-			case SDP_PRINT:
-				uekspederCounterKanalSPD_PRINT.increment();
-				break;
-			case E_HANDEL:
-				uekspederCounterKanalE_HANDEL.increment();
-				break;
-			case PRINT_DITTNAV:
-				uekspederCounterKanalPRINT_DITTNAV.increment();
-				break;
-			case DITTNAV:
-				uekspederCounterKanalDITTNAV.increment();
-				break;
-			case TRYGDERETTEN:
-				uekspederCounterKanalTRYGDERETTEN.increment();
-				break;
-		}
+		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
+				"distribusjonKanal",distribusjonKanal==null?null:distribusjonKanal,
+				"distribusjonDato",distribusjonDato==null?null:distribusjonDato,
+				"distribusjonStatus",distribusjonStatus==null?null:distribusjonStatus).increment();
+
 	}
 
-	private boolean isFilExistOgNotNull(File fil){
-
-		return fil.exists() && fil.length()>0;
+	private boolean isFilExistOgNotNull(File fil) {
+		return fil.exists() && fil.length() > 0;
 	}
 
 }
