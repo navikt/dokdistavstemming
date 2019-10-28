@@ -4,7 +4,7 @@ package no.nav.dokdistavstemming.service.serviceimp;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
@@ -13,7 +13,6 @@ import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,20 +37,20 @@ public class DokDistAvstemmingService {
 	private static final Long ANTALL_TIMER = 24L;
 	private static final Long ANTALL_DAGER = 144L; // 144 timer er 6 dager
 	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
-	private final HentUekspederForsendelse hentUekspederForsendelse;
+	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 
-	public DokDistAvstemmingService(HentUekspederForsendelse hentUekspederForsendelse, CSVProdusere csvProdusere,
+	public DokDistAvstemmingService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere,
 									MeterRegistry meterRegistry) {
-		this.hentUekspederForsendelse = hentUekspederForsendelse;
+		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.csvProdusere = csvProdusere;
 		this.meterRegistry = meterRegistry;
 	}
 
 	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelserService(String distribusjonKanal) {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
-		List<DokDistAvstemmingRequestTo> dokDistAvstemmingRequestTos = hentUekspederForsendelse.hentUekspederForsendelse(distribusjonKanal, period);
+		List<DokDistAvstemmingRequestTo> dokDistAvstemmingRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 		return dokDistAvstemmingRequestTos.stream()
 				.filter(uekspederForsendelse -> !uekspederForsendelse.getDokumenter().isEmpty())
 				.collect(Collectors.toList());
@@ -87,23 +86,18 @@ public class DokDistAvstemmingService {
 					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
 					incrementFunctionalMetrics(dokDistAvstemming.getDistribusjonKanal(),dokDistAvstemming.getDistribusjonDato(),
 							dokDistAvstemming.getDistribusjonStatus());
-					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getDistribusjonId(),
-							dokDistAvstemming.getArkivKode(), dokDistAvstemming.getDistribusjonStatus(),dokDistAvstemming.getDistribusjonDato(), dokDistAvstemming.getDistribusjonKanal()));
+					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getForsendelseId(),
+							dokDistAvstemming.getJournalpostId(), dokDistAvstemming.getDistribusjonStatus(),dokDistAvstemming.getDistribusjonDato(), dokDistAvstemming.getDistribusjonKanal()));
 
 					Timer.builder("måler_forsinkelser").description("duration mellom")
 							.tag("kanal",dokDistAvstemming.getDistribusjonKanal())
 							.tags("status",dokDistAvstemming.getDistribusjonStatus())
 							.register(meterRegistry)
-							.record(System.currentTimeMillis()-start, TimeUnit.SECONDS);
+							.record(System.currentTimeMillis()-start, TimeUnit.MILLISECONDS);
 					return dokDistAvstemming;
 
 				})
 				.collect(Collectors.toSet());
-
-
-
-
-
 
 		return new ArrayList<>(uekspederFrosendelseUtenPrint);
 	}
@@ -139,9 +133,9 @@ public class DokDistAvstemmingService {
 			return;
 		}
 		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
-				"distribusjonKanal",distribusjonKanal==null?null:distribusjonKanal,
-				"distribusjonDato",distribusjonDato==null?null:distribusjonDato,
-				"distribusjonStatus",distribusjonStatus==null?null:distribusjonStatus).increment();
+				"distribusjonKanal",distribusjonKanal==null?"UKJENT":distribusjonKanal,
+				"distribusjonDato",distribusjonDato==null?"UKJENT":distribusjonDato,
+				"distribusjonStatus",distribusjonStatus==null?"UKJENT":distribusjonStatus).increment();
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {

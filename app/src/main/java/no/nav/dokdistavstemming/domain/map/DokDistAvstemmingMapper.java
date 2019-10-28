@@ -16,7 +16,7 @@ public class DokDistAvstemmingMapper {
 			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
 		}
 		return DokDistAvstemmingResponseTo.builder()
-				.distribusjonId(forsendelseResponse.getDistribusjonId())
+				.forsendelseId(forsendelseResponse.getDistribusjonId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
 				.produksjonDato(forsendelseResponse.getProduksjonDato() == null ? null : forsendelseResponse.getProduksjonDato())
 				.distribusjonKanal(forsendelseResponse.getDistribusjonKanal())
@@ -39,9 +39,9 @@ public class DokDistAvstemmingMapper {
 		}
 
 		return DokDistAvstemmingResponseTo.builder()
-				.distribusjonId(forsendelseResponse.getDistribusjonId())
+				.forsendelseId(forsendelseResponse.getDistribusjonId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
-				.arkivKode(dokumentInfoTo.getArkivKode() == null ? null : dokumentInfoTo.getArkivKode())
+				.journalpostId(dokumentInfoTo.getArkivKode() == null ? null : dokumentInfoTo.getArkivKode())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
 				.produksjonDato(forsendelseResponse.getProduksjonDato())
 				.distribusjonKanal(forsendelseResponse.getDistribusjonKanal())

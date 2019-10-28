@@ -23,7 +23,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,14 +32,14 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class HentUekspederForsendelseConsumer implements HentUekspederForsendelse {
+public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsendelseKvitteringIkkeMottatt {
 
 	private final String administrerforsendelseV1Url;
 	private final RestTemplate restTemplate;
 
 	@Inject
-	public HentUekspederForsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-											RestTemplate restTemplate) {
+	public HentForsendelseKvitteringIkkeMottattConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
+														RestTemplate restTemplate) {
 		this.administrerforsendelseV1Url = administrerforsendelseV1Url;
 		this.restTemplate = restTemplate;
 	}
@@ -49,7 +48,7 @@ public class HentUekspederForsendelseConsumer implements HentUekspederForsendels
 	@Override
 	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
-	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelse(String distribusjonKanal, Long antallTimer) {
+	public List<DokDistAvstemmingRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer) {
 		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
 		try {
 			HttpHeaders httpHeaders = createHeaders();

@@ -1,11 +1,9 @@
 package no.nav.dokdistavstemming.service;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentUekspederForsendelse;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
-import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
-import no.nav.dokdistavstemming.metrics.MetricUtils;
 import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -30,7 +27,7 @@ public class DokDistAvstemmingServiceTest {
 
 	private DokDistAvstemmingService dokDistAvstemmingService;
 
-	private HentUekspederForsendelse hentUekspederForsendelse;
+	private HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private CSVProdusere csvProdusere;
 
 	private MeterRegistry meterRegistry;
@@ -38,19 +35,19 @@ public class DokDistAvstemmingServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		hentUekspederForsendelse = mock(HentUekspederForsendelse.class);
+		hentForsendelseKvitteringIkkeMottatt = mock(HentForsendelseKvitteringIkkeMottatt.class);
 		csvProdusere = mock(CSVProdusere.class);
 		meterRegistry=mock(MeterRegistry.class);
 
 		argument = ArgumentCaptor.forClass(Long.class);
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederForsendelse, csvProdusere,meterRegistry);
+		dokDistAvstemmingService = new DokDistAvstemmingService(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry);
 	}
 
 	@Test
 	void shouldCallHentUekspederForsendelse() {
 		List<DokDistAvstemmingRequestTo> result = dokDistAvstemmingService.hentUekspederForsendelserService(DistribusjonKanalCode.SDP.name());
-		verify(hentUekspederForsendelse).hentUekspederForsendelse(DistribusjonKanalCode.SDP.name(), 24L);
-		verify(hentUekspederForsendelse).hentUekspederForsendelse(anyString(), argument.capture());
+		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(DistribusjonKanalCode.SDP.name(), 24L);
+		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), argument.capture());
 		assertThat(argument.getValue().longValue(), is(24L));
 	}
 
