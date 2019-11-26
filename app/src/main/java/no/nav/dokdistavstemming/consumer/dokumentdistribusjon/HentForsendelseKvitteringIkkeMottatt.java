@@ -1,12 +1,12 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 
 import java.util.List;
 
 public interface HentForsendelseKvitteringIkkeMottatt {
 
-	List<DokDistAvstemmingRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer);
+	List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer);
 
 }

@@ -1,44 +1,51 @@
 package no.nav.dokdistavstemming.domain.map;
 
 
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
-public class DokDistAvstemmingMapper {
+public class AvstemForsendelseMapper {
 
-	public DokDistAvstemmingResponseTo mapDokDistPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
+	public AvstemForsendelseResponseTo mapDokDistPrint(AvstemForsendelseRequestTo forsendelseResponse) {
 
-		if (forsendelseResponse==null && forsendelseResponse.getDokumenter()==null) {
-			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
+		if (forsendelseResponse == null) {
+			throw new AvstemForsendelseFunctionalException("Fant ikke dokumentinfo og kan ikke mappe  ");
 		}
-		return DokDistAvstemmingResponseTo.builder()
+
+		AvstemForsendelseRequestTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
+
+		if (dokumentInfoTo == null) {
+			throw new AvstemForsendelseFunctionalException("mangler dokumentinfo ");
+		}
+
+		return AvstemForsendelseResponseTo.builder()
 				.forsendelseId(forsendelseResponse.getDistribusjonId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
 				.produksjonDato(forsendelseResponse.getProduksjonDato() == null ? null : forsendelseResponse.getProduksjonDato())
 				.distribusjonKanal(forsendelseResponse.getDistribusjonKanal())
 				.distribusjonStatus(forsendelseResponse.getDistribusjonStatus())
-				.dokumentStatus(forsendelseResponse.getDokumenter().get(0).getDokumentStatus()==null?null:forsendelseResponse.getDokumenter().get(0).getDokumentStatus())
+				.dokumentStatus(forsendelseResponse.getDokumenter().get(0).getDokumentStatus() == null ? null : forsendelseResponse.getDokumenter().get(0).getDokumentStatus())
 				.countDokument(forsendelseResponse.getCountDokument())
 				.build();
 	}
 
-	public DokDistAvstemmingResponseTo mapDokDistUtenPrint(DokDistAvstemmingRequestTo forsendelseResponse) {
+	public AvstemForsendelseResponseTo mapDokDistUtenPrint(AvstemForsendelseRequestTo forsendelseResponse) {
 
-		if (forsendelseResponse==null && forsendelseResponse.getDokumenter()==null) {
-			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
+		if (forsendelseResponse == null) {
+			throw new AvstemForsendelseFunctionalException("mangler dokumentinfo ");
 		}
 
-		DokDistAvstemmingRequestTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
+		AvstemForsendelseRequestTo.DokumentInfoTo dokumentInfoTo = forsendelseResponse.getDokumenter().get(0);
 
-		if (dokumentInfoTo==null) {
-			throw new DokDistAvstemmingFunctionalException("mangler dokumentinfo ");
+		if (dokumentInfoTo == null) {
+			throw new AvstemForsendelseFunctionalException("mangler dokumentinfo ");
 		}
 
-		return DokDistAvstemmingResponseTo.builder()
+		return AvstemForsendelseResponseTo.builder()
 				.forsendelseId(forsendelseResponse.getDistribusjonId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
 				.journalpostId(dokumentInfoTo.getArkivKode() == null ? null : dokumentInfoTo.getArkivKode())
@@ -56,8 +63,5 @@ public class DokDistAvstemmingMapper {
 
 	}
 
-	private boolean isDistribusjonKanalPrint(String distribusjonKanal) {
-		return "PRINT".equalsIgnoreCase(distribusjonKanal) || "SDP_PRINT".equalsIgnoreCase(distribusjonKanal);
-	}
 
 }

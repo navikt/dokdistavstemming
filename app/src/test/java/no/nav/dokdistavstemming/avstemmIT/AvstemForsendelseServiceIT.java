@@ -1,26 +1,18 @@
-package no.nav.dokdistavstemming.consumer;
+package no.nav.dokdistavstemming.avstemmIT;
 
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.mdc.MDCConstants;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.service.CSVProdusere;
-import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
+import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.MDC;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -31,41 +23,33 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_J;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelseKanalPrint;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@AutoConfigureWireMock(port = 0)
-@ActiveProfiles("itest")
-public class DokDistAvstemmingServiceIT extends AbstractIT {
 
-	private static String CALL_ID = UUID.randomUUID().toString();
+public class AvstemForsendelseServiceIT extends AbstractIT {
+
 
 	@Inject
-	private DokDistAvstemmingService dokDistAvstemmingService;
+	private AvstemForsendelseService avstemForsendelseService;
 	@Inject
-	private HentForsendelseKvitteringIkkeMottatt hentUekspederKvitteringForsendelse;
+	private HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	@Inject
 	private CSVProdusere csvProdusere;
 	@Inject
 	private MeterRegistry meterRegistry;
 
-
 	@BeforeEach
 	public void setUp() {
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentUekspederKvitteringForsendelse, csvProdusere, meterRegistry);
-		WireMock.reset();
-		WireMock.resetAllRequests();
-		WireMock.removeAllMappings();
-		MDC.put(MDCConstants.MDC_CALL_ID, CALL_ID);
+		avstemForsendelseService = new AvstemForsendelseService(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry);
 
 	}
 
 	@Test
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
-		List<DokDistAvstemmingResponseTo> dokDistAvstemmingForsendels = dokDistAvstemmingService.dokDistAvstemmingUtenPrintJiraSak();
+		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = avstemForsendelseService.avstemmForsendelseDistKanalUtenPrint();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/24")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1_J));
 	}
@@ -73,9 +57,9 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
-		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<DokDistAvstemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederKanalPrint();
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
+		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
+		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
 		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
@@ -87,10 +71,11 @@ public class DokDistAvstemmingServiceIT extends AbstractIT {
 	@Test
 	public void shouldOppretteCSVFilList() throws Exception {
 
-		dokDistHappyHentUekspedereFrosendelseKanalPrint();
-		List<DokDistAvstemmingResponseTo> result = dokDistAvstemmingService.dokDistAvstemmingUekspederKanalPrint();
+		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
 		assertThat(csvFiler.isFile(), is(true));
+		assertThat(csvFiler.length() != 0, is(true));
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
 
 	}

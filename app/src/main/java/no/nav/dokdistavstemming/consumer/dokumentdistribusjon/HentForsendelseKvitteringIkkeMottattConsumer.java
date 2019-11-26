@@ -2,9 +2,9 @@ package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
@@ -46,30 +46,30 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 
 
 	@Override
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
-	public List<DokDistAvstemmingRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer) {
+	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer) {
 		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
 			log.info(String.format("%s mottat kall til å hente uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
-			ResponseEntity<List<DokDistAvstemmingRequestTo>> responseEntity = restTemplate
+			ResponseEntity<List<AvstemForsendelseRequestTo>> responseEntity = restTemplate
 					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
 							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<>() {
 							});
 			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
-			return responseEntity.getBody()== null? Collections.EMPTY_LIST:responseEntity.getBody();
+			return responseEntity.getBody()== null? Collections.emptyList():responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
 			log.warn(String.format("%s Kall mot  DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
-			throw new DokDistAvstemmingFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			throw new AvstemForsendelseFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
 			log.warn(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
-			throw new DokDistAvstemmingTechnicalException(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk.  status=%s, feilmedling=%s",
+			throw new AvstemForsendelseTechnicalException(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk.  status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 	}

@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,6 +36,6 @@ public class MetricUtils {
 
 
 	public static boolean isFunctionalException(Throwable e) {
-		return e instanceof DokDistAvstemmingFunctionalException;
+		return e instanceof AvstemForsendelseFunctionalException;
 	}
 }

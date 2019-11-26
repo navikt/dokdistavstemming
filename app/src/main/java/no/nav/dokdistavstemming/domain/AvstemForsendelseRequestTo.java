@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DokDistAvstemmingRequestTo {
+public class AvstemForsendelseRequestTo {
 
 	private String distribusjonId;
 	private List<DokumentInfoTo> dokumenter;

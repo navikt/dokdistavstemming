@@ -12,7 +12,7 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
-public class DokDistAvstemmingResponseTo {
+public class AvstemForsendelseResponseTo {
 
 	private String forsendelseId;
 	private String konversasjonId;

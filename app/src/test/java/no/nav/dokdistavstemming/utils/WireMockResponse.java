@@ -27,7 +27,7 @@ public class WireMockResponse {
 						.withBody(classpathToString("__files/hentuekspedereforsendelse-empty.json"))));
 	}
 
-	public static void dokDistHappyHentUekspedereFrosendelseKanalPrint() throws Exception {
+	public static void happilyHentForsendelseKvitteringIkkeMottattKanalPrint() throws Exception {
 		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -35,11 +35,32 @@ public class WireMockResponse {
 	}
 
 
-	public static void dokDistHappyOppretteJiraSak() throws Exception{
+	public static void jiraHappyOpprettSakForAvstemFrosendelse() throws Exception{
 		stubFor(post(urlMatching("/rest/api/2/issue"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_VALUE)
-						.withBody("")));
+						.withBody(classpathToString("__files/jiraresponse.json"))));
+	}
+
+	public static void jiraHappyHentProjectDetails() throws Exception {
+		stubFor(get(urlMatching("/rest/api/2/project/MMA"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBody(classpathToString("__files/hent_project_data.json"))));
+	}
+
+	public static void jiraHappyPostVedleggDokument() throws Exception{
+		stubFor(post(urlMatching("/rest/api/2/issue/MMA-134/attachments"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_VALUE)
+						.withBody(classpathToString("__files/laggevedlagg-happy-return.json"))));
+	}
+
+	public static void jiraFeilToOpprettSakForAvstemFrosendelse() throws Exception{
+		stubFor(post(urlMatching("/rest/api/2/issue"))
+				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_VALUE)
+						.withBody(classpathToString("__files/jiraresponse.json"))));
 	}
 
 

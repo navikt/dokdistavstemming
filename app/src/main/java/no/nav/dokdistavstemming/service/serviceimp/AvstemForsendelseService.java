@@ -6,9 +6,9 @@ import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
 
@@ -32,58 +32,59 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 
 @Component
 @Slf4j
-public class DokDistAvstemmingService {
+public class AvstemForsendelseService {
 
 	private static final Long ANTALL_TIMER = 24L;
 	private static final Long ANTALL_DAGER = 144L; // 144 timer er 6 dager
 	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
+	private static final String UKJENT ="Ukjent";
 	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 
-	public DokDistAvstemmingService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere,
+	public AvstemForsendelseService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere,
 									MeterRegistry meterRegistry) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.csvProdusere = csvProdusere;
 		this.meterRegistry = meterRegistry;
 	}
 
-	public List<DokDistAvstemmingRequestTo> hentUekspederForsendelserService(String distribusjonKanal) {
+	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
-		List<DokDistAvstemmingRequestTo> dokDistAvstemmingRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
-		return dokDistAvstemmingRequestTos.stream()
-				.filter(uekspederForsendelse -> !uekspederForsendelse.getDokumenter().isEmpty())
+		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
+		return avstemForsendelseRequestTos.stream()
+				.filter(avstemForsendelse -> !avstemForsendelse.getDokumenter().isEmpty())
 				.collect(Collectors.toList());
 	}
 
 	public List<File> henteDokDistFil() throws Exception {
-		log.info("Har mottat kall til å opprette  CSV fil fra uekspedert forsendelse");
+		log.info("Har mottat kall til å opprette  CSV fil fra forsendelser som mottatt ikke kvittering");
 
-		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUtenPrintJiraSak());
-		File csvFilPrintKanal = csvProdusere.oppretteCsvFil(dokDistAvstemmingUekspederKanalPrint());
+		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(avstemmForsendelseDistKanalUtenPrint());
+		File csvFilPrintKanal = csvProdusere.oppretteCsvFil(avstemmForsendelseDistKanalPrint());
 		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal, csvFilSDPKanal);
 		return produsereCSVFiler.stream()
-				.filter(csvFil -> isFilExistOgNotNull(csvFil))
+				.filter(this::isFilExistOgNotNull)
 				.collect(Collectors.toList());
 	}
 
 
-	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUtenPrintJiraSak() {
-		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
+	public List<AvstemForsendelseResponseTo> avstemmForsendelseDistKanalUtenPrint() {
+		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
 		long start = System.currentTimeMillis();
 
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
 				.filter(distribusjonKanal -> PRINT != distribusjonKanal)
 				.distinct()
 				.collect(Collectors.toList());
-		Set<DokDistAvstemmingResponseTo> uekspederFrosendelseUtenPrint = distribusjonKanaler.stream()
-				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
+		Set<AvstemForsendelseResponseTo> uekspederFrosendelseUtenPrint = distribusjonKanaler.stream()
+				.map(distribusjonKanal -> hentForsendelserKvitteringIkkeMottattService(distribusjonKanal.name()))
 				.filter(Objects::nonNull)
 				.distinct()
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
-					DokDistAvstemmingResponseTo dokDistAvstemming = dokDistAvstemmingMapper.mapDokDistUtenPrint(uekspederForsendelse);
+					AvstemForsendelseResponseTo dokDistAvstemming = avstemForsendelseMapper.mapDokDistUtenPrint(uekspederForsendelse);
 					incrementFunctionalMetrics(dokDistAvstemming.getDistribusjonKanal(),dokDistAvstemming.getDistribusjonDato(),
 							dokDistAvstemming.getDistribusjonStatus());
 					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getForsendelseId(),
@@ -104,23 +105,23 @@ public class DokDistAvstemmingService {
 
 	//dokDistAvstemmingKanalPrint
 
-	public List<DokDistAvstemmingResponseTo> dokDistAvstemmingUekspederKanalPrint() {
-		DokDistAvstemmingMapper dokDistAvstemmingMapper = new DokDistAvstemmingMapper();
+	public List<AvstemForsendelseResponseTo> avstemmForsendelseDistKanalPrint() {
+		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
 
 		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
 				.filter(distribusjonKanal -> PRINT == distribusjonKanal)
 				.collect(Collectors.toList());
-		Set<DokDistAvstemmingResponseTo> uekspederFrosendelsePrint = distribusjonKanaler.stream()
-				.map(distribusjonKanal -> hentUekspederForsendelserService(distribusjonKanal.name()))
+		Set<AvstemForsendelseResponseTo> uekspederFrosendelsePrint = distribusjonKanaler.stream()
+				.map(distribusjonKanal -> hentForsendelserKvitteringIkkeMottattService(distribusjonKanal.name()))
 				.flatMap(Collection::stream)
 				.distinct()
 				.filter(Objects::nonNull)
 				.map(uekspederForsendelse -> {
 					incrementFunctionalMetrics(uekspederForsendelse.getDistribusjonKanal(),uekspederForsendelse.getDistribusjonDato(),
 							uekspederForsendelse.getDistribusjonStatus());
-					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,distribusjonDato=%s,distribusjonKanal=%s",
+					log.info(String.format("DokDistAvstemming har fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,distribusjonDato=%s,distribusjonKanal=%s",
 							uekspederForsendelse.getDistribusjonId(), uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDistribusjonDato(), uekspederForsendelse.getDistribusjonKanal()));
-					return dokDistAvstemmingMapper.mapDokDistPrint(uekspederForsendelse);
+					return avstemForsendelseMapper.mapDokDistPrint(uekspederForsendelse);
 				})
 				.collect(Collectors.toSet());
 
@@ -129,13 +130,10 @@ public class DokDistAvstemmingService {
 
 
 	private void incrementFunctionalMetrics(String distribusjonKanal,String distribusjonDato, String distribusjonStatus) {
-		if (distribusjonKanal == null) {
-			return;
-		}
 		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
-				"distribusjonKanal",distribusjonKanal==null?"UKJENT":distribusjonKanal,
-				"distribusjonDato",distribusjonDato==null?"UKJENT":distribusjonDato,
-				"distribusjonStatus",distribusjonStatus==null?"UKJENT":distribusjonStatus).increment();
+				"distribusjonKanal",distribusjonKanal==null?UKJENT:distribusjonKanal,
+				"distribusjonDato",distribusjonDato==null?UKJENT:distribusjonDato,
+				"distribusjonStatus",distribusjonStatus==null?UKJENT:distribusjonStatus).increment();
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {

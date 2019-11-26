@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
@@ -34,24 +34,24 @@ public class JiraService {
 
 	private static final String BROWSE = "/browse";
 	private JiraConsumer jiraConsumer;
-	private DokDistAvstemmingService dokDistAvstemmingService;
+	private AvstemForsendelseService avstemForsendelseService;
 	private MeterRegistry meterRegistry;
 
-	public JiraService(JiraConsumer jiraConsumer, DokDistAvstemmingService dokDistAvstemmingService,MeterRegistry meterRegistry) {
+	public JiraService(JiraConsumer jiraConsumer, AvstemForsendelseService avstemForsendelseService, MeterRegistry meterRegistry) {
 		this.jiraConsumer = jiraConsumer;
-		this.dokDistAvstemmingService = dokDistAvstemmingService;
-		this.meterRegistry=meterRegistry;
+		this.avstemForsendelseService = avstemForsendelseService;
+		this.meterRegistry = meterRegistry;
 	}
 
-	@Monitor(value = "dokdist_request", extraTags = {"process_code", "createJiraSak"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dokdist_request", extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
 	public JiraSakResponseTo oppretteMMAJiraSak() throws Exception {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
-		List<File> fils = dokDistAvstemmingService.henteDokDistFil();
-		if (fils == null) {
+		List<File> fils = avstemForsendelseService.henteDokDistFil();
+		if (fils.size() == 0) {
 			log.info("Det fant ikke noen avvik fra dokumentdistribusjon(rdist002) og dokdistavstemming har ikke opprettet jira sak");
 			return JiraSakResponseTo.builder()
-					.message("Ingen fil og opprettet ikke jira sak")
+					.message("Ingen filer og kan ikke opprette jira-sak")
 					.httpStatusCode(HttpStatus.NO_CONTENT.value())
 					.build();
 		}
@@ -59,26 +59,25 @@ public class JiraService {
 		validateInput(issueInput);
 
 		try {
-
-			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
+			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge fra forskjellige distribusjonkanaler ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
 			fils.forEach(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil));
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-					.message(issue == null ? null : String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
+					.message(issue == null ? "Opprettet ikke jira sak" : String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
 			meterRegistry.counter("opprettet_jira",
-					"jiraSakUrl",jiraSakResponseTo.getMessage()==null?"Ukjent":jiraSakResponseTo.getMessage())
+					"jiraSakUrl", jiraSakResponseTo.getMessage() == null ? "Ukjent" : jiraSakResponseTo.getMessage())
 					.increment();
 
 			log.info(String.format("DokDistAvstemming opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
 			return jiraSakResponseTo;
 
-		} catch (DokDistAvstemmingFunctionalException e) {
+		} catch (AvstemForsendelseFunctionalException e) {
 			log.warn(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
 					e.getMessage()));
-			throw new DokDistAvstemmingFunctionalException(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
+			throw new AvstemForsendelseFunctionalException(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
 					e.getMessage()));
 		}
 	}
@@ -88,7 +87,7 @@ public class JiraService {
 		if (!isGyldigInput(issueInput)) {
 			log.error(String.format("En eller flere nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
 					issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
-			throw new DokDistAvstemmingFunctionalException(String.format("Bestilling kan ikke utføres, nødvendige felter i mangler eller er null. projectKey=%s, saksTypeNavn=%s",
+			throw new AvstemForsendelseFunctionalException(String.format("Bestilling kan ikke utføres, nødvendige felter i mangler eller er null. projectKey=%s, saksTypeNavn=%s",
 					issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
 		}
 	}
@@ -108,7 +107,7 @@ public class JiraService {
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Oppgave");
+		issueType.setName("Test");
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
@@ -125,6 +124,7 @@ public class JiraService {
 		return issueInput;
 
 	}
+
 
 	private String getHostFraUrl(String stringUrl) {
 		String hostFraUrl = "";

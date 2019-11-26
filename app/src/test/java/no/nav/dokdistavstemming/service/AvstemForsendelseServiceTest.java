@@ -3,8 +3,8 @@ package no.nav.dokdistavstemming.service;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
-import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +20,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
-public class DokDistAvstemmingServiceTest {
+public class AvstemForsendelseServiceTest {
 
 	private ArgumentCaptor<Long> argument;
 
 
-	private DokDistAvstemmingService dokDistAvstemmingService;
+	private AvstemForsendelseService avstemForsendelseService;
 
 	private HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private CSVProdusere csvProdusere;
@@ -40,12 +40,12 @@ public class DokDistAvstemmingServiceTest {
 		meterRegistry=mock(MeterRegistry.class);
 
 		argument = ArgumentCaptor.forClass(Long.class);
-		dokDistAvstemmingService = new DokDistAvstemmingService(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry);
+		avstemForsendelseService = new AvstemForsendelseService(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry);
 	}
 
 	@Test
 	void shouldCallHentUekspederForsendelse() {
-		List<DokDistAvstemmingRequestTo> result = dokDistAvstemmingService.hentUekspederForsendelserService(DistribusjonKanalCode.SDP.name());
+		List<AvstemForsendelseRequestTo> result = avstemForsendelseService.hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode.SDP.name());
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(DistribusjonKanalCode.SDP.name(), 24L);
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), argument.capture());
 		assertThat(argument.getValue().longValue(), is(24L));
