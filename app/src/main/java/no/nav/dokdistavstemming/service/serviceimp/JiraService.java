@@ -48,7 +48,7 @@ public class JiraService {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		List<File> fils = avstemForsendelseService.henteDokDistFil();
-		if (fils.size() == 0) {
+		if (fils.isEmpty()) {
 			log.info("Det fant ikke noen avvik fra dokumentdistribusjon(rdist002) og dokdistavstemming har ikke opprettet jira sak");
 			return JiraSakResponseTo.builder()
 					.message("Ingen filer og kan ikke opprette jira-sak")
@@ -61,7 +61,7 @@ public class JiraService {
 		try {
 			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge fra forskjellige distribusjonkanaler ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
-			fils.forEach(fil -> jiraConsumer.laggeVedlagg(issue.getKey(), fil));
+			fils.forEach(fil -> jiraConsumer.leggVedlegg(issue.getKey(), fil));
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
@@ -82,7 +82,6 @@ public class JiraService {
 		}
 	}
 
-
 	private void validateInput(IssueInput issueInput) {
 		if (!isGyldigInput(issueInput)) {
 			log.error(String.format("En eller flere nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
@@ -99,7 +98,6 @@ public class JiraService {
 
 	private IssueInput createJiraSaksRequest() {
 		IssueInput issueInput = new IssueInput();
-
 		Project project = jiraConsumer.hentProjekt("MMA");
 		List<com.pep1.jira.client.domain.issue.Component> componenter = project.getComponents().stream()
 				.filter(dokdistComp -> dokdistComp.getName().equalsIgnoreCase("Dokumentdistribusjon"))
@@ -107,7 +105,7 @@ public class JiraService {
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Test");
+		issueType.setName("Oppgave");
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
@@ -124,7 +122,6 @@ public class JiraService {
 		return issueInput;
 
 	}
-
 
 	private String getHostFraUrl(String stringUrl) {
 		String hostFraUrl = "";

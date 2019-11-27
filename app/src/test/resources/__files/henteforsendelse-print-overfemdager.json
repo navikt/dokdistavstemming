@@ -1,6 +1,6 @@
 [
   {
-    "distribusjonId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
+    "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
     "dokumenter": [
       {
         "konversasjonId": "24c59c0e-8a41-4e21-80c9-1ae913b56a61",
@@ -9,16 +9,16 @@
         "fagomradeCode": null,
         "dokumentStatus": "OVERSENDT",
         "mottakkerId": null,
-        "arkivKode": null
+        "journalpostId": null
       }
     ],
     "distribusjonKanal": "PRINT",
     "distribusjonStatus": "OVERSENDT",
-    "produksjonDato": "2019-09-03 11:03:45",
+    "opprettetDato": "2019-09-03 11:03:45",
     "distribusjonDato":"2019-09-03T11:03:45",
     "countDokument": 10
   },  {
-  "distribusjonId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
+  "forsendelseId": "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c",
   "dokumenter": [
     {
       "konversasjonId": "24c59c0e-8a41-4e21-80c9-1ae913b56a61",
@@ -27,12 +27,12 @@
       "fagomradeCode": "HEL",
       "dokumentStatus": "OVERSENDT",
       "mottakkerId": "***gammelt_fnr***",
-      "arkivKode": "389438560"
+      "journalpostId": "389438560"
     }
   ],
   "distribusjonKanal": "PRINT",
   "distribusjonStatus": "OVERSENDT",
-  "produksjonDato": "2019-09-03 11:03:45",
+  "opprettetDato": "2019-09-03 11:03:45",
   "distribusjonDato":"2019-09-03T11:03:45",
   "countDokument": 1
 }

@@ -1,11 +1,11 @@
 package no.nav.dokdistavstemming.avstemmIT;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +37,9 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 	@BeforeEach
 	public void setUp() {
 		jiraService = new JiraService(jiraConsumer, avstemForsendelseService, meterRegistry);
+		WireMock.reset();
+		WireMock.resetAllRequests();
+		WireMock.removeAllMappings();
 	}
 
 	@Test
@@ -70,10 +73,10 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 		AvstemForsendelseFunctionalException avstemForsendelseFunctionalException = assertThrows(AvstemForsendelseFunctionalException.class, () ->
 				jiraService.oppretteMMAJiraSak());
 
-		assertThat(avstemForsendelseFunctionalException.getMessage(),is(containsString("status:400 BAD_REQUEST ,feilet: 400 Bad Request")));
+		assertThat(avstemForsendelseFunctionalException.getMessage(),containsString("status:400 BAD_REQUEST ,feilmelding: 400 Bad Request"));
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
-		verify(2, postRequestedFor(urlEqualTo("/rest/api/2/issue")));
-		verify(2, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
+		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")));
+		verify(1, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
 	}
 }

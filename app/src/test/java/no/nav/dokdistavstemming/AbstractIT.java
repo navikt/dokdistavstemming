@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 
-@Profile("itest,wiremock")
+@Profile("itest")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		classes = {ApplicationConfig.class})
 @EnableConfigurationProperties({ServiceuserAlias.class})

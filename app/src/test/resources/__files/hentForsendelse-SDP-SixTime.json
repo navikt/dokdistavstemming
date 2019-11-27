@@ -1,6 +1,6 @@
 [
   {
-    "distribusjonId": "ea0dea1f-3904-4239-8a5f-c3fa3af29896",
+    "forsendelseId": "ea0dea1f-3904-4239-8a5f-c3fa3af29896",
     "dokumenter": [
       {
         "konversasjonId": "e65eeff6-38e6-4eca-bda6-609842ea7129",
@@ -9,17 +9,17 @@
         "fagomradeCode": "DAG",
         "dokumentStatus": "OPPRETTET",
         "mottakkerId": "***gammelt_fnr***",
-        "arkivKode": "389426207"
+        "journalpostId": "389426207"
       }
     ],
     "distribusjonKanal": "SDP",
     "distribusjonStatus": "OPPRETTET",
-    "produksjonDato": "2017-05-05 15:26:00",
+    "opprettetDato": "2017-05-05 15:26:00",
     "distribusjonDato": "2019-09-05 15:26:01",
     "countDokument": 1
   },
   {
-    "distribusjonId": "810f567d-192b-4531-9a90-914fee360dce",
+    "forsendelseId": "810f567d-192b-4531-9a90-914fee360dce",
     "dokumenter": [
       {
         "konversasjonId": "ee9ebe2d-00f6-4ded-923d-8da681269d15",
@@ -28,17 +28,17 @@
         "fagomradeCode": "DAG",
         "dokumentStatus": "OPPRETTET",
         "mottakkerId": "***gammelt_fnr***",
-        "arkivKode": "389426200"
+        "journalpostId": "389426200"
       }
     ],
     "distribusjonKanal": "SDP",
     "distribusjonStatus": "OPPRETTET",
-    "produksjonDato": "2017-05-05 14:57:22",
+    "opprettetDato": "2017-05-05 14:57:22",
     "distribusjonDato": "2019-08-05 14:57:23",
     "countDokument": 1
   },
   {
-    "distribusjonId": "5054bf0c-8000-48b6-8898-bcca7732fb2a",
+    "forsendelseId": "5054bf0c-8000-48b6-8898-bcca7732fb2a",
     "dokumenter": [
       {
         "konversasjonId": "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb2613c",
@@ -47,17 +47,17 @@
         "fagomradeCode": "DAG",
         "dokumentStatus": "OVERSENDT",
         "mottakkerId": "***gammelt_fnr***",
-        "arkivKode": "389426113"
+        "journalpostId": "389426113"
       }
     ],
     "distribusjonKanal": "SDP",
     "distribusjonStatus": "OVERSENDT",
-    "produksjonDato": "2017-05-04 08:52:30",
+    "opprettetDato": "2017-05-04 08:52:30",
     "distribusjonDato": "2019-09-23 12:52:31",
     "countDokument": 1
   },
   {
-    "distribusjonId": "40549a31-1787-45ce-a31e-60b159b801eb",
+    "forsendelseId": "40549a31-1787-45ce-a31e-60b159b801eb",
     "dokumenter": [
       {
         "konversasjonId": "66248da8-dbc6-4d15-8fa7-e22c078e9a65",
@@ -66,12 +66,12 @@
         "fagomradeCode": "FOR",
         "dokumentStatus": "OPPRETTET",
         "mottakkerId": "***gammelt_fnr***",
-        "arkivKode": "389427030"
+        "journalpostId": "389427030"
       }
     ],
     "distribusjonKanal": "SDP",
     "distribusjonStatus": "OPPRETTET",
-    "produksjonDato": "2017-06-02 11:52:57",
+    "opprettetDato": "2017-06-02 11:52:57",
     "distribusjonDato": "2019-09-07 11:53:00",
     "countDokument": 1
   }

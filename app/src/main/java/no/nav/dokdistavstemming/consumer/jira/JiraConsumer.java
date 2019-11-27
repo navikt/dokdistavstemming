@@ -10,7 +10,9 @@ import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
 import no.nav.dokdistavstemming.metrics.Monitor;
+import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.time.Duration;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -42,15 +45,21 @@ public class JiraConsumer {
 	private static final String ISSUE_CREATE = "/rest/api/2/issue";
 	private static final String PROJECT_HENT = "/rest/api/2/project";
 	private static final String ATTACHMENTS = "/attachments";
+	private static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String jiraBaseUri;
 	private final String apiBaseUri;
 	private final RestTemplate restTemplate;
 	private final JiraServiceuserAlias jiraServiceuserAlias;
 
 
-	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplate restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
+	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplateBuilder, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
-		this.restTemplate = restTemplate;
+		this.restTemplate = restTemplateBuilder
+				.interceptors(new CallIdInterceptor())
+				.setReadTimeout(DURATION)
+				.setConnectTimeout(DURATION)
+				.basicAuthentication(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword())
+				.build();
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
 		this.jiraServiceuserAlias = jiraServiceuserAlias;
 	}
@@ -65,9 +74,9 @@ public class JiraConsumer {
 					new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kall mot jira feilet med url=%s, feilet: %s", apiBaseUri, e.getMessage()));
+			log.warn(String.format("Kall mot jira feilet med url=%s, feilmelding: %s", apiBaseUri, e.getMessage()));
 			throw new AvstemForsendelseFunctionalException(
-					String.format("Kall mot jira feilet med url=%s, status:%s ,feilet: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
+					String.format("Kall mot jira feilet med url=%s, status:%s ,feilmelding: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
 			throw new AvstemForsendelseTechnicalException(
@@ -76,10 +85,10 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
-	public String laggeVedlagg(String key, @NonNull File file) {
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "leggVedlegg"}, percentiles = {0.5, 0.95})
+	public String leggVedlegg(String key, @NonNull File file) {
 		if (key == null) {
-			throw new IllegalArgumentException("MMA Key er null og kan ikke vedlagge fil til jira saken");
+			throw new IllegalArgumentException("MMA Key er null og kan ikke legge fil til jira saken");
 		} else if (file.length()==0 && !file.exists()) {
 			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
 		}
@@ -99,7 +108,7 @@ public class JiraConsumer {
 
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjektFields"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
 	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
 
 		if (projectKey == null) {
@@ -119,7 +128,7 @@ public class JiraConsumer {
 
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjektFields"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "addWatchers"}, percentiles = {0.5, 0.95})
 	public String addWatchers(@Valid @RequestParam(value = "key") String projectKey, String watchers) {
 
 		try {
@@ -130,9 +139,9 @@ public class JiraConsumer {
 			return responseEntity.getBody();
 
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kall mot jira feilet med url=%s, feilet: %s", apiBaseUri, e.getMessage()));
+			log.warn(String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()));
 			throw new AvstemForsendelseFunctionalException(
-					String.format("Kall mot jira feilet med url=%s, status:%s ,feilet: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
+					String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
 			throw new AvstemForsendelseTechnicalException(
@@ -140,7 +149,6 @@ public class JiraConsumer {
 		}
 
 	}
-
 
 	private HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();

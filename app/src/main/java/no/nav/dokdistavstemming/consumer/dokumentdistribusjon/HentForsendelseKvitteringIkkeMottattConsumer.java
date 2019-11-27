@@ -44,28 +44,27 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 		this.restTemplate = restTemplate;
 	}
 
-
 	@Override
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentUekspederForsendelse"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"}, percentiles = {0.5, 0.95})
 	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer) {
-		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentUekspederForsendelse");
+		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
-			log.info(String.format("%s mottat kall til å hente uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
+			log.info(String.format("%s mottat kall til å hente forsendelser som kvittering ikke mottatt fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 			ResponseEntity<List<AvstemForsendelseRequestTo>> responseEntity = restTemplate
 					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
 							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<>() {
 							});
-			log.info(String.format("%s har hentet uekspedert forsendelse fra dokdist med distribusjonKanal=%s, antallTimer=%s",
+			log.info(String.format("%s har hentet forsendelser som kvittering ikke mottatt fra dokdist med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
 			return responseEntity.getBody()== null? Collections.emptyList():responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("%s Kall mot  DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			log.warn(String.format("%s Kall mot  DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
-			throw new AvstemForsendelseFunctionalException(String.format("Kallet til DokumentDistribusjon  {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			throw new AvstemForsendelseFunctionalException(String.format("Kallet til DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
 			log.warn(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
@@ -73,7 +72,6 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 	}
-
 
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();

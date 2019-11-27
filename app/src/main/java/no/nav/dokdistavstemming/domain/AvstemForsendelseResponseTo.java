@@ -21,10 +21,10 @@ public class AvstemForsendelseResponseTo {
 	private String bestillendeFagsystem;
 	private String fagomradeCode;
 	private String dokumentStatus;
-	private String mottakkerId;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
-	private String produksjonDato;
+	private String opprettetDato;
 	private String distribusjonDato;
+	private final String brevProduksjonApplikasjon;
 	private Long countDokument;
 }

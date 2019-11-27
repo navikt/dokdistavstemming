@@ -2,7 +2,6 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
@@ -90,10 +89,9 @@ public class AvstemForsendelseService {
 					log.info(String.format("DokDistAvstemming fant uekspedert forsendelse med distribusjonId=%s, arkivKode=%s,distStatus=%s, distribusjonDato=%s,distribusjonKanal=%s", dokDistAvstemming.getForsendelseId(),
 							dokDistAvstemming.getJournalpostId(), dokDistAvstemming.getDistribusjonStatus(),dokDistAvstemming.getDistribusjonDato(), dokDistAvstemming.getDistribusjonKanal()));
 
-					Timer.builder("måler_forsinkelser").description("duration mellom")
-							.tag("kanal",dokDistAvstemming.getDistribusjonKanal())
-							.tags("status",dokDistAvstemming.getDistribusjonStatus())
-							.register(meterRegistry)
+					meterRegistry.timer("måler_forsinkelser",
+							"kanal",dokDistAvstemming.getDistribusjonKanal(),
+							"status",dokDistAvstemming.getDistribusjonStatus())
 							.record(System.currentTimeMillis()-start, TimeUnit.MILLISECONDS);
 					return dokDistAvstemming;
 
@@ -103,7 +101,6 @@ public class AvstemForsendelseService {
 		return new ArrayList<>(uekspederFrosendelseUtenPrint);
 	}
 
-	//dokDistAvstemmingKanalPrint
 
 	public List<AvstemForsendelseResponseTo> avstemmForsendelseDistKanalPrint() {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
@@ -119,8 +116,8 @@ public class AvstemForsendelseService {
 				.map(uekspederForsendelse -> {
 					incrementFunctionalMetrics(uekspederForsendelse.getDistribusjonKanal(),uekspederForsendelse.getDistribusjonDato(),
 							uekspederForsendelse.getDistribusjonStatus());
-					log.info(String.format("DokDistAvstemming har fant uekspedert forsendelse med distribusjonId=%s, distStatus=%s,distribusjonDato=%s,distribusjonKanal=%s",
-							uekspederForsendelse.getDistribusjonId(), uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDistribusjonDato(), uekspederForsendelse.getDistribusjonKanal()));
+					log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med distribusjonId=%s, distStatus=%s,distribusjonDato=%s,distribusjonKanal=%s",
+							uekspederForsendelse.getForsendelseId(), uekspederForsendelse.getDistribusjonStatus(), uekspederForsendelse.getDistribusjonDato(), uekspederForsendelse.getDistribusjonKanal()));
 					return avstemForsendelseMapper.mapDokDistPrint(uekspederForsendelse);
 				})
 				.collect(Collectors.toSet());

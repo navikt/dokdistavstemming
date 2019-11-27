@@ -26,7 +26,6 @@ public class AvstemForsendelseMapperTest {
 
 	private AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 
-
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
 		AvstemForsendelseResponseTo hentAvstemming = mapper.mapDokDistUtenPrint(TestDataUtils.createDokDistAvstemmingRequestTo());
@@ -44,26 +43,19 @@ public class AvstemForsendelseMapperTest {
 
 	}
 
-
-
 	public void assertDokDistAvStemmingResponseToMapperPrint(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
 		assertThat(dokDistAvStemmingResponseTo.getForsendelseId(), is(DISTRIBUSJON_ID));
 		assertThat(dokDistAvStemmingResponseTo.getBestillendeFagsystem(), is(BESTILLENDE_FAGSYSTEM));
 		assertThat(dokDistAvStemmingResponseTo.getDokumentStatus(), is(DOKUMENT_STATUS));
-		assertThat(dokDistAvStemmingResponseTo.getMottakkerId(), is(MOTTAKER_ID));
 		assertThat(dokDistAvStemmingResponseTo.getKonversasjonId(), is(KONVERSASJON_ID));
 		assertThat(dokDistAvStemmingResponseTo.getJournalpostId(), is(ARKIV_KODE));
 		assertThat(dokDistAvStemmingResponseTo.getFagomradeCode(), is(FAGOMRADE_CODE));
 
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonKanal(), is(DISTRIBUSJON_KANAL.name()));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
-		assertThat(dokDistAvStemmingResponseTo.getProduksjonDato(), is(PRODUKSJON_DATO));
+		assertThat(dokDistAvStemmingResponseTo.getOpprettetDato(), is(PRODUKSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonDato(), is(DISTRIBUSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getCountDokument(), is(1L));
 
 	}
-
-
-
-
 }

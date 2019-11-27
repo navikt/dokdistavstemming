@@ -48,7 +48,7 @@ public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 					try {
 						jiraService.oppretteMMAJiraSak();
 					} catch (Exception e) {
-						log.error(String.format("createJiraSak feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
+						log.error(String.format("Feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
 
 					}
 				}, cronSchedule);
