@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import org.jose4j.json.internal.json_simple.JSONObject;
 import org.jose4j.json.internal.json_simple.parser.JSONParser;
 
@@ -29,6 +29,15 @@ public class ConverterUtils {
 		return Enum.valueOf(clazz, value);
 	}
 
+	public static String objectToJsonString(Object object) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			return mapper.writeValueAsString(object);
+		} catch (IOException e) {
+			return null;
+		}
+	}
 
 	public static <T> List<T> jsonStringToObjectList(String jsonString, Class<T> tClass) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -36,7 +45,7 @@ public class ConverterUtils {
 		try {
 			return mapper.readValue(jsonString, mapper.getTypeFactory().constructCollectionType(List.class, tClass));
 		} catch (IOException e) {
-			throw new DokDistAvstemmingTechnicalException(e.getMessage(), e);
+			throw new AvstemForsendelseTechnicalException(e.getMessage(), e);
 		}
 
 	}

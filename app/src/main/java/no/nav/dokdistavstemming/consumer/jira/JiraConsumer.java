@@ -6,10 +6,11 @@ import com.pep1.jira.client.domain.project.Project;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingTechnicalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
 import no.nav.dokdistavstemming.metrics.Monitor;
+import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.FileSystemResource;
@@ -51,43 +52,44 @@ public class JiraConsumer {
 	private final JiraServiceuserAlias jiraServiceuserAlias;
 
 
-	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplate, JiraServiceuserAlias jiraServiceuserAlias) {
+	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplateBuilder, JiraServiceuserAlias jiraServiceuserAlias) {
 		this.jiraBaseUri = jiraBaseUri;
-		this.restTemplate = restTemplate
-				.basicAuthentication(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword())
-				.setConnectTimeout(DURATION)
+		this.restTemplate = restTemplateBuilder
+				.interceptors(new CallIdInterceptor())
 				.setReadTimeout(DURATION)
+				.setConnectTimeout(DURATION)
+				.basicAuthentication(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword())
 				.build();
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
 		this.jiraServiceuserAlias = jiraServiceuserAlias;
 	}
 
 
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
 	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
-	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) throws JiraClientException {
+	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 			ResponseEntity<Issue> responseEntity = restTemplate.exchange(apiBaseUri, HttpMethod.POST,
 					new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kall mot jira feilet med url=%s, feilet: %s", apiBaseUri, e.getMessage()));
-			throw new DokDistAvstemmingFunctionalException(
-					String.format("Kall mot jira feilet med url=%s, status:%s ,feilet: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
+			log.warn(String.format("Kall mot jira feilet med url=%s, feilmelding: %s", apiBaseUri, e.getMessage()));
+			throw new AvstemForsendelseFunctionalException(
+					String.format("Kall mot jira feilet med url=%s, status:%s ,feilmelding: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
-			throw new DokDistAvstemmingTechnicalException(
+			throw new AvstemForsendelseTechnicalException(
 					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
 		}
 	}
 
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "laggeVedlagg"}, percentiles = {0.5, 0.95})
-	public String laggeVedlagg(@NonNull String key, @NonNull File file) throws JiraClientException {
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "leggVedlegg"}, percentiles = {0.5, 0.95})
+	public String leggVedlegg(String key, @NonNull File file) {
 		if (key == null) {
-			throw new IllegalArgumentException("MMA Key er null og kan ikke vedlagge fil til jira saken");
-		} else if (file == null) {
+			throw new IllegalArgumentException("MMA Key er null og kan ikke legge fil til jira saken");
+		} else if (file.length()==0 && !file.exists()) {
 			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
 		}
 		try {
@@ -96,6 +98,7 @@ public class JiraConsumer {
 			HttpHeaders headers = createSecurityHeaders(MediaType.MULTIPART_FORM_DATA);
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity(map, headers);
 			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, String.class).getBody();
+
 		} catch (JiraClientException e) {
 			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
 					file.getName(), e.getMessage()));
@@ -104,12 +107,12 @@ public class JiraConsumer {
 	}
 
 
-	@Retryable(include = DokDistAvstemmingTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjektFields"}, percentiles = {0.5, 0.95})
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
 	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
 
 		if (projectKey == null) {
-			throw new DokDistAvstemmingFunctionalException(String.format("Fant ikke projekt key med projectKey=%s", projectKey));
+			throw new AvstemForsendelseFunctionalException(String.format("Fant ikke projekt key med projectKey=%s", projectKey));
 		}
 
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
@@ -123,6 +126,29 @@ public class JiraConsumer {
 		}
 	}
 
+
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "addWatchers"}, percentiles = {0.5, 0.95})
+	public String addWatchers(@Valid @RequestParam(value = "key") String projectKey, String watchers) {
+
+		try {
+			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+			ResponseEntity<String> responseEntity=
+					restTemplate.exchange(String.format("%s/%s/watchers",apiBaseUri,projectKey), HttpMethod.POST,
+						new HttpEntity<>(watchers, headers), String.class);
+			return responseEntity.getBody();
+
+		} catch (HttpClientErrorException e) {
+			log.warn(String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()));
+			throw new AvstemForsendelseFunctionalException(
+					String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()), e);
+		} catch (HttpServerErrorException e) {
+			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
+			throw new AvstemForsendelseTechnicalException(
+					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
+		}
+
+	}
 
 	private HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();

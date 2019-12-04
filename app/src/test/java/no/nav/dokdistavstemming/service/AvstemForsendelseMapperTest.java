@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.service;
 
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingResponseTo;
-import no.nav.dokdistavstemming.domain.map.DokDistAvstemmingMapper;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.utils.ConverterUtils;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,13 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class DokDistAvstemmingMapperTest {
+public class AvstemForsendelseMapperTest {
 
-	private DokDistAvstemmingMapper mapper = new DokDistAvstemmingMapper();
-
+	private AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
-		DokDistAvstemmingResponseTo hentAvstemming = mapper.mapDokDistUtenPrint(TestDataUtils.createDokDistAvstemmingRequestTo());
+		AvstemForsendelseResponseTo hentAvstemming = mapper.mapDokDistUtenPrint(TestDataUtils.createDokDistAvstemmingRequestTo());
 		assertResponse(hentAvstemming);
 	}
 
@@ -39,31 +38,24 @@ public class DokDistAvstemmingMapperTest {
 		assertThat(distributsionDato.getYear(),is(2019));
 	}
 
-	public void assertResponse(DokDistAvstemmingResponseTo dokDistAvStemmingResponseTo) {
+	public void assertResponse(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
 		assertDokDistAvStemmingResponseToMapperPrint(dokDistAvStemmingResponseTo);
 
 	}
 
-
-
-	public void assertDokDistAvStemmingResponseToMapperPrint(DokDistAvstemmingResponseTo dokDistAvStemmingResponseTo) {
-		assertThat(dokDistAvStemmingResponseTo.getDistribusjonId(), is(DISTRIBUSJON_ID));
+	public void assertDokDistAvStemmingResponseToMapperPrint(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
+		assertThat(dokDistAvStemmingResponseTo.getForsendelseId(), is(DISTRIBUSJON_ID));
 		assertThat(dokDistAvStemmingResponseTo.getBestillendeFagsystem(), is(BESTILLENDE_FAGSYSTEM));
 		assertThat(dokDistAvStemmingResponseTo.getDokumentStatus(), is(DOKUMENT_STATUS));
-		assertThat(dokDistAvStemmingResponseTo.getMottakkerId(), is(MOTTAKER_ID));
 		assertThat(dokDistAvStemmingResponseTo.getKonversasjonId(), is(KONVERSASJON_ID));
-		assertThat(dokDistAvStemmingResponseTo.getArkivKode(), is(ARKIV_KODE));
+		assertThat(dokDistAvStemmingResponseTo.getJournalpostId(), is(ARKIV_KODE));
 		assertThat(dokDistAvStemmingResponseTo.getFagomradeCode(), is(FAGOMRADE_CODE));
 
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonKanal(), is(DISTRIBUSJON_KANAL.name()));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
-		assertThat(dokDistAvStemmingResponseTo.getProduksjonDato(), is(PRODUKSJON_DATO));
+		assertThat(dokDistAvStemmingResponseTo.getOpprettetDato(), is(PRODUKSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonDato(), is(DISTRIBUSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getCountDokument(), is(1L));
 
 	}
-
-
-
-
 }

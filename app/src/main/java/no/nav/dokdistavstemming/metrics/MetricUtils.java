@@ -2,14 +2,14 @@ package no.nav.dokdistavstemming.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.exceptions.DokDistAvstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MetricUtils {
 
 	public static final String DOK_REQUEST_FUNCTIONAL_EXCEPTION_COUNTER = "dok_request_functional_exception_counter";
-	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
+	public static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_counter";
 	public static final String TAG_BESKRIVELSE = "beskrivelse";
 	private static final String TAG_KANAL_KODE ="distribusjonKanal";
 
@@ -36,6 +36,6 @@ public class MetricUtils {
 
 
 	public static boolean isFunctionalException(Throwable e) {
-		return e instanceof DokDistAvstemmingFunctionalException;
+		return e instanceof AvstemForsendelseFunctionalException;
 	}
 }

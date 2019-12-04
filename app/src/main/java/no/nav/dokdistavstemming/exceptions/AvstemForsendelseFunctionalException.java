@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class DokDistAvstemmingFunctionalException extends RuntimeException {
+public class AvstemForsendelseFunctionalException extends RuntimeException {
 
 	private final HttpStatus httpStatus;
 
-	public DokDistAvstemmingFunctionalException(String message) {
+	public AvstemForsendelseFunctionalException(String message) {
 		super(message);
 		this.httpStatus = HttpStatus.BAD_REQUEST;
 	}
 
-	public DokDistAvstemmingFunctionalException(String message, HttpStatus httpStatus) {
+	public AvstemForsendelseFunctionalException(String message, HttpStatus httpStatus) {
 		super(message);
 		this.httpStatus = httpStatus;
 	}
 
-	public DokDistAvstemmingFunctionalException(String message, Throwable cause) {
+	public AvstemForsendelseFunctionalException(String message, Throwable cause) {
 		super(message, cause);
 		this.httpStatus = HttpStatus.BAD_REQUEST;
 	}

@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.consumer;
+package no.nav.dokdistavstemming;
 
 
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;

@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.service.serviceimp.DokDistAvstemmingService;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -18,18 +17,18 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 @Slf4j
-public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
+public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 
-	private final int POOL_SIZE = 10;
+	private static final int POOL_SIZE = 10;
 
-	private final DokDistAvstemmingService dokDistAvstemmingService;
 	private final String cronSchedule;
+	private final JiraService jiraService;
 
 
-	public DokDistAvstemmingScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
-										   DokDistAvstemmingService dokDistAvstemmingService) {
-		this.dokDistAvstemmingService = dokDistAvstemmingService;
+	public AvstemForsendelseScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
+										   JiraService jiraService) {
 		this.cronSchedule=cronScheduler;
+		this.jiraService = jiraService;
 
 	}
 
@@ -47,9 +46,9 @@ public class DokDistAvstemmingScheduleConfig implements SchedulingConfigurer {
 		scheduledTaskRegistrar.addCronTask(() ->
 				{
 					try {
-						dokDistAvstemmingService.henteDokDistFil();
+						jiraService.oppretteMMAJiraSak();
 					} catch (Exception e) {
-						log.error(String.format("createJiraSak feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
+						log.error(String.format("Feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
 
 					}
 				}, cronSchedule);

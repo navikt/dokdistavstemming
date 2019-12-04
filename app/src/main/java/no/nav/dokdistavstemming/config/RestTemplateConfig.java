@@ -5,7 +5,6 @@ import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -18,14 +17,15 @@ public class RestTemplateConfig {
 
 
 	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
-		RestTemplate restTemplate = restTemplateBuilder
+	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder,
+									 final ServiceuserAlias serviceuserAlias) {
+		return restTemplateBuilder
 				.interceptors(new CallIdInterceptor())
 				.setReadTimeout(DURATION_READTIMEOUT)
 				.setConnectTimeout(DURATION)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
-		return restTemplate;
+
 	}
 
 

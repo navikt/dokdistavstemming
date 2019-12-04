@@ -8,8 +8,9 @@ import com.pep1.jira.client.domain.issue.Priority;
 import com.pep1.jira.client.domain.issue.Reporter;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DokDistAvstemmingRequestTo;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -59,6 +60,9 @@ public class TestDataUtils {
 	public static final String DOKUMENT_STATUS_3 = "OVERSENDT";
 	public static final String DISTRIBUSJON_STATUS_3 = "OVERSENDT";
 	public static final DistribusjonKanalCode DISTRIBUSJON_KANAL_3 = DistribusjonKanalCode.SDP;
+	public static final String SAK_ID = "533815";
+	public static final String KEY = "MMA-43";
+	public static final String SELF = "https://jira-q1.adeo.no/rest/api/2/issue/533815";
 	public static String FORSENDELSE_ID_J = "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c";
 	public static String FORSENDELSE_ID_1_J = "ea0dea1f-3904-4239-8a5f-c3fa3af29896";
 	public static String DISTRIBUSJON_STATUS_J = "OVERSENDT";
@@ -66,78 +70,71 @@ public class TestDataUtils {
 	public static DistribusjonKanalCode DISTRIBUSJON_KANAL_P_J = DistribusjonKanalCode.PRINT;
 	public static String DIGITAL_DISTRIBUTOR_ID_2 = "984661183";
 
-
-	public static final String SAK_ID = "533815";
-	public static final String KEY = "MMA-43";
-	public static final String SELF = "https://jira-q1.adeo.no/rest/api/2/issue/533815";
-
-	public static List<DokDistAvstemmingRequestTo> createDokDistAvstemmingRequestList() {
-		return Arrays.asList(DokDistAvstemmingRequestTo.builder()
-						.distribusjonId(DISTRIBUSJON_ID)
+	public static List<AvstemForsendelseRequestTo> createDokDistAvstemmingRequestList() {
+		return Arrays.asList(AvstemForsendelseRequestTo.builder()
+						.forsendelseId(DISTRIBUSJON_ID)
 						.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS)
-						.produksjonDato(PRODUKSJON_DATO)
+						.opprettetDato(PRODUKSJON_DATO)
 						.distribusjonDato(DISTRIBUSJON_DATO)
 						.countDokument(1L)
-						.dokumenter(Arrays.asList(DokDistAvstemmingRequestTo.DokumentInfoTo.builder()
+						.dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
 								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
 								.dokumentStatus(DOKUMENT_STATUS)
-								.mottakkerId(MOTTAKER_ID)
 								.konversasjonId(KONVERSASJON_ID)
-								.arkivKode(ARKIV_KODE)
+								.journalpostId(ARKIV_KODE)
 								.fagomradeCode(FAGOMRADE_CODE)
 								.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID)
 								.build()))
 						.build(),
-				DokDistAvstemmingRequestTo.builder().distribusjonId(DISTRIBUSJON_ID_2)
+				AvstemForsendelseRequestTo.builder().forsendelseId(DISTRIBUSJON_ID_2)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
-						.produksjonDato(PRODUKSJON_DATO_2)
+						.opprettetDato(PRODUKSJON_DATO_2)
 						.distribusjonDato(DISTRIBUSJON_DATO_2)
 						.countDokument(1L)
-						.dokumenter(Arrays.asList(DokDistAvstemmingRequestTo.DokumentInfoTo.builder()
+						.dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
 								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
 								.dokumentStatus(DOKUMENT_STATUS_2)
-								.mottakkerId(MOTTAKER_ID_2)
 								.fagomradeCode(FAGOMRADE_CODE_2)
 								.konversasjonId(KONVERSASJON_ID_2)
-								.arkivKode(ARKIV_KODE_2)
+								.journalpostId(ARKIV_KODE_2)
 								.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID_2)
 								.build()))
 						.build(),
-				DokDistAvstemmingRequestTo.builder()
-						.distribusjonId(DISTRIBUSJON_ID_3)
+				AvstemForsendelseRequestTo.builder()
+						.forsendelseId(DISTRIBUSJON_ID_3)
 						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
 						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
-						.produksjonDato(convertDateTimeToString(OPPRETTET_DATO_3))
+						.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
 						.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
 						.countDokument(1L)
-						.dokumenter(Arrays.asList(DokDistAvstemmingRequestTo.DokumentInfoTo.builder()
+						.dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
 								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
 								.dokumentStatus(DOKUMENT_STATUS_3)
-								.mottakkerId(MOTTAKER_ID_3)
+								.journalpostId(MOTTAKER_ID_3)
 								.fagomradeCode(FAGOMRADE_CODE_3)
 								.konversasjonId(KONVERSASJON_ID_3)
-								.arkivKode(ARKIV_KODE_3)
+								.journalpostId(ARKIV_KODE_3)
 								.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID_3)
 								.build()))
 						.build());
 	}
 
-	public static DokDistAvstemmingRequestTo createDokDistAvstemmingRequestTo() {
-		return DokDistAvstemmingRequestTo.builder()
-				.distribusjonId(DISTRIBUSJON_ID)
+	public static AvstemForsendelseRequestTo createDokDistAvstemmingRequestTo() {
+		return AvstemForsendelseRequestTo.builder()
+				.forsendelseId(DISTRIBUSJON_ID)
 				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
-				.produksjonDato(PRODUKSJON_DATO)
+				.opprettetDato(PRODUKSJON_DATO)
 				.distribusjonDato(DISTRIBUSJON_DATO)
 				.countDokument(1L)
-				.dokumenter(Arrays.asList(DokDistAvstemmingRequestTo.DokumentInfoTo.builder()
+				.dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
 						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
 						.dokumentStatus(DOKUMENT_STATUS)
-						.mottakkerId(MOTTAKER_ID)
+						.journalpostId(MOTTAKER_ID)
 						.konversasjonId(KONVERSASJON_ID)
-						.arkivKode(ARKIV_KODE)
+						.journalpostId(ARKIV_KODE)
 						.fagomradeCode(FAGOMRADE_CODE)
 						.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID)
 						.build()))
@@ -145,6 +142,38 @@ public class TestDataUtils {
 	}
 
 
+	public static List<AvstemForsendelseResponseTo> createAvstemForsendelseResponseTo() {
+		return Arrays.asList(
+				AvstemForsendelseResponseTo.builder()
+						.forsendelseId(DISTRIBUSJON_ID_2)
+						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
+						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
+						.opprettetDato(PRODUKSJON_DATO_2)
+						.distribusjonDato(DISTRIBUSJON_DATO_2)
+						.countDokument(1L)
+						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
+						.dokumentStatus(DOKUMENT_STATUS_2)
+						.journalpostId(MOTTAKER_ID_2)
+						.fagomradeCode(FAGOMRADE_CODE_2)
+						.konversasjonId(KONVERSASJON_ID_2)
+						.journalpostId(ARKIV_KODE_2)
+						.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID_2)
+						.build(),
+				AvstemForsendelseResponseTo.builder()
+						.forsendelseId(DISTRIBUSJON_ID_3)
+						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
+						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
+						.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
+						.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
+						.countDokument(1L)
+						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
+						.dokumentStatus(DOKUMENT_STATUS_3)
+						.fagomradeCode(FAGOMRADE_CODE_3)
+						.konversasjonId(KONVERSASJON_ID_3)
+						.journalpostId(ARKIV_KODE_3)
+						.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID_3)
+						.build());
+	}
 
 	public static IssueInput createJiraSaksRequest() {
 		IssueInput issueInput = new IssueInput();
@@ -152,9 +181,6 @@ public class TestDataUtils {
 		Project project = new Project();
 		project.setKey("MMA");
 		project.setName("Team Dokument");
-
-		/*Component component = new Component();
-		component.setName("DokDistAvstemming, DokumentDistribusjon");*/
 
 		Reporter reporter = new Reporter();
 		reporter.setDisplayName("DokDistAvstemming Applikajonen");
@@ -181,13 +207,13 @@ public class TestDataUtils {
 
 	}
 
-	public static Issue createIssueResponse(){
+	public static Issue createIssueResponse() {
 		Issue issue = new Issue();
 		issue.setId(SAK_ID);
 		issue.setKey(KEY);
 		issue.setSelf(SELF);
 
-		return  issue;
+		return issue;
 	}
 
 }

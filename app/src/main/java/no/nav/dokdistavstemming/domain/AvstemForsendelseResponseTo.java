@@ -12,19 +12,19 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
-public class DokDistAvstemmingResponseTo {
+public class AvstemForsendelseResponseTo {
 
-	private String distribusjonId;
+	private String forsendelseId;
 	private String konversasjonId;
-	private String arkivKode;
+	private String journalpostId;
 	private String digitalDistributorId;
 	private String bestillendeFagsystem;
 	private String fagomradeCode;
 	private String dokumentStatus;
-	private String mottakkerId;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
-	private String produksjonDato;
+	private String opprettetDato;
 	private String distribusjonDato;
+	private final String brevProduksjonApplikasjon;
 	private Long countDokument;
 }
