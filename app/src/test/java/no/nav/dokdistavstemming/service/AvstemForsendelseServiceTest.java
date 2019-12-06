@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_3;
@@ -70,7 +71,7 @@ public class AvstemForsendelseServiceTest {
 
 	@Test
 	void shouldCallHentUekspederForsendelse() {
-		List<AvstemForsendelseRequestTo> result = avstemForsendelseService.hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode.SDP.name());
+		Set<AvstemForsendelseRequestTo> result = avstemForsendelseService.hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode.SDP.name());
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(DistribusjonKanalCode.SDP.name(), 24L);
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), argument.capture());
 		assertThat(argument.getValue().longValue(), is(24L));
@@ -79,7 +80,7 @@ public class AvstemForsendelseServiceTest {
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestTo()));
-		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
+		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos =avstemForsendelseService.avstemmForsendelseDistKanalPrint();
 
@@ -102,7 +103,7 @@ public class AvstemForsendelseServiceTest {
 	@Test
 	public void shouldHentForsendelserDistKanalUtenPrint(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
-		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
+		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 		when(meterRegistry.timer(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockTimer);
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos =avstemForsendelseService.avstemmForsendelseDistKanalUtenPrint();
 

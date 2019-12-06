@@ -1,14 +1,17 @@
 package no.nav.dokdistavstemming.avstemmIT;
 
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -42,6 +45,9 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
+		WireMock.reset();
+		WireMock.resetAllRequests();
+		WireMock.removeAllMappings();
 		avstemForsendelseService = new AvstemForsendelseService(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry);
 
 	}
@@ -59,7 +65,7 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
 		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
-		verify(2, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
 		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
