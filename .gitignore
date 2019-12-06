@@ -27,3 +27,6 @@ target/
 /.nb-gradle/
 build/
 
+**/application-t*.properties
+**/application-q*.properties
+**/application-local.properties

@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -22,13 +22,13 @@ public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 	private static final int POOL_SIZE = 10;
 
 	private final String cronSchedule;
-	private final JiraService jiraService;
+	private final AvstemForsendelseService avstemForsendelseService;
 
 
 	public AvstemForsendelseScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
-										   JiraService jiraService) {
-		this.cronSchedule=cronScheduler;
-		this.jiraService = jiraService;
+										   AvstemForsendelseService avstemForsendelseService) {
+		this.cronSchedule = cronScheduler;
+		this.avstemForsendelseService = avstemForsendelseService;
 
 	}
 
@@ -44,14 +44,14 @@ public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 
 		scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
 		scheduledTaskRegistrar.addCronTask(() ->
-				{
-					try {
-						jiraService.oppretteMMAJiraSak();
-					} catch (Exception e) {
-						log.error(String.format("Feilet til å opprette jira sak med feilmelding=%s", e.getMessage()));
+		{
+			try {
+				avstemForsendelseService.henteDokDistFil();
+			} catch (Exception e) {
+				log.error(String.format("Feilet til å hente avvik fra dokumentdistribusjon med feilmelding=%s", e.getMessage()));
 
-					}
-				}, cronSchedule);
+			}
+		}, cronSchedule);
 	}
 
 
