@@ -126,30 +126,6 @@ public class JiraConsumer {
 		}
 	}
 
-
-	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "addWatchers"}, percentiles = {0.5, 0.95})
-	public String addWatchers(@Valid @RequestParam(value = "key") String projectKey, String watchers) {
-
-		try {
-			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
-			ResponseEntity<String> responseEntity=
-					restTemplate.exchange(String.format("%s/%s/watchers",apiBaseUri,projectKey), HttpMethod.POST,
-						new HttpEntity<>(watchers, headers), String.class);
-			return responseEntity.getBody();
-
-		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()));
-			throw new AvstemForsendelseFunctionalException(
-					String.format("Fant ikke watchers og Kall mot jira feilet med url=%s, projectKey=%s, feilmelding: %s", apiBaseUri,projectKey, e.getMessage()), e);
-		} catch (HttpServerErrorException e) {
-			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
-			throw new AvstemForsendelseTechnicalException(
-					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
-		}
-
-	}
-
 	private HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBasicAuth(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword());
