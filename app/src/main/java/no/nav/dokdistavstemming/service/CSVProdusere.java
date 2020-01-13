@@ -12,5 +12,5 @@ import java.util.List;
 
 public interface CSVProdusere {
 
-	File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) throws IOException;
+	File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo);
 }

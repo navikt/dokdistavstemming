@@ -44,14 +44,7 @@ public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 
 		scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
 		scheduledTaskRegistrar.addCronTask(() ->
-		{
-			try {
-				avstemForsendelseService.henteDokDistFil();
-			} catch (Exception e) {
-				log.error(String.format("Feilet til å hente avvik fra dokumentdistribusjon med feilmelding=%s", e.getMessage()));
-
-			}
-		}, cronSchedule);
+				avstemForsendelseService.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal(), cronSchedule);
 	}
 
 

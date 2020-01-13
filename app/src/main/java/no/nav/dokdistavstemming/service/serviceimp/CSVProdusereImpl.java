@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 	private static final String CSV_FILTER_FIL = "dokdistcvs";
 
-	public File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) throws IOException {
+	public File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) {
 
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
@@ -43,16 +44,19 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
 		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
+		try {
+			File produced = File.createTempFile(avstemForsendelseResponseTo.isEmpty()?"dokdistavstemming-" :"dokdistavstemming-"+ avstemForsendelseResponseTo.get(0).getDistribusjonKanal(), ".csv", null);
+			FileOutputStream fos = new FileOutputStream(produced);
+			log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
+			csvMapper.setFilterProvider(filterProvider);
+			csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
+			ObjectWriter objectWriter = csvMapper.writer(csvSchema);
+			objectWriter.writeValue(fos, avstemForsendelseResponseTo);
 
-		File produced = File.createTempFile("dokdistavstemming-", ".csv", null);
-		FileOutputStream fos = new FileOutputStream(produced);
-		log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
-		csvMapper.setFilterProvider(filterProvider);
-		csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
-		ObjectWriter objectWriter = csvMapper.writer(csvSchema);
-		objectWriter.writeValue(fos, avstemForsendelseResponseTo);
-
-		return produced;
+			return produced;
+		} catch (IOException e) {
+			throw new AvstemForsendelseFunctionalException(String.format("Ugyldig input. Kan ikke opprette csv fil med feilmelding=%s",e.getMessage()));
+		}
 	}
 
 

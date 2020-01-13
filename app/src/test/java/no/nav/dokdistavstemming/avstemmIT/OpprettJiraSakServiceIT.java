@@ -17,14 +17,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +37,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(jiraConsumer, avstemForsendelseService, meterRegistry);
+		jiraService = new JiraService(jiraConsumer, meterRegistry);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
@@ -45,35 +46,35 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 	@Test
 	void shouldHappilyOppretteJiraSak() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
-		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemFrosendelse();
 		jiraHappyPostVedleggDokument();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
 		File fil = csvProdusere.oppretteCsvFil(result);
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak();
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil);
 
 		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_MESSAGE));
-		assertThat(jiraSakResponseTo.getHttpStatusCode(),is(0));
+		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(0));
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")).withRequestBody(equalToJson(classpathToString("__files/jirarequest-happy.json"))));
-		verify(2, postRequestedFor(urlEqualTo("/rest/api/2/issue/MMA-134/attachments")));
+		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue/MMA-134/attachments")));
 		verify(1, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
 	}
 
 	@Test
 	void opprettJiraSakThrowsBadRequestErrorMelding() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
-		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
 		jiraHappyHentProjectDetails();
 		jiraFeilToOpprettSakForAvstemFrosendelse();
 		jiraHappyPostVedleggDokument();
 		File fil = csvProdusere.oppretteCsvFil(result);
 
 		AvstemForsendelseFunctionalException avstemForsendelseFunctionalException = assertThrows(AvstemForsendelseFunctionalException.class, () ->
-				jiraService.oppretteMMAJiraSak());
+				jiraService.oppretteMMAJiraSak(PRINT.name(), fil));
 
-		assertThat(avstemForsendelseFunctionalException.getMessage(),containsString("status:400 BAD_REQUEST ,feilmelding: 400 Bad Request"));
+		assertThat(avstemForsendelseFunctionalException.getMessage(), containsString("status:400 BAD_REQUEST ,feilmelding: 400 Bad Request"));
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")));

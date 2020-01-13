@@ -11,8 +11,10 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
+import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
+import no.nav.dokdistavstemming.service.serviceimp.CSVProdusereImpl;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,17 +22,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createAvstemForsendelseResponseTo;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokDistAvstemmingRequestList;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,6 +50,12 @@ class JiraServiceTest {
 
 	@Mock
 	private JiraConsumer jiraConsumer;
+
+	@Inject
+	private CSVProdusere csvProdusereImpl;
+
+	@Mock
+	private File fil;
 
 	@Mock
 	private AvstemForsendelseService avstemForsendelseService;
@@ -57,8 +70,10 @@ class JiraServiceTest {
 
 	@BeforeEach
 	public void setUp() {
+		csvProdusereImpl = mock(CSVProdusereImpl.class);
+		fil = mock(File.class);
 		jiraServiceuserAlias = new JiraServiceuserAlias("test", "test");
-		jiraService = new JiraService(jiraConsumer, avstemForsendelseService, meterRegistry);
+		jiraService = new JiraService(jiraConsumer, meterRegistry);
 
 	}
 
@@ -66,25 +81,21 @@ class JiraServiceTest {
 	public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
 		when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
 		when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
-		File avvikFiler = new File(classpathToString("__files/csvfil_print.csv"));
-		when(avstemForsendelseService.henteDokDistFil()).thenReturn(Arrays.asList(avvikFiler));
+		File avvikFil = new File(new ClassPathResource("__files/csvfil_print.csv").getFile().toString());
 		when(meterRegistry.counter(anyString(), anyString(), anyString())).thenReturn(counterMock);
 
-
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak();
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(),avvikFil);
 
 		verify(meterRegistry, times(1)).counter(anyString(), anyString(), anyString());
 		verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
 		verify(jiraConsumer,times(1)).hentProjekt(anyString());
-		verify(avstemForsendelseService, times(1)).henteDokDistFil();
 		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
 	}
 
 	@Test
 	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() throws Exception {
-		when(avstemForsendelseService.henteDokDistFil()).thenReturn(Collections.emptyList());
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak();
-		verify(avstemForsendelseService, times(1)).henteDokDistFil();
+		File avvikFil = new File("");
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil);
 		assertThat(jiraSakResponseTo.getMessage(), is("Ingen filer og kan ikke opprette jira-sak"));
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(HttpStatus.NO_CONTENT.value()));
 	}

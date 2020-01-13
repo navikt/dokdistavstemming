@@ -141,6 +141,26 @@ public class TestDataUtils {
 				.build();
 	}
 
+	public static List<AvstemForsendelseRequestTo> createDokDistAvstemmingSDPRequestTo() {
+		return Arrays.asList(AvstemForsendelseRequestTo.builder()
+				.forsendelseId(DISTRIBUSJON_ID_3)
+				.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
+				.distribusjonStatus(DISTRIBUSJON_STATUS_3)
+				.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
+				.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
+				.countDokument(1L)
+				.dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
+						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
+						.dokumentStatus(DOKUMENT_STATUS_3)
+						.journalpostId(MOTTAKER_ID_3)
+						.fagomradeCode(FAGOMRADE_CODE_3)
+						.konversasjonId(KONVERSASJON_ID_3)
+						.journalpostId(ARKIV_KODE_3)
+						.digitalDistributorId(DIGITAL_DISTRIBUTOR_ID_3)
+						.build()))
+				.build());
+	}
+
 
 	public static List<AvstemForsendelseResponseTo> createAvstemForsendelseResponseTo() {
 		return Arrays.asList(

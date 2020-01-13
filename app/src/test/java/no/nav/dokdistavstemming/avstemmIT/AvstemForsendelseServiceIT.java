@@ -6,12 +6,11 @@ import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
-import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
+import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.MDC;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -20,6 +19,8 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISRIBUSJON_DATO_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_P_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J;
@@ -42,20 +43,22 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 	private CSVProdusere csvProdusere;
 	@Inject
 	private MeterRegistry meterRegistry;
+	@Inject
+	private JiraService jiraService;
 
 	@BeforeEach
 	public void setUp() {
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
-		avstemForsendelseService = new AvstemForsendelseService(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry);
+		avstemForsendelseService = new AvstemForsendelseService(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService);
 
 	}
 
 	@Test
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
-		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = avstemForsendelseService.avstemmForsendelseDistKanalUtenPrint();
+		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(SDP.name());
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/24")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1_J));
 	}
@@ -64,12 +67,12 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 	@Test
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
-		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
 		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
-		assertThat(result.get(0).getCountDokument(), is(10L));
+		assertThat(result.get(1).getCountDokument(), is(1L));
 		assertThat(result.get(0).getDistribusjonDato().toString(), is(DISRIBUSJON_DATO_J));
 
 	}
@@ -78,7 +81,7 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 	public void shouldOppretteCSVFilList() throws Exception {
 
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
-		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.avstemmForsendelseDistKanalPrint();
+		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
 		assertThat(csvFiler.isFile(), is(true));
 		assertThat(csvFiler.length() != 0, is(true));

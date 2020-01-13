@@ -13,11 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
@@ -39,12 +37,13 @@ public class AvstemForsendelseService {
 	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
+	private final JiraService jiraService;
 
-	public AvstemForsendelseService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere,
-									MeterRegistry meterRegistry) {
+	public AvstemForsendelseService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.csvProdusere = csvProdusere;
 		this.meterRegistry = meterRegistry;
+		this.jiraService = jiraService;
 	}
 
 	public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
@@ -55,71 +54,29 @@ public class AvstemForsendelseService {
 				.collect(Collectors.toSet());
 	}
 
-	public List<File> henteDokDistFil() throws Exception {
-		log.info("Har mottat kall til å opprette  CSV fil fra forsendelser som har ikke mottatt kvittering");
 
-		File csvFilSDPKanal = csvProdusere.oppretteCsvFil(avstemmForsendelseDistKanalUtenPrint());
-		File csvFilPrintKanal = csvProdusere.oppretteCsvFil(avstemmForsendelseDistKanalPrint());
-		List<File> produsereCSVFiler = Arrays.asList(csvFilPrintKanal, csvFilSDPKanal);
-		return produsereCSVFiler.stream()
-				.filter(this::isFilExistOgNotNull)
-				.collect(Collectors.toList());
+	public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
+		Arrays.stream(DistribusjonKanalCode.values())
+				.map(distribusjonKanal -> getMappedAvstemmForsendelseByDistKanal(distribusjonKanal.name()))
+				.filter(Objects::nonNull)
+				.forEach(avstemForsendelseResponseTo -> {
+					File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTo);
+					jiraService.oppretteMMAJiraSak(avstemForsendelseResponseTo.get(0).getDistribusjonKanal(), csvFil);
+				});
+
 	}
 
 
-	public List<AvstemForsendelseResponseTo> avstemmForsendelseDistKanalUtenPrint() {
+	public List<AvstemForsendelseResponseTo> getMappedAvstemmForsendelseByDistKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
-		long start = System.currentTimeMillis();
-
-		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
-				.filter(distribusjonKanal -> PRINT != distribusjonKanal)
-				.distinct()
-				.collect(Collectors.toList());
-		return distribusjonKanaler.stream()
-				.map(distribusjonKanal -> hentForsendelserKvitteringIkkeMottattService(distribusjonKanal.name()))
-				.filter(Objects::nonNull)
-				.distinct()
-				.flatMap(Collection::stream)
-				.filter(Objects::nonNull)
-				.map(uekspederForsendelse -> {
-					AvstemForsendelseResponseTo avstemForsendelse = avstemForsendelseMapper.mapDokDistUtenPrint(uekspederForsendelse);
-					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
-					log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
-									",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
-							avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
-					meterRegistry.timer("måler_forsinkelser",
-							"kanal", avstemForsendelse.getDistribusjonKanal(),
-							"status", avstemForsendelse.getDistribusjonStatus())
-							.record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
-					return avstemForsendelse;
-
-				})
-				.collect(Collectors.toList());
-	}
-
-
-	public List<AvstemForsendelseResponseTo> avstemmForsendelseDistKanalPrint() {
-		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
-
-		List<DistribusjonKanalCode> distribusjonKanaler = Arrays.stream(DistribusjonKanalCode.values())
-				.filter(distribusjonKanal -> PRINT == distribusjonKanal)
-				.collect(Collectors.toList());
-		return distribusjonKanaler.stream()
-				.map(distribusjonKanal -> hentForsendelserKvitteringIkkeMottattService(distribusjonKanal.name()))
-				.flatMap(Collection::stream)
-				.distinct()
-				.filter(Objects::nonNull)
-				.map(uekspederForsendelse -> {
-
-					AvstemForsendelseResponseTo avstemForsendelse = avstemForsendelseMapper.mapDokDistPrint(uekspederForsendelse);
-					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
-					log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
-									",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
-							avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
-					return avstemForsendelse;
-				})
-				.collect(Collectors.toList());
-
+		return hentForsendelserKvitteringIkkeMottattService(distribusjonKanal).stream().filter(Objects::nonNull).map(hentForsendelse -> {
+			AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+			incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
+			log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
+							",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
+					avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
+			return avstemForsendelse;
+		}).collect(Collectors.toList());
 	}
 
 
@@ -132,8 +89,5 @@ public class AvstemForsendelseService {
 				"antallDokInfoId", antallDokInfoId == null ? UKJENT : String.valueOf(antallDokInfoId)).increment();
 	}
 
-	private boolean isFilExistOgNotNull(File fil) {
-		return fil.exists() && fil.length() > 0;
-	}
 
 }

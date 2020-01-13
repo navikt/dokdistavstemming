@@ -5,6 +5,7 @@ package no.nav.dokdistavstemming.utils;
 import io.micrometer.core.instrument.util.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
