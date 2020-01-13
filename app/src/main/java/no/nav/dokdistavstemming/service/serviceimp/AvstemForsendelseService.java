@@ -70,7 +70,7 @@ public class AvstemForsendelseService {
 	public List<AvstemForsendelseResponseTo> getMappedAvstemmForsendelseByDistKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
 		return hentForsendelserKvitteringIkkeMottattService(distribusjonKanal).stream().filter(Objects::nonNull).map(hentForsendelse -> {
-			AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+			AvstemForsendelseResponseTo avstemForsendelse = PRINT.name().equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
 			incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
 			log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
 							",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
