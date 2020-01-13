@@ -22,7 +22,7 @@ public class OppretteJiraSakRequestUtil {
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Test");
+		issueType.setName("Oppgave");
 
 		Priority priority = new Priority();
 		priority.setName("Medium");
