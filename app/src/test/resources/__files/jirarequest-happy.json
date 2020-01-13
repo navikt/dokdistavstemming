@@ -681,7 +681,7 @@
     "summary" : "DOKUMENTDISTRIBUSJON Kanal-PRINT: Utsendelse av dokumenter/brev har ikke mottatt kvittering",
     "issuetype" : {
       "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-      "name" : "Test"
+      "name" : "Oppgave"
     },
     "priority" : {
       "name" : "Medium"
