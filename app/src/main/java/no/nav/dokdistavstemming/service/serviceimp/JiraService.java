@@ -57,7 +57,7 @@ public class JiraService {
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-					.message(issue == null ? "Opprettet ikke jira sak" : String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
+					.message(String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
 			meterRegistry.counter("opprettet_jira",
 					"jiraSakUrl", jiraSakResponseTo.getMessage() == null ? "Ukjent" : jiraSakResponseTo.getMessage())
