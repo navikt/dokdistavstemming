@@ -61,7 +61,11 @@ public class AvstemForsendelseService {
 				.filter(Objects::nonNull)
 				.forEach(avstemForsendelseResponseTo -> {
 					File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTo);
-					jiraService.oppretteMMAJiraSak(avstemForsendelseResponseTo.get(0).getDistribusjonKanal(), csvFil);
+					if (!csvFil.exists() || avstemForsendelseResponseTo.isEmpty()) {
+						return;
+					} else {
+						jiraService.oppretteMMAJiraSak(avstemForsendelseResponseTo.get(0).getDistribusjonKanal(), csvFil);
+					}
 				});
 
 	}
@@ -69,14 +73,16 @@ public class AvstemForsendelseService {
 
 	public List<AvstemForsendelseResponseTo> getMappedAvstemmForsendelseByDistKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
-		return hentForsendelserKvitteringIkkeMottattService(distribusjonKanal).stream().filter(Objects::nonNull).map(hentForsendelse -> {
-			AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
-			incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
-			log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
-							",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
-					avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
-			return avstemForsendelse;
-		}).collect(Collectors.toList());
+		return hentForsendelserKvitteringIkkeMottattService(distribusjonKanal).stream()
+				.filter(Objects::nonNull)
+				.map(hentForsendelse -> {
+					AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
+					log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
+									",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
+							avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
+					return avstemForsendelse;
+				}).collect(Collectors.toList());
 	}
 
 

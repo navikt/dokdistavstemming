@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 
 public class OppretteJiraSakRequestUtil {
 
-	private OppretteJiraSakRequestUtil(){}
+	private OppretteJiraSakRequestUtil() {
+	}
 
-	public static  IssueInput createJiraSaksRequest(Project project, String title) {
+	public static IssueInput createJiraSaksRequest(Project project, String title) {
 		IssueInput issueInput = new IssueInput();
 		List<Component> componenter = project.getComponents().stream()
 				.filter(dokdistComp -> dokdistComp.getName().equalsIgnoreCase("Dokumentdistribusjon"))
@@ -22,18 +23,19 @@ public class OppretteJiraSakRequestUtil {
 
 		IssueType issueType = new IssueType();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-		issueType.setName("Test");
+		issueType.setName("Oppgave");
+		String[] labels = {"dokumentdistribusjon_avvik"};
 
 		Priority priority = new Priority();
-		priority.setName("Medium");
+		priority.setName("Viktig");
 
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
 				.issuetype(issueType)
+				.labels(labels)
 				.components(componenter)
-				.summary(String.format("DOKUMENTDISTRIBUSJON Kanal-%s: Utsendelse av dokumenter/brev har ikke mottatt kvittering",title))
+				.summary(String.format("DOKUMENTDISTRIBUSJON Kanal-%s: Utsendelse av dokumenter/brev har ikke mottatt kvittering", title))
 				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
-				.priority(priority)
 				.build();
 		issueInput.setFields(issueFields);
 		return issueInput;

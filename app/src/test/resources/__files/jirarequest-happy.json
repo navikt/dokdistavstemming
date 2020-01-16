@@ -681,12 +681,10 @@
     "summary" : "DOKUMENTDISTRIBUSJON Kanal-PRINT: Utsendelse av dokumenter/brev har ikke mottatt kvittering",
     "issuetype" : {
       "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-      "name" : "Test"
-    },
-    "priority" : {
-      "name" : "Medium"
+      "name" : "Oppgave"
     },
     "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+    "labels" : [ "dokumentdistribusjon_avvik" ],
     "components" : [ {
       "self" : "https://jira-q1.adeo.no/rest/api/2/component/26154",
       "id" : "26154",

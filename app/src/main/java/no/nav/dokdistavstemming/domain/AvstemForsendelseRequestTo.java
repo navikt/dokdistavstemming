@@ -19,6 +19,8 @@ import java.util.List;
 public class AvstemForsendelseRequestTo {
 
 	private String forsendelseId;
+	private String resendingForsendelseId;
+	private String originalForsendelseId;
 	private List<DokumentInfoTo> dokumenter;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
@@ -35,6 +37,7 @@ public class AvstemForsendelseRequestTo {
 		private final String bestillendeFagsystem;
 		private final String fagomradeCode;
 		private final String dokumentStatus;
+		private final String mottakkerId;
 		private final String journalpostId;
 		private final String brevProduksjonApplikasjon;
 
