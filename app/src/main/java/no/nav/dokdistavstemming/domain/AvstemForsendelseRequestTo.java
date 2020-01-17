@@ -37,7 +37,7 @@ public class AvstemForsendelseRequestTo {
 		private final String bestillendeFagsystem;
 		private final String fagomradeCode;
 		private final String dokumentStatus;
-		private final String mottakkerId;
+		private final String mottakerId;
 		private final String journalpostId;
 		private final String brevProduksjonApplikasjon;
 
