@@ -65,6 +65,7 @@ public class TestDataUtils {
 	public static final String SELF = "https://jira-q1.adeo.no/rest/api/2/issue/533815";
 	public static String FORSENDELSE_ID_J = "c3bc9d18-c5b8-40d2-9d50-5cbfa661475c";
 	public static String FORSENDELSE_ID_1_J = "40549a31-1787-45ce-a31e-60b159b801eb";
+	public static String FORSENDELSE_ID_11_J="810f567d-192b-4531-9a90-914fee360dce";
 	public static String DISTRIBUSJON_STATUS_J = "OVERSENDT";
 	public static String DISRIBUSJON_DATO_J = "2019-09-03T11:03:45";
 	public static DistribusjonKanalCode DISTRIBUSJON_KANAL_P_J = DistribusjonKanalCode.PRINT;

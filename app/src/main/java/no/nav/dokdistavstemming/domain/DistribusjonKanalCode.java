@@ -6,9 +6,9 @@ package no.nav.dokdistavstemming.domain;
 
 public enum DistribusjonKanalCode {
 
-	PRINT,
 	SDP,
 	SDP_PRINT,
+	PRINT,
 	E_HANDEL,
 	PRINT_DITTNAV,
 	DITTNAV,

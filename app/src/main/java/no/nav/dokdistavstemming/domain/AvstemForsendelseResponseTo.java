@@ -15,6 +15,8 @@ import lombok.ToString;
 public class AvstemForsendelseResponseTo {
 
 	private String forsendelseId;
+	private String resendingForsendelseId;
+	private String originalForsendelseId;
 	private String konversasjonId;
 	private String journalpostId;
 	private String digitalDistributorId;

@@ -1,8 +1,11 @@
 package no.nav.dokdistavstemming.consumer.jira;
 
+import com.pep1.jira.client.domain.field.Field;
 import com.pep1.jira.client.domain.issue.Issue;
+import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
+import com.pep1.jira.client.error.JIRAClientException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
@@ -13,6 +16,7 @@ import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +37,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.time.Duration;
+import java.util.List;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -44,7 +49,10 @@ public class JiraConsumer {
 
 	private static final String ISSUE_CREATE = "/rest/api/2/issue";
 	private static final String PROJECT_HENT = "/rest/api/2/project";
+	private static final String FIELD_HENT = "/rest/api/2/field";
 	private static final String ATTACHMENTS = "/attachments";
+	private static final String META_FIELDS = "/rest/api/2/issue/createmeta";
+	private static final String EXPAND_SEARCH = "projects.issuetypes.fields";
 	private static final Duration DURATION = Duration.ofMillis(30000L);
 	private final String jiraBaseUri;
 	private final String apiBaseUri;
@@ -89,7 +97,7 @@ public class JiraConsumer {
 	public String leggVedlegg(String key, @NonNull File file) {
 		if (key == null) {
 			throw new IllegalArgumentException("MMA Key er null og kan ikke legge fil til jira saken");
-		} else if (file.length()==0 && !file.exists()) {
+		} else if (file.length() == 0 && !file.exists()) {
 			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
 		}
 		try {
@@ -122,7 +130,36 @@ public class JiraConsumer {
 
 			return responseEntity.getBody();
 		} catch (JiraClientException e) {
-			throw new JiraClientException(String.format("Feil, fant ikke project med projectKey=%s", projectKey));
+			throw new JiraClientException(String.format("Feil, fant ikke project med projectKey=%s, feilmelding=%s", projectKey, e.getMessage()));
+		}
+	}
+
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
+	public List<Field> listFields() throws JIRAClientException {
+
+		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		try {
+			return restTemplate.exchange(jiraBaseUri + FIELD_HENT,
+					HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<Field>>() {
+					}).getBody();
+
+		} catch (JiraClientException e) {
+			throw new JiraClientException(String.format("Feil, fant ikke meta fields med feilmelding=%s", e.getMessage()));
+		}
+	}
+
+	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
+	public IssueFields hentIssueTypeByProjectIdAndIssuetypeId(@Valid @RequestParam(value = "projectKeys") String projectKey,
+														  @Valid @RequestParam(value = "issuetypeNames") String issuetypeNames) throws JIRAClientException {
+		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		try {
+			return restTemplate.exchange( String.format("%s%s?projectKeys=%s&issuetypeNames=%s&expand=projects.issuetypes.fields",jiraBaseUri,META_FIELDS ,projectKey,issuetypeNames),
+					HttpMethod.GET, new HttpEntity<>(headers), IssueFields.class).getBody();
+
+		} catch (JiraClientException e) {
+			throw new JiraClientException(String.format("Feil, fant ikke meta fields med feilmelding=%s", e.getMessage()));
 		}
 	}
 

@@ -48,6 +48,7 @@ public class AvstemForsendelseMapper {
 
 		return AvstemForsendelseResponseTo.builder()
 				.forsendelseId(forsendelseResponse.getForsendelseId())
+				.resendingForsendelseId(forsendelseResponse.getResendingForsendelseId())
 				.konversasjonId(dokumentInfoTo.getKonversasjonId())
 				.journalpostId(dokumentInfoTo.getJournalpostId() == null ? null : dokumentInfoTo.getJournalpostId())
 				.distribusjonDato(forsendelseResponse.getDistribusjonDato())
