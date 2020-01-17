@@ -35,140 +35,15 @@
         "description" : "team prosjekter fra PK prosjekt"
       },
       "components" : [ {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26140",
-        "id" : "26140",
-        "name" : "Brevserver",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26141",
-        "id" : "26141",
-        "name" : "Distribusjonsvarsel",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26142",
-        "id" : "26142",
-        "name" : "dokarkiv",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26143",
-        "id" : "26143",
-        "name" : "dokdistkanal",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26144",
-        "id" : "26144",
-        "name" : "Dokkat",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26145",
-        "id" : "26145",
-        "name" : "Dokkonv",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26146",
-        "id" : "26146",
-        "name" : "Dokmot",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26147",
-        "id" : "26147",
-        "name" : "Dokmotaltinn",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26148",
-        "id" : "26148",
-        "name" : "Dokmotfordeling",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26149",
-        "id" : "26149",
-        "name" : "Dokmotinngaaende",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26150",
-        "id" : "26150",
-        "name" : "Dokmotsed",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26151",
-        "id" : "26151",
-        "name" : "Dokopp",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26152",
-        "id" : "26152",
-        "name" : "Dokprod",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26153",
-        "id" : "26153",
-        "name" : "Dokprodbatch",
-        "isAssigneeTypeValid" : false
-      }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/component/26154",
         "id" : "26154",
         "name" : "Dokumentdistribusjon",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26155",
-        "id" : "26155",
-        "name" : "Dokumentmal Exstream",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26156",
-        "id" : "26156",
-        "name" : "Dokumentmal Metaforce",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26157",
-        "id" : "26157",
-        "name" : "Inn-meta-dok",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26158",
-        "id" : "26158",
-        "name" : "Inn-prod-dok",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26159",
-        "id" : "26159",
-        "name" : "Joark",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26160",
-        "id" : "26160",
-        "name" : "Oppgavevarsel",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26161",
-        "id" : "26161",
-        "name" : "regoppslag",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26162",
-        "id" : "26162",
-        "name" : "Sikkerhetsnivaa",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26163",
-        "id" : "26163",
-        "name" : "Skanningmottak",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26164",
-        "id" : "26164",
-        "name" : "Varsel",
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26165",
-        "id" : "26165",
-        "name" : "Varseloppgave",
         "isAssigneeTypeValid" : false
       } ],
       "issueTypes" : [ {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
         "id" : "10901",
-        "description" : "En oppgave som må utføres.",
+        "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
         "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
         "name" : "Oppgave",
         "subtask" : false,
@@ -680,16 +555,25 @@
     },
     "summary" : "DOKUMENTDISTRIBUSJON Kanal-PRINT: Utsendelse av dokumenter/brev har ikke mottatt kvittering",
     "issuetype" : {
+      "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
+      "id" : "10901",
       "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-      "name" : "Oppgave"
+      "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
+      "name" : "Oppgave",
+      "subtask" : false,
+      "avatarId" : 18108
+    },
+    "reporter" : {
+      "self" : null,
+      "key" : "srvjiradokdistavstemming",
+      "name" : "srvjiradokdistavstemming",
+      "emailAddress" : null,
+      "avatarUrls" : null,
+      "displayName" : null,
+      "active" : null,
+      "timeZone" : null
     },
     "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-    "labels" : [ "dokumentdistribusjon_avvik" ],
-    "components" : [ {
-      "self" : "https://jira-q1.adeo.no/rest/api/2/component/26154",
-      "id" : "26154",
-      "name" : "Dokumentdistribusjon",
-      "isAssigneeTypeValid" : false
-    } ]
+    "labels" : [ "dokumentdistribusjon_avvik" ]
   }
 }

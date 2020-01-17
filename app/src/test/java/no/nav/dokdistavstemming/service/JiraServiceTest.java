@@ -4,6 +4,7 @@ package no.nav.dokdistavstemming.service;
 import com.pep1.jira.client.domain.issue.Component;
 import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
+import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Reporter;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
@@ -28,11 +29,7 @@ import org.springframework.http.HttpStatus;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 
-import static no.nav.dokdistavstemming.utils.TestDataUtils.createAvstemForsendelseResponseTo;
-import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokDistAvstemmingRequestList;
-import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -82,13 +79,14 @@ class JiraServiceTest {
 		when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
 		when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
 		File avvikFil = new File(new ClassPathResource("__files/csvfil_print.csv").getFile().toString());
+		when(jiraConsumer.leggVedlegg("MMA-134",avvikFil)).thenReturn("https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments");
 		when(meterRegistry.counter(anyString(), anyString(), anyString())).thenReturn(counterMock);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(),avvikFil);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil);
 
 		verify(meterRegistry, times(1)).counter(anyString(), anyString(), anyString());
 		verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
-		verify(jiraConsumer,times(1)).hentProjekt(anyString());
+		verify(jiraConsumer, times(1)).hentProjekt(anyString());
 		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
 	}
 
@@ -103,14 +101,24 @@ class JiraServiceTest {
 
 	private Project createProject() {
 		Project project = new Project();
+		project.setExpand("Project");
 		Component component = new Component();
 		component.setSelf("https://jira-q1.adeo.no/rest/api/2/component/26154");
 		component.setId("26154");
 		component.setName("Dokumentdistribusjon");
 		component.setIsAssigneeTypeValid(false);
-		project.setId("19377");
+
+		IssueType issueType = new IssueType();
+		issueType.setName("Oppgave");
+		issueType.setSelf("https://jira.adeo.no/rest/api/2/issuetype/10901");
+		issueType.setId("10901");
+		issueType.setDescription("En oppgave som må utføres.");
+
+		project.setSelf("https://jira.adeo.no/rest/api/2/project/19377");
+		project.setId("19954");
 		project.setKey("MMA");
-		project.setName("Test Test");
+		project.setName("Team Dokumentløsninger");
+		project.setIssueTypes(Arrays.asList(issueType));
 		project.setComponents(Arrays.asList(component));
 		return project;
 	}
@@ -120,6 +128,8 @@ class JiraServiceTest {
 
 		Issue issue = new Issue();
 		issue.setSelf("https://jira-q1.adeo.no/rest/api/2/issue/534999");
+		Project project = new Project();
+		project.setKey("MMA");
 		issue.setKey("MMA-134");
 		issue.setId("534999");
 		IssueFields issueFields = new IssueFields();
@@ -132,6 +142,7 @@ class JiraServiceTest {
 		reporter.setKey("srvjiradokdistavstemming");
 		reporter.setSelf("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
 		issueFields.setComponents(Arrays.asList(component));
+		issueFields.setProject(project);
 		issue.setFields(issueFields);
 
 		return issue;
