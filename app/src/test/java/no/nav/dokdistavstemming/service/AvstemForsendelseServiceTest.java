@@ -70,9 +70,6 @@ public class AvstemForsendelseServiceTest {
 	@Mock
 	private Counter mockCounter;
 
-	@Mock
-	private Timer mockTimer;
-
 
 	@BeforeEach
 	public void setUp() {
@@ -107,10 +104,10 @@ public class AvstemForsendelseServiceTest {
 	}
 
 	@Test
-	public void shouldHentForsendelserDistKanalPrintReturnEmptyList(){
+	public void shouldHentForsendelserDistKanalPrintReturnsNull(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos =avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
-		assertThat(avstemForsendelseResponseTos,is(Collections.EMPTY_LIST));
+		assertThat(avstemForsendelseResponseTos,nullValue());
 		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
 	}
 
@@ -126,6 +123,15 @@ public class AvstemForsendelseServiceTest {
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_3));
 		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
 
+	}
+
+	@Test
+	public void returnsNullWhenHentForsendelserKvitteringIkkeMottattGetNullorEmptyList(){
+
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
+		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos =avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(SDP.name());
+
+		assertThat(avstemForsendelseResponseTos,nullValue());
 	}
 
 

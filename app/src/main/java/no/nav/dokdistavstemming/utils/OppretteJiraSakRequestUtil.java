@@ -24,10 +24,8 @@ public class OppretteJiraSakRequestUtil {
 				.collect(Collectors.toList());
 		project.setComponents(componenter);
 
-
 		IssueType issueType = project.getIssueTypes().stream().filter(issueType1 -> "Oppgave".equals(issueType1.getName())).findFirst().get();
 		issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
-
 
 		String[] labels = {"dokumentdistribusjon_avvik"};
 		Reporter reporter = new Reporter();
@@ -40,9 +38,7 @@ public class OppretteJiraSakRequestUtil {
 		String[] customObject = {"Dokumentdistribusjon (CMDB-31953)"};
 		Map<String, Object> custemField = new HashMap<>();
 
-
 		custemField.put("customfield_20211", customObject);
-
 
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
@@ -52,6 +48,7 @@ public class OppretteJiraSakRequestUtil {
 				.summary(String.format("DOKUMENTDISTRIBUSJON Kanal-%s: Utsendelse av dokumenter/brev har ikke mottatt kvittering", title))
 				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
 				.build();
+		Map<String, Object> custemField_1 = issueFields.getCustomfields();
 		issueInput.setFields(issueFields);
 		return issueInput;
 
