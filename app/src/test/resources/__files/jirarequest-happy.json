@@ -573,7 +573,7 @@
       "active" : null,
       "timeZone" : null
     },
-    "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+    "description" : "Se i vedlegg oversikten av 2 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
     "labels" : [ "dokumentdistribusjon_avvik" ]
   }
 }

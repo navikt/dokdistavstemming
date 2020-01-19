@@ -37,7 +37,7 @@ public class JiraService {
 	}
 
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
-	public JiraSakResponseTo oppretteMMAJiraSak(String distribusjonKanal, File fil) {
+	public JiraSakResponseTo oppretteMMAJiraSak(String distribusjonKanal, File fil, int size) {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		if (!isFilExistOgNotNull(fil)) {
@@ -47,7 +47,8 @@ public class JiraService {
 					.httpStatusCode(HttpStatus.NO_CONTENT.value())
 					.build();
 		}
-		IssueInput issueInput = OppretteJiraSakRequestUtil.createJiraSaksRequest(jiraConsumer.hentProjekt("MMA"), distribusjonKanal);
+
+		IssueInput issueInput = OppretteJiraSakRequestUtil.createJiraSaksRequest(jiraConsumer.hentProjekt("MMA"), distribusjonKanal, size);
 		validateInput(issueInput);
 
 		try {

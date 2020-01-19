@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,7 +83,7 @@ class JiraServiceTest {
 		when(jiraConsumer.leggVedlegg("MMA-134",avvikFil)).thenReturn("https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments");
 		when(meterRegistry.counter(anyString(), anyString(), anyString())).thenReturn(counterMock);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil,10);
 
 		verify(meterRegistry, times(1)).counter(anyString(), anyString(), anyString());
 		verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
@@ -93,7 +94,7 @@ class JiraServiceTest {
 	@Test
 	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() throws Exception {
 		File avvikFil = new File("");
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil,0);
 		assertThat(jiraSakResponseTo.getMessage(), is("Ingen filer og kan ikke opprette jira-sak"));
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(HttpStatus.NO_CONTENT.value()));
 	}
@@ -118,8 +119,8 @@ class JiraServiceTest {
 		project.setId("19954");
 		project.setKey("MMA");
 		project.setName("Team Dokumentløsninger");
-		project.setIssueTypes(Arrays.asList(issueType));
-		project.setComponents(Arrays.asList(component));
+		project.setIssueTypes(Collections.singletonList(issueType));
+		project.setComponents(Collections.singletonList(component));
 		return project;
 	}
 

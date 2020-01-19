@@ -24,7 +24,7 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISRIBUSJON_DATO_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_P_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J;
-import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1_J;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_11_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_J;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
@@ -60,7 +60,7 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(SDP.name());
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/24")));
-		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_1_J));
+		assertThat(dokDistAvstemmingForsendels.get(0).getForsendelseId(), is(FORSENDELSE_ID_11_J));
 	}
 
 
@@ -72,7 +72,7 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 		assertThat(result.get(0).getForsendelseId(), is(FORSENDELSE_ID_J));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
-		assertThat(result.get(1).getCountDokument(), is(1L));
+		assertThat(result.get(1).getCountDokument(), is(10L));
 		assertThat(result.get(0).getDistribusjonDato().toString(), is(DISRIBUSJON_DATO_J));
 
 	}
@@ -88,5 +88,6 @@ public class AvstemForsendelseServiceIT extends AbstractIT {
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/144")));
 
 	}
+
 
 }

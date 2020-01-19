@@ -49,6 +49,7 @@ public class AvstemForsendelseService {
 	public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
 		Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
 		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
+
 		return avstemForsendelseRequestTos.stream()
 				.filter(avstemForsendelse -> !avstemForsendelse.getDokumenter().isEmpty())
 				.collect(Collectors.toSet());
@@ -57,14 +58,13 @@ public class AvstemForsendelseService {
 
 	public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
 		Arrays.stream(DistribusjonKanalCode.values())
-				.map(distribusjonKanal -> getMappedAvstemmForsendelseByDistKanal(distribusjonKanal.name()))
-				.filter(Objects::nonNull)
-				.forEach(avstemForsendelseResponseTo -> {
-					File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTo);
-					if (!csvFil.exists() || avstemForsendelseResponseTo.isEmpty()) {
+				.forEach(distribusjonKanal -> {
+					List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getMappedAvstemmForsendelseByDistKanal(distribusjonKanal.name());
+					if (avstemForsendelseResponseTos == null) {
 						return;
 					} else {
-						jiraService.oppretteMMAJiraSak(avstemForsendelseResponseTo.get(0).getDistribusjonKanal(), csvFil);
+						File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
+						jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
 					}
 				});
 
@@ -73,26 +73,28 @@ public class AvstemForsendelseService {
 
 	public List<AvstemForsendelseResponseTo> getMappedAvstemmForsendelseByDistKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
-		return hentForsendelserKvitteringIkkeMottattService(distribusjonKanal).stream()
-				.filter(Objects::nonNull)
-				.map(hentForsendelse -> {
-					AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
-					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getCountDokument());
-					log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
-									",distribusjonKanal=%s,antallDokInfo=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
-							avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getCountDokument()));
-					return avstemForsendelse;
-				}).collect(Collectors.toList());
+		Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
+		return avstemForsendelseRequestTos.isEmpty() || avstemForsendelseRequestTos == null ? null :
+				avstemForsendelseRequestTos.stream()
+						.filter(Objects::nonNull)
+						.map(hentForsendelse -> {
+							AvstemForsendelseResponseTo avstemForsendelse = PRINT.name().equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+							incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getJournalpostId());
+							log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
+											",distribusjonKanal=%s,jouranalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
+									avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
+							return avstemForsendelse;
+						}).collect(Collectors.toList());
 	}
 
 
 	private void incrementFunctionalMetrics(String distribusjonKanal, String opprettetDato,
-											String distribusjonStatus, Long antallDokInfoId) {
+											String distribusjonStatus, String journalpostId) {
 		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
 				"distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
 				"opprettetDato", opprettetDato == null ? UKJENT : opprettetDato,
 				"distribusjonStatus", distribusjonStatus == null ? UKJENT : distribusjonStatus,
-				"antallDokInfoId", antallDokInfoId == null ? UKJENT : String.valueOf(antallDokInfoId)).increment();
+				"jouranalpostId", journalpostId == null ? UKJENT : journalpostId).increment();
 	}
 
 
