@@ -64,7 +64,7 @@ public class AvstemForsendelseService {
 						return;
 					} else {
 						File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
-						jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil);
+						jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
 					}
 				});
 
@@ -78,7 +78,7 @@ public class AvstemForsendelseService {
 				avstemForsendelseRequestTos.stream()
 						.filter(Objects::nonNull)
 						.map(hentForsendelse -> {
-							AvstemForsendelseResponseTo avstemForsendelse = PRINT.equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+							AvstemForsendelseResponseTo avstemForsendelse = PRINT.name().equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
 							incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getJournalpostId());
 							log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
 											",distribusjonKanal=%s,jouranalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),

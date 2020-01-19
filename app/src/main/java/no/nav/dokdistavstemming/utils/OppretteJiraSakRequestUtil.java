@@ -17,7 +17,7 @@ public class OppretteJiraSakRequestUtil {
 	private OppretteJiraSakRequestUtil() {
 	}
 
-	public static IssueInput createJiraSaksRequest(Project project, String title) {
+	public static IssueInput createJiraSaksRequest(Project project, String title, int avvikSize) {
 		IssueInput issueInput = new IssueInput();
 		List<com.pep1.jira.client.domain.issue.Component> componenter = project.getComponents().stream()
 				.filter(dokdistComp -> dokdistComp.getName().equalsIgnoreCase("Dokumentdistribusjon"))
@@ -46,9 +46,8 @@ public class OppretteJiraSakRequestUtil {
 				.reporter(reporter)
 				.labels(labels)
 				.summary(String.format("DOKUMENTDISTRIBUSJON Kanal-%s: Utsendelse av dokumenter/brev har ikke mottatt kvittering", title))
-				.description("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.")
+				.description(String.format("Se i vedlegg oversikten av %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.", avvikSize))
 				.build();
-		Map<String, Object> custemField_1 = issueFields.getCustomfields();
 		issueInput.setFields(issueFields);
 		return issueInput;
 

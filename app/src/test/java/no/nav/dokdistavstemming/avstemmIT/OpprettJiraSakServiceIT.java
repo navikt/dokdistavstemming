@@ -51,7 +51,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 		jiraHappyPostVedleggDokument();
 		List<AvstemForsendelseResponseTo> result = avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(PRINT.name());
 		File fil = csvProdusere.oppretteCsvFil(result);
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil,result.size());
 
 		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_MESSAGE));
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(0));
@@ -72,7 +72,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 		File fil = csvProdusere.oppretteCsvFil(result);
 
 		AvstemForsendelseFunctionalException avstemForsendelseFunctionalException = assertThrows(AvstemForsendelseFunctionalException.class, () ->
-				jiraService.oppretteMMAJiraSak(PRINT.name(), fil));
+				jiraService.oppretteMMAJiraSak(PRINT.name(), fil,result.size()));
 
 		assertThat(avstemForsendelseFunctionalException.getMessage(), containsString("status:400 BAD_REQUEST ,feilmelding: 400 Bad Request"));
 		assertTrue(fil.exists());
