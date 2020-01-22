@@ -22,34 +22,38 @@ import java.util.Arrays;
 @Slf4j
 public class AvstemForsendelseScheduleConfig implements SchedulingConfigurer {
 
-	private static final int POOL_SIZE = 4;
+    private static final int POOL_SIZE = 4;
 
-	private final String cronSchedule;
-	private final AvstemForsendelseService avstemForsendelseService;
+    private final String cronSchedule;
+    private final String jiraSchedule;
+    private final AvstemForsendelseService avstemForsendelseService;
 
 
-	public AvstemForsendelseScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
-										   AvstemForsendelseService avstemForsendelseService) {
-		this.cronSchedule = cronScheduler;
-		this.avstemForsendelseService = avstemForsendelseService;
+    public AvstemForsendelseScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
+                                           @Value("${scheduler_jira_cron}") String jiraSchedule,
+                                           AvstemForsendelseService avstemForsendelseService) {
+        this.cronSchedule = cronScheduler;
+        this.avstemForsendelseService = avstemForsendelseService;
+        this.jiraSchedule = jiraSchedule;
 
-	}
+    }
 
-	@Override
-	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 
-		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 
-		taskScheduler.setPoolSize(POOL_SIZE);
-		taskScheduler.setThreadNamePrefix("dokdistavstemming-scheduled-task-pool-");
-		taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
-		taskScheduler.initialize();
+        taskScheduler.setPoolSize(POOL_SIZE);
+        taskScheduler.setThreadNamePrefix("dokdistavstemming-scheduled-task-pool-");
+        taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+        taskScheduler.initialize();
 
-		scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
-		scheduledTaskRegistrar.addCronTask(() -> Arrays.stream(DistribusjonKanalCode.values())
-				.forEach( kanal->
-						avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(kanal.name())), cronSchedule);
-	}
+        scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
+        scheduledTaskRegistrar.addCronTask(() ->
+                avstemForsendelseService.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal(), jiraSchedule);
+        scheduledTaskRegistrar.addCronTask(()-> Arrays.stream(DistribusjonKanalCode.values())
+                .forEach(kanal->avstemForsendelseService.getMappedAvstemmForsendelseByDistKanal(kanal.name())),cronSchedule);
+    }
 
 
 }
