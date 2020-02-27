@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -28,18 +30,18 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 
 @Component
 @Slf4j
-public class AvstemForsendelseService {
+public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
-	private static final Long ANTALL_TIMER = 24L;
-	private static final Long ANTALL_DAGER = 144L; // 144 timer er 6 dager
+	private static final Long ANTALL_TIMER = 6L;
+	private static final Long ANTALL_DAGER = 120L; // 144 timer er 6 dager
 	private static final String UKJENT = "Ukjent";
 	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 	private final JiraService jiraService;
 
-	public AvstemForsendelseService(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService) {
+	public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.csvProdusere = csvProdusere;
 		this.meterRegistry = meterRegistry;
@@ -59,7 +61,7 @@ public class AvstemForsendelseService {
 	public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
 		Arrays.stream(DistribusjonKanalCode.values())
 				.forEach(distribusjonKanal -> {
-					List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getMappedAvstemmForsendelseByDistKanal(distribusjonKanal.name());
+					List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getAvstemmForsendelseByDistKanal(distribusjonKanal.name());
 					if (avstemForsendelseResponseTos == null) {
 						return;
 					} else {
@@ -71,17 +73,19 @@ public class AvstemForsendelseService {
 	}
 
 
-	public List<AvstemForsendelseResponseTo> getMappedAvstemmForsendelseByDistKanal(String distribusjonKanal) {
+	public List<AvstemForsendelseResponseTo> getAvstemmForsendelseByDistKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
 		Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
 		return avstemForsendelseRequestTos.isEmpty() || avstemForsendelseRequestTos == null ? null :
 				avstemForsendelseRequestTos.stream()
 						.filter(Objects::nonNull)
-						.map(hentForsendelse -> {
-							AvstemForsendelseResponseTo avstemForsendelse = PRINT.name().equals(distribusjonKanal) ? avstemForsendelseMapper.mapDokDistPrint(hentForsendelse) : avstemForsendelseMapper.mapDokDistUtenPrint(hentForsendelse);
+						.map(hentForsendelse -> avstemForsendelseMapper.mapAvstemmForsendelser(hentForsendelse))
+						.flatMap(Collection::stream)
+						.sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
+						.map(avstemForsendelse -> {
 							incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getJournalpostId());
-							log.info(String.format("DokDistAvstemming har fant forsendelser som kvittering ikke mottatt med forsendelseId=%s, distribusjonStatus=%s,opprettetDato=%s" +
-											",distribusjonKanal=%s,jouranalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getOpprettetDato(),
+							log.info(String.format("Sdist002 har fant avvik forsendelser med forsendelseId=%s, dokumentId=%s, dokumentStatus=%s,opprettetDato=%s" +
+											",distribusjonKanal=%s,journalpostId=%s", avstemForsendelse.getForsendelseId(),avstemForsendelse.getDokumentId(), avstemForsendelse.getDokumentStatus(), avstemForsendelse.getOpprettetDato(),
 									avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
 							return avstemForsendelse;
 						}).collect(Collectors.toList());
@@ -89,12 +93,12 @@ public class AvstemForsendelseService {
 
 
 	private void incrementFunctionalMetrics(String distribusjonKanal, String opprettetDato,
-											String distribusjonStatus, String journalpostId) {
+											String dokumentStatus, String journalpostId) {
 		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
 				"distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
 				"opprettetDato", opprettetDato == null ? UKJENT : opprettetDato,
-				"distribusjonStatus", distribusjonStatus == null ? UKJENT : distribusjonStatus,
-				"jouranalpostId", journalpostId == null ? UKJENT : journalpostId).increment();
+				"dokumentStatus", dokumentStatus == null ? UKJENT : dokumentStatus,
+				"journalpostId", journalpostId == null ? UKJENT : journalpostId).increment();
 	}
 
 

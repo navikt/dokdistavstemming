@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,11 @@ class CSVProdusereImplTest {
 	public void shouldProdusereCSVFil()  throws Exception{
 		AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 		List<AvstemForsendelseResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
-				.map(hentUekspederForsendelse -> mapper.mapDokDistUtenPrint(hentUekspederForsendelse))
+				.map(hentUekspederForsendelse -> mapper.mapAvstemmForsendelser(hentUekspederForsendelse))
+				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 
 		File fil = csvProdusere.oppretteCsvFil(dokDistAvStemmingResponseTo);
-		long filSize = fil.length();
-
 
 		assertTrue(fil.exists());
 		assertTrue(fil.length()>0);

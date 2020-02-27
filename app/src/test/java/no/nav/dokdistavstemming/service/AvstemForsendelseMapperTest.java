@@ -17,7 +17,6 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DOKUMENT_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FAGOMRADE_CODE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
-import static no.nav.dokdistavstemming.utils.TestDataUtils.MOTTAKER_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,7 +27,7 @@ public class AvstemForsendelseMapperTest {
 
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
-		AvstemForsendelseResponseTo hentAvstemming = mapper.mapDokDistUtenPrint(TestDataUtils.createDokDistAvstemmingRequestTo());
+		AvstemForsendelseResponseTo hentAvstemming = mapper.mapAvstemmForsendelser(TestDataUtils.createDokDistAvstemmingRequestTo()).get(0);
 		assertResponse(hentAvstemming);
 	}
 
@@ -44,7 +43,7 @@ public class AvstemForsendelseMapperTest {
 	}
 
 	public void assertDokDistAvStemmingResponseToMapperPrint(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
-		assertThat(dokDistAvStemmingResponseTo.getForsendelseId(), is(DISTRIBUSJON_ID));
+		assertThat(dokDistAvStemmingResponseTo.getDistribusjonId(), is(DISTRIBUSJON_ID));
 		assertThat(dokDistAvStemmingResponseTo.getBestillendeFagsystem(), is(BESTILLENDE_FAGSYSTEM));
 		assertThat(dokDistAvStemmingResponseTo.getDokumentStatus(), is(DOKUMENT_STATUS));
 		assertThat(dokDistAvStemmingResponseTo.getKonversasjonId(), is(KONVERSASJON_ID));
@@ -55,7 +54,6 @@ public class AvstemForsendelseMapperTest {
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
 		assertThat(dokDistAvStemmingResponseTo.getOpprettetDato(), is(PRODUKSJON_DATO));
 		assertThat(dokDistAvStemmingResponseTo.getDistribusjonDato(), is(DISTRIBUSJON_DATO));
-		assertThat(dokDistAvStemmingResponseTo.getCountDokument(), is(1L));
 
 	}
 }

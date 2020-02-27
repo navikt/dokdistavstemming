@@ -14,7 +14,7 @@ import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
-import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
+import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
 import no.nav.dokdistavstemming.service.serviceimp.CSVProdusereImpl;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ class JiraServiceTest {
 	private File fil;
 
 	@Mock
-	private AvstemForsendelseService avstemForsendelseService;
+	private Sdist002Service sdist002Service;
 	@Mock
 	private MeterRegistry meterRegistry;
 	private JiraServiceuserAlias jiraServiceuserAlias;

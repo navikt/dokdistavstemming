@@ -18,30 +18,26 @@ import java.util.List;
 @NoArgsConstructor
 public class AvstemForsendelseRequestTo {
 
-	private String forsendelseId;
-	private String resendingForsendelseId;
-	private String originalForsendelseId;
+	private String distribusjonId;
 	private List<DokumentInfoTo> dokumenter;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
 	private String opprettetDato;
 	private String distribusjonDato;
-	private Long countDokument;
 
 
 	@Data
 	@Builder
 	public static class DokumentInfoTo {
+		private final String forsendelseId;
+		private final String dokumentId;
+		private final String dokumentStatus;
 		private final String konversasjonId;
-		private final String digitalDistributorId;
 		private final String bestillendeFagsystem;
 		private final String fagomradeCode;
-		private final String dokumentStatus;
-		private final String mottakkerId;
 		private final String journalpostId;
 		private final String brevProduksjonApplikasjon;
 
 	}
-
 
 }
