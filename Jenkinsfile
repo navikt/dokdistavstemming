@@ -1,4 +1,4 @@
-naisPipeline {
+naiseratorPipeline {
     applicationName = "dokdistavstemming"
     dockerfileDir = "."
     deployEnvironmentQ = "q1"
