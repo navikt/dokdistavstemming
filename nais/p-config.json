@@ -3,10 +3,11 @@
   "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "JIRA_V1_URL": "https://jira.adeo.no",
+  "VAULT": "/kv/prod/fss/joarkadmin/default",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "NAMESPACE": "default",
   "INGRESSES": [
-    "https://dokdistvstemming.nais.adeo.no"
+    "https://dokdistavstemming.nais.adeo.no"
   ]
 }
