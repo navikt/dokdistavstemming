@@ -16,6 +16,11 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 
@@ -36,7 +41,9 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
-		CsvSchema csvSchema = csvMapper.schemaFor(AvstemForsendelseResponseTo.class).withHeader().withColumnSeparator(';');
+		CsvSchema csvSchema = csvMapper.schemaFor(AvstemForsendelseResponseTo.class)
+				.withHeader()
+				.withColumnSeparator(';').sortedBy("forsendelseId");
 
 		for (CsvSchema.Column kolonne : csvSchema) {
 			kolonneNavn.add(kolonne.getName());
@@ -44,9 +51,10 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
 		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
-
+		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+		String distribusjonKanal = avstemForsendelseResponseTo.get(0).getDistribusjonKanal();
 		try {
-			produced = File.createTempFile( "dokdistavstemming-" + avstemForsendelseResponseTo.get(0).getDistribusjonKanal()+"-", ".csv", null);
+			produced = new File("dokdistavstemming-" + distribusjonKanal +"-" + localDate  +".csv");
 			FileOutputStream fos = new FileOutputStream(produced);
 			log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
 			csvMapper.setFilterProvider(filterProvider);

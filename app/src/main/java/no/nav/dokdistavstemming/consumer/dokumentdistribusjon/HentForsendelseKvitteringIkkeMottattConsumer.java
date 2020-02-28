@@ -51,24 +51,22 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 		MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 		try {
 			HttpHeaders httpHeaders = createHeaders();
-			log.info(String.format("%s mottat kall til å hente forsendelser som kvittering ikke mottatt fra dokdist med distribusjonKanal=%s, antallTimer=%s",
+			log.info(String.format("%s mottat kall til å hente forsendelser fra rdist001(dokdist) med distribusjonKanal=%s, antallTimer=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 			ResponseEntity<List<AvstemForsendelseRequestTo>> responseEntity = restTemplate
 					.exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
 							HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<>() {
 							});
-			log.info(String.format("%s har hentet forsendelser som kvittering ikke mottatt fra dokdist med distribusjonKanal=%s, antallTimer=%s",
-					MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer));
 
 			return responseEntity.getBody()== null? Collections.emptyList():responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("%s Kall mot  DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			log.warn(String.format("%s Kall mot  rdist001 feilet med status=%s, feilmelding=%s",
 					MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage()));
-			throw new AvstemForsendelseFunctionalException(String.format("Kallet til DokumentDistribusjon {administrerforsendelse} feilet med status=%s, feilmelding=%s",
+			throw new AvstemForsendelseFunctionalException(String.format("%s Kall mot  rdist001 feilet med status=%s, feilmelding=%s",
 					e.getStatusCode(), e.getMessage()), e.getStatusCode());
 		} catch (HttpServerErrorException e) {
-			log.warn(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
-			throw new AvstemForsendelseTechnicalException(String.format("Kall mot DokumentDistribusjon {administrerforsendelse} feilet teknisk.  status=%s, feilmedling=%s",
+			log.warn(String.format("%s Kall mot  rdist001 feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
+			throw new AvstemForsendelseTechnicalException(String.format("%s Kall mot  rdist001 feilet teknisk.  status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 	}

@@ -553,7 +553,7 @@
         "userStartDate" : null
       } ]
     },
-    "summary" : "Dokumentdistribusjon Kanal-PRINT: Utsendelse av dokumenter/brev har ikke mottatt kvittering- 2",
+    "summary" : "Dokumentdistribusjon Kanal-PRINT: Utsendelse av dokumenter/brev har ikke mottatt kvittering- 5",
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",
@@ -573,7 +573,7 @@
       "active" : null,
       "timeZone" : null
     },
-    "description" : "Se i vedlegg oversikten av 2 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+    "description" : "Se i vedlegg oversikten av 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
     "labels" : [ "dokumentdistribusjon_avvik" ]
   }
 }

@@ -14,19 +14,17 @@ import lombok.ToString;
 @ToString
 public class AvstemForsendelseResponseTo {
 
-	private String forsendelseId;
-	private String resendingForsendelseId;
-	private String originalForsendelseId;
-	private String konversasjonId;
-	private String journalpostId;
-	private String digitalDistributorId;
-	private String bestillendeFagsystem;
-	private String fagomradeCode;
-	private String dokumentStatus;
+	private String distribusjonId;
 	private String distribusjonKanal;
 	private String distribusjonStatus;
 	private String opprettetDato;
 	private String distribusjonDato;
+	private String forsendelseId;
+	private String dokumentId;
+	private String dokumentStatus;
+	private String konversasjonId;
+	private String bestillendeFagsystem;
+	private String fagomradeCode;
+	private String journalpostId;
 	private final String brevProduksjonApplikasjon;
-	private Long countDokument;
 }

@@ -10,9 +10,8 @@ import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.nais.ApplicationConfig;
 import no.nav.dokdistavstemming.service.CSVProdusere;
-import no.nav.dokdistavstemming.service.serviceimp.AvstemForsendelseService;
+import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
-import no.nav.dokdistavstemming.utils.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,16 +22,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 
 import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 
 @Profile("itest")
@@ -60,7 +55,7 @@ public abstract class AbstractIT {
 	@Inject
 	public CSVProdusere csvProdusere;
 	@Inject
-	public AvstemForsendelseService avstemForsendelseService;
+	public Sdist002Service sdist002Service;
 
 
 	@Mock

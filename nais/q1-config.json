@@ -1,0 +1,12 @@
+{
+  "ADMINISTRERFORSENDELSE_V1_URL": "https://app-q1.adeo.no/dokdist/rest/v1/administrerforsendelse",
+  "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
+  "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
+  "JIRA_V1_URL": "https://jira-q1.adeo.no",
+  "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
+  "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
+  "NAMESPACE": "q1",
+  "INGRESSES": [
+    "https://dokdistavstemming-q1.nais.preprod.local"
+  ]
+}
