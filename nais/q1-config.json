@@ -3,7 +3,6 @@
   "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
   "JIRA_V1_URL": "https://jira-q1.adeo.no",
-  "VAULT": "/kv/preprod/fss/joarkadmin/q1",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
   "NAMESPACE": "q1",
