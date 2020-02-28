@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if test -f /var/run/secrets/nais.io/dokdistavstemming/username;
+if test -f /var/run/secrets/nais.io/srvdokdistavstemming/username;
 then
     echo "Setting SERVICEUSER_USERNAME"
     export SERVICEUSER_USERNAME=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/username)
