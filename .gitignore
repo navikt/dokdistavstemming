@@ -1,7 +1,8 @@
 ###Maven##
 HELP.md
 target/
-*.mvn/
+.mvn/
+**/.mvn
 
 ### IntelliJ IDEA ###
 *.idea
