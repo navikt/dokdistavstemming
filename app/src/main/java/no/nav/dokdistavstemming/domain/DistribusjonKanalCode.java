@@ -8,10 +8,10 @@ public enum DistribusjonKanalCode {
 
 	SDP,
 	SDP_PRINT,
-	PRINT,
 	E_HANDEL,
 	PRINT_DITTNAV,
 	DITTNAV,
-	TRYGDERETTEN
+	TRYGDERETTEN,
+	PRINT
 
 }
