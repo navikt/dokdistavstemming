@@ -24,15 +24,12 @@ public class Sdist002ScheduleConfig implements SchedulingConfigurer {
 
     private static final int POOL_SIZE = 4;
 
-    private final String cronSchedule;
     private final String jiraSchedule;
     private final Sdist002Service sdist002Service;
 
 
-    public Sdist002ScheduleConfig(@Value("${scheduler_interval_cron}") String cronScheduler,
-                                  @Value("${scheduler_jira_cron}") String jiraSchedule,
+    public Sdist002ScheduleConfig(@Value("${scheduler_jira_cron}") String jiraSchedule,
                                   Sdist002Service sdist002Service) {
-        this.cronSchedule = cronScheduler;
         this.sdist002Service = sdist002Service;
         this.jiraSchedule = jiraSchedule;
 
@@ -51,8 +48,7 @@ public class Sdist002ScheduleConfig implements SchedulingConfigurer {
         scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
         scheduledTaskRegistrar.addCronTask(() ->
                 sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal(), jiraSchedule);
-        scheduledTaskRegistrar.addCronTask(()-> Arrays.stream(DistribusjonKanalCode.values())
-                .forEach(kanal-> sdist002Service.getAvstemmForsendelseByDistKanal(kanal.name())),cronSchedule);
+
     }
 
 
