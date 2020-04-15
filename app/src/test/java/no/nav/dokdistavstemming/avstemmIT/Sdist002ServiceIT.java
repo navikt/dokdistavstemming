@@ -59,7 +59,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = sdist002Service.getAvstemmForsendelseByDistKanal(SDP.name());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/6")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
 	}
 

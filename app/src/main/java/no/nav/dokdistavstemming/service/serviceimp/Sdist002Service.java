@@ -33,7 +33,7 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
-	private static final Long ANTALL_TIMER = 6L;
+	private static final Long ANTALL_TIMER = 10L;
 	private static final Long ANTALL_DAGER = 120L; // 144 timer er 6 dager
 	private static final String UKJENT = "Ukjent";
 	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
