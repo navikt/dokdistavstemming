@@ -32,6 +32,10 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_PRINT;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.ADMINISTRERFORSENDELSE_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_MMA_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
@@ -114,7 +118,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 
 		sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
-		verify(7, putRequestedFor(urlEqualTo("/administrerforsendelse/avstemforsendelser"))
+		verify(7, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
 				.withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
 
 	}
@@ -130,10 +134,10 @@ public class Sdist002ServiceIT extends AbstractIT {
 		assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
-		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")));
-		verify(1, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
-		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue/MMA-134/attachments")));
-		verify(1, putRequestedFor(urlEqualTo("/administrerforsendelse/avstemforsendelser")));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
+		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(1, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
 
 	}
 
@@ -147,10 +151,10 @@ public class Sdist002ServiceIT extends AbstractIT {
 
 		assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
-		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")));
-		verify(1, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
-		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue/MMA-134/attachments")));
-		verify(3, putRequestedFor(urlEqualTo("/administrerforsendelse/avstemforsendelser")));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
+		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(3, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
 
 	}
 
