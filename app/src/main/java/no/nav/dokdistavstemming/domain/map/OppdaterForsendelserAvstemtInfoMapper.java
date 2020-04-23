@@ -1,9 +1,11 @@
-package no.nav.dokdistavstemming.domain;
+package no.nav.dokdistavstemming.domain.map;
 
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
@@ -20,18 +22,13 @@ public class OppdaterForsendelserAvstemtInfoMapper {
     }
 
     List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList) {
-        List<OppdaterForsendelserAvstemtInfo.Forsendelse> forsendelser = new ArrayList<>();
 
-        avstemForsendelseResponseToList.forEach(avstemForsendelseResponseTo -> {
-            String forsendelseId = avstemForsendelseResponseTo.getForsendelseId();
+        return avstemForsendelseResponseToList.stream()
+                .map(avstemForsendelseResponseTo -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
+                        .forsendelseId(avstemForsendelseResponseTo.getForsendelseId())
+                        .build())
+                .collect(Collectors.toList());
 
-            forsendelser.add(OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
-                    .forsendelseId(forsendelseId)
-                    .build());
-
-        });
-
-        return forsendelser;
     }
 
 }

@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.service;
 
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
-import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfoMapper;
+import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import org.junit.jupiter.api.Test;
 

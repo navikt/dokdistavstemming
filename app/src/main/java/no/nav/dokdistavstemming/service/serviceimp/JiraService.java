@@ -39,7 +39,7 @@ public class JiraService {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		if (!isFilExistOgNotNull(fil)) {
-			log.info("Det fant ikke noen avvik fra dokumentdistribusjon(rdist002) og sdist002 kan ikke opprette jira sak");
+			log.info("Det fant ingen avvik fra dokumentdistribusjon(rdist002) og sdist002 kan ikke opprette jira sak");
 			return JiraSakResponseTo.builder()
 					.message("Ingen filer og kan ikke opprette jira-sak")
 					.httpStatusCode(HttpStatus.NO_CONTENT.value())

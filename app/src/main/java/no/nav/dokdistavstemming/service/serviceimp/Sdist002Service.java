@@ -7,7 +7,7 @@ import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvi
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfoMapper;
+import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.service.CSVProdusere;
