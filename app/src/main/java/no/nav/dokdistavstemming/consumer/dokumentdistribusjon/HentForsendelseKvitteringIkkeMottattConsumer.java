@@ -3,6 +3,7 @@ package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
@@ -67,6 +68,28 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 		} catch (HttpServerErrorException e) {
 			log.warn(String.format("%s Kall mot  rdist001 feilet teknisk. status=%s, feilmedling=%s", e.getStatusCode(), e.getResponseBodyAsString()));
 			throw new AvstemForsendelseTechnicalException(String.format("%s Kall mot  rdist001 feilet teknisk.  status=%s, feilmedling=%s",
+					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
+		}
+	}
+
+	@Override
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"}, percentiles = {0.5, 0.95})
+	public void oppdaterForsendelserAvstemDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
+
+		try {
+			HttpEntity httpEntity = new HttpEntity<>(oppdaterForsendelserAvstemtInfo, createHeaders());
+			log.info("{} mottat kall til å oppdatere forsendelser fra på rdist001 med  avstemtReferanse={}",
+					MDC.get(MDCConstants.MDC_CONSUMER_ID), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
+			restTemplate.exchange(administrerforsendelseV1Url + "/avstemforsendelser", HttpMethod.PUT, httpEntity, Object.class);
+			log.info("Forsendelser med forsendelseIder={} oppdatert", oppdaterForsendelserAvstemtInfo.getForsendelser());
+		} catch (HttpClientErrorException e) {
+			log.warn("Kall mot  rdist001 feilet med status={}, feilmelding={}", e.getStatusCode(), e.getMessage());
+			throw new AvstemForsendelseFunctionalException(String.format("Kall mot  rdist001 feilet med status=%s, feilmelding=%s",
+					e.getStatusCode(), e.getMessage()), e.getStatusCode());
+		} catch (HttpServerErrorException e) {
+			log.warn("Kall mot  rdist001 feilet teknisk. status={}, feilmelding={}", e.getStatusCode(), e.getResponseBodyAsString());
+			throw new AvstemForsendelseTechnicalException(String.format("Kall mot  rdist001 feilet teknisk.  status=%s, feilmedling=%s",
 					e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 	}

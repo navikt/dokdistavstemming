@@ -30,6 +30,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
+
 
 public class OpprettJiraSakServiceIT extends AbstractIT {
 
@@ -37,7 +41,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(jiraConsumer, meterRegistry);
+		jiraService = new JiraService(jiraConsumer);
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
@@ -57,7 +61,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(0));
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
-		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")).withRequestBody(equalToJson(classpathToString("__files/jirarequest-happy.json"))));
+		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue")).withRequestBody(equalToJson(classpathToString("__files/jira/jirarequest-happy.json"))));
 		verify(1, postRequestedFor(urlEqualTo("/rest/api/2/issue/MMA-134/attachments")));
 		verify(1, getRequestedFor(urlEqualTo("/rest/api/2/project/MMA")));
 	}

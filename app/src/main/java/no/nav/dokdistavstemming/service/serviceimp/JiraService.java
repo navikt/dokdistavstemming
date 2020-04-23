@@ -29,11 +29,9 @@ public class JiraService {
 
 	private static final String BROWSE = "/browse";
 	private JiraConsumer jiraConsumer;
-	private MeterRegistry meterRegistry;
 
-	public JiraService(JiraConsumer jiraConsumer, MeterRegistry meterRegistry) {
+	public JiraService(JiraConsumer jiraConsumer) {
 		this.jiraConsumer = jiraConsumer;
-		this.meterRegistry = meterRegistry;
 	}
 
 	@Monitor(value = "dokdist_request", extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
@@ -41,7 +39,7 @@ public class JiraService {
 
 		MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
 		if (!isFilExistOgNotNull(fil)) {
-			log.info("Det fant ikke noen avvik fra dokumentdistribusjon(rdist002) og dokdistavstemming har ikke opprettet jira sak");
+			log.info("Det fant ikke noen avvik fra dokumentdistribusjon(rdist002) og sdist002 kan ikke opprette jira sak");
 			return JiraSakResponseTo.builder()
 					.message("Ingen filer og kan ikke opprette jira-sak")
 					.httpStatusCode(HttpStatus.NO_CONTENT.value())
@@ -52,19 +50,17 @@ public class JiraService {
 		validateInput(issueInput);
 
 		try {
-			log.info(String.format("%s mottat kall til å opprette jira sak med vedlagge fra forskjellige distribusjonkanaler ", MDC.get(MDCConstants.MDC_REQUEST_ID)));
+			log.info(String.format("%s mottat kall til å opprette jira sak", MDC.get(MDCConstants.MDC_REQUEST_ID)));
 			Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
 			jiraConsumer.leggVedlegg(issue.getKey(), fil);
 			log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
 					MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
+					.jiraSakKey(issue.getKey())
 					.message(String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
-			meterRegistry.counter("opprettet_jira",
-					"jiraSakUrl", jiraSakResponseTo.getMessage() == null ? "Ukjent" : jiraSakResponseTo.getMessage())
-					.increment();
 
-			log.info(String.format("DokDistAvstemming opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
+			log.info(String.format("Sdist002 opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
 			return jiraSakResponseTo;
 
 		} catch (AvstemForsendelseFunctionalException e) {

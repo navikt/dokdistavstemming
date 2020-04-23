@@ -36,6 +36,8 @@ public class AvstemForsendelseRequestTo {
 		private final String bestillendeFagsystem;
 		private final String fagomradeCode;
 		private final String journalpostId;
+		private final String avstemtReferanse;
+		private final String avstemtDato;
 		private final String brevProduksjonApplikasjon;
 
 	}

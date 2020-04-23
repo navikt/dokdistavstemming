@@ -42,6 +42,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
+
 @ExtendWith(MockitoExtension.class)
 public class Sdist002ServiceTest {
 
