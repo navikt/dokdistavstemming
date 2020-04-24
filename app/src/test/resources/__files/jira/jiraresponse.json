@@ -303,7 +303,7 @@
     "customfield_17621": null,
     "customfield_17620": null,
     "aggregatetimespent": null,
-    "customfield_10310": "***gammelt_fnr***54775807",
+    "customfield_10310": "9223372036854775807",
     "workratio": -1,
     "customfield_20228": null,
     "customfield_21318": null,
@@ -345,7 +345,7 @@
       {
         "self": "https://jira-q1.adeo.no/rest/api/2/attachment/130330",
         "id": "130330",
-        "filename": "dokdistavstemming-***gammelt_fnr***752372969.csv",
+        "filename": "dokdistavstemming-13072593800752372969.csv",
         "author": {
           "self": "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming",
           "name": "srvjiradokdistavstemming",
@@ -364,12 +364,12 @@
         "created": "2019-11-22T14:04:46.000+0100",
         "size": 5327,
         "mimeType": "text/csv",
-        "content": "https://jira-q1.adeo.no/secure/attachment/130330/dokdistavstemming-***gammelt_fnr***752372969.csv"
+        "content": "https://jira-q1.adeo.no/secure/attachment/130330/dokdistavstemming-13072593800752372969.csv"
       },
       {
         "self": "https://jira-q1.adeo.no/rest/api/2/attachment/130332",
         "id": "130332",
-        "filename": "dokdistavstemming-***gammelt_fnr***8584628.csv",
+        "filename": "dokdistavstemming-986104543378584628.csv",
         "author": {
           "self": "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming",
           "name": "srvjiradokdistavstemming",
@@ -388,12 +388,12 @@
         "created": "2019-11-22T14:09:22.000+0100",
         "size": 1926,
         "mimeType": "text/csv",
-        "content": "https://jira-q1.adeo.no/secure/attachment/130332/dokdistavstemming-***gammelt_fnr***8584628.csv"
+        "content": "https://jira-q1.adeo.no/secure/attachment/130332/dokdistavstemming-986104543378584628.csv"
       },
       {
         "self": "https://jira-q1.adeo.no/rest/api/2/attachment/130331",
         "id": "130331",
-        "filename": "dokdistavstemming-***gammelt_fnr***8584628.csv",
+        "filename": "dokdistavstemming-986104543378584628.csv",
         "author": {
           "self": "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming",
           "name": "srvjiradokdistavstemming",
@@ -412,7 +412,7 @@
         "created": "2019-11-22T14:05:29.000+0100",
         "size": 1926,
         "mimeType": "text/csv",
-        "content": "https://jira-q1.adeo.no/secure/attachment/130331/dokdistavstemming-***gammelt_fnr***8584628.csv"
+        "content": "https://jira-q1.adeo.no/secure/attachment/130331/dokdistavstemming-986104543378584628.csv"
       }
     ],
     "customfield_20329": null,

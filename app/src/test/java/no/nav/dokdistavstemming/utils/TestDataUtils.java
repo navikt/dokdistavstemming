@@ -11,6 +11,7 @@ import com.pep1.jira.client.domain.project.Project;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class TestDataUtils {
     public static final String PRODUKSJON_DATO = convertDateTimeToString(LocalDateTime.now().minusDays(6).minusMinutes(23));
     public static final String EKSPEDERT_DATO = convertDateTimeToString(LocalDateTime.now());
     public static final String DISTRIBUSJON_DATO = convertDateTimeToString(LocalDateTime.now().minusDays(7).minusHours(23).minusMinutes(59));
-    public static final String MOTTAKER_ID = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID = "26016826020";
     public static final String DIGITAL_DISTRIBUTOR_ID = "996460320";
     public static final String ARKIV_KODE = "389426100";
     public static final String DOKUMENT_STATUS = "OPPRETTET";
@@ -44,7 +45,7 @@ public class TestDataUtils {
     public static final String PRODUKSJON_DATO_2 = convertDateTimeToString(LocalDateTime.now().minusDays(6).minusMinutes(23));
     public static final String DISTRIBUSJON_DATO_2 = convertDateTimeToString(LocalDateTime.now().minusHours(6).minusSeconds(59));
     public static final String ARKIV_KODE_2 = "389426102";
-    public static final String MOTTAKER_ID_2 = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID_2 = "26016826022";
     public static final String DOKUMENT_STATUS_2 = "OPPRETTET";
     public static final String DISTRIBUSJON_STATUS_2 = "OPPRETTET";
     public static final DistribusjonKanalCode DISTRIBUSJON_KANAL_2 = DistribusjonKanalCode.SDP;
@@ -54,7 +55,7 @@ public class TestDataUtils {
     public static final String FAGOMRADE_CODE_3 = "AAP";
     public static final LocalDateTime OPPRETTET_DATO_3 = LocalDateTime.now().minusHours(6).minusSeconds(3);
     public static final LocalDateTime DISTRIBUSJON_DATO_3 = LocalDateTime.now().minusHours(6).minusMinutes(1).minusSeconds(59);
-    public static final String MOTTAKER_ID_3 = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID_3 = "26016826023";
     public static final String ARKIV_KODE_3 = "389426113";
     public static final String DIGITAL_DISTRIBUTOR_ID_3 = "984661183";
     public static final String DOKUMENT_STATUS_3 = "OVERSENDT";
@@ -69,6 +70,9 @@ public class TestDataUtils {
     public static String DISTRIBUSJON_STATUS_J = "OVERSENDT";
     public static String DISRIBUSJON_DATO_J = "2020-01-14 13:00:48";
     public static DistribusjonKanalCode DISTRIBUSJON_KANAL_P_J = DistribusjonKanalCode.PRINT;
+    public static final String FORSENDELSE_ID_1 = "1";
+    public static final String FORSENDELSE_ID_2 = "2";
+    public static String AVSTEMT_REFERANSE ="MMA-1234";
 
     public static List<AvstemForsendelseRequestTo> createDokDistAvstemmingRequestList() {
         return Arrays.asList(AvstemForsendelseRequestTo.builder()
@@ -91,6 +95,7 @@ public class TestDataUtils {
                         .opprettetDato(PRODUKSJON_DATO_2)
                         .distribusjonDato(DISTRIBUSJON_DATO_2)
                         .dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
+                                .forsendelseId(FORSENDELSE_ID_2)
                                 .bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
                                 .dokumentStatus(DOKUMENT_STATUS_2)
                                 .fagomradeCode(FAGOMRADE_CODE_2)
@@ -105,6 +110,7 @@ public class TestDataUtils {
                         .opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
                         .distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
                         .dokumenter(Arrays.asList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
+                                .forsendelseId(FORSENDELSE_ID_1)
                                 .bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
                                 .dokumentStatus(DOKUMENT_STATUS_3)
                                 .journalpostId(MOTTAKER_ID_3)
@@ -149,6 +155,13 @@ public class TestDataUtils {
                         .journalpostId(ARKIV_KODE_3)
                         .build()))
                 .build());
+    }
+
+    public static JiraSakResponseTo createJiraSakResponseTo(){
+        return JiraSakResponseTo.builder()
+                .jiraSakKey(AVSTEMT_REFERANSE)
+                .message("https://jira.adeo.no/browse/MMA-1234")
+                .build();
     }
 
 }

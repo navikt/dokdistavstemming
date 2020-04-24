@@ -2,7 +2,7 @@
   {
     "self": "https://jira-q1.adeo.no/rest/api/2/attachment/130332",
     "id": "130332",
-    "filename": "dokdistavstemming-***gammelt_fnr***8584628.csv",
+    "filename": "dokdistavstemming-986104543378584628.csv",
     "author": {
       "self": "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming",
       "name": "srvjiradokdistavstemming",
@@ -21,6 +21,6 @@
     "created": "2019-11-22T14:09:22.000+0100",
     "size": 1926,
     "mimeType": "text/csv",
-    "content": "https://jira-q1.adeo.no/secure/attachment/130332/dokdistavstemming-***gammelt_fnr***8584628.csv"
+    "content": "https://jira-q1.adeo.no/secure/attachment/130332/dokdistavstemming-986104543378584628.csv"
   }
 ]

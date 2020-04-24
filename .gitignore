@@ -3,6 +3,7 @@ HELP.md
 target/
 .mvn/
 **/.mvn
+app/dokdistavstemming*.csv
 
 ### IntelliJ IDEA ###
 *.idea

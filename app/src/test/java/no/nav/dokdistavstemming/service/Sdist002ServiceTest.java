@@ -42,6 +42,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
+
 @ExtendWith(MockitoExtension.class)
 public class Sdist002ServiceTest {
 
@@ -88,7 +92,7 @@ public class Sdist002ServiceTest {
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(0)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 
-		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getAvstemmForsendelseByDistKanal(PRINT.name());
+		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL.name()));
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
@@ -99,7 +103,7 @@ public class Sdist002ServiceTest {
 	@Test
 	public void shouldHentForsendelserDistKanalPrintReturnsNull(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
-		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getAvstemmForsendelseByDistKanal(PRINT.name());
+		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 		assertThat(avstemForsendelseResponseTos,nullValue());
 		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
 	}
@@ -109,7 +113,7 @@ public class Sdist002ServiceTest {
 	public void shouldHentForsendelserDistKanalUtenPrint(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
-		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getAvstemmForsendelseByDistKanal(SDP.name());
+		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_3.name()));
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_3));
@@ -121,7 +125,7 @@ public class Sdist002ServiceTest {
 	public void returnsNullWhenHentForsendelserKvitteringIkkeMottattGetNullorEmptyList(){
 
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
-		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getAvstemmForsendelseByDistKanal(SDP.name());
+		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
 		assertThat(avstemForsendelseResponseTos,nullValue());
 	}

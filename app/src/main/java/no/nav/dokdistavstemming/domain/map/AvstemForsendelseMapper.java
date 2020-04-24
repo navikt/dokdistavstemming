@@ -43,6 +43,8 @@ public class AvstemForsendelseMapper {
 							.bestillendeFagsystem(dokumentInfo.getBestillendeFagsystem())
 							.fagomradeCode(dokumentInfo.getFagomradeCode())
 							.brevProduksjonApplikasjon(dokumentInfo.getBrevProduksjonApplikasjon())
+							.avstemtDato(dokumentInfo.getAvstemtDato())
+							.avstemtReferanse(dokumentInfo.getAvstemtReferanse())
 							.build();
 				}).collect(Collectors.toList());
 

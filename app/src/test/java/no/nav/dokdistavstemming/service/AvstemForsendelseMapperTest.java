@@ -20,6 +20,9 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+/**
+ * @author Tsigab Angosom Gebremedhin, NAV.
+ */
 
 public class AvstemForsendelseMapperTest {
 
