@@ -8,7 +8,7 @@ fi
 if test -f /var/run/secrets/nais.io/srvdokdistavstemming/password;
 then
     echo "Setting SERVICEUSER_PASSWORD"
-    export SERVICEUSER_***passord=gammelt_passord***)
+    export SERVICEUSER_PASSWORD=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
 fi
 
 
@@ -21,7 +21,7 @@ fi
 if test -f /var/run/secrets/nais.io/srvjiradokdistavstemming/password;
 then
     echo "Setting JIRA_PASSWORD"
-    export JIRA_***passord=gammelt_passord***)
+    export JIRA_PASSWORD=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/password)
 fi
 
 

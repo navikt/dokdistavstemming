@@ -7,8 +7,8 @@ import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvi
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
+import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import org.springframework.stereotype.Component;
@@ -57,7 +57,6 @@ public class Sdist002Service {
         List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 
         return avstemForsendelseRequestTos.stream()
-                .filter(avstemForsendelse -> !avstemForsendelse.getDokumenter().isEmpty())
                 .collect(Collectors.toSet());
     }
 
@@ -65,20 +64,20 @@ public class Sdist002Service {
     public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
         Arrays.stream(DistribusjonKanalCode.values())
                 .forEach(distribusjonKanal -> {
-                    List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getAvstemmForsendelseByDistKanal(distribusjonKanal.name());
+                    List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getForsendelserByDistirbusjonKanal(distribusjonKanal.name());
                     if (avstemForsendelseResponseTos == null) {
                         return;
                     } else {
                         File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
                         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
-                        hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
+                        hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
                     }
                 });
 
     }
 
 
-    public List<AvstemForsendelseResponseTo> getAvstemmForsendelseByDistKanal(String distribusjonKanal) {
+    public List<AvstemForsendelseResponseTo> getForsendelserByDistirbusjonKanal(String distribusjonKanal) {
         AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
         Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
         return avstemForsendelseRequestTos.isEmpty() || avstemForsendelseRequestTos == null ? null :
@@ -94,13 +93,13 @@ public class Sdist002Service {
                                     avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
                             return avstemForsendelse;
                         })
-						.filter(avstemForsendelseResponseTo -> isAvstemtReferanseNull(avstemForsendelseResponseTo.getAvstemtReferanse()))
-						.collect(Collectors.toList());
+                        .filter(avstemForsendelseResponseTo -> isAvstemtReferanseNull(avstemForsendelseResponseTo.getAvstemtReferanse()))
+                        .collect(Collectors.toList());
     }
 
-	private boolean isAvstemtReferanseNull(String avstemtReferense){
-		return avstemtReferense==null;
-	}
+    private boolean isAvstemtReferanseNull(String avstemtReferanse) {
+        return avstemtReferanse == null;
+    }
 
     private void incrementFunctionalMetrics(String distribusjonKanal, String opprettetDato,
                                             String dokumentStatus, String journalpostId) {

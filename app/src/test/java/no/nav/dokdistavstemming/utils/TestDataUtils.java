@@ -30,7 +30,7 @@ public class TestDataUtils {
     public static final String PRODUKSJON_DATO = convertDateTimeToString(LocalDateTime.now().minusDays(6).minusMinutes(23));
     public static final String EKSPEDERT_DATO = convertDateTimeToString(LocalDateTime.now());
     public static final String DISTRIBUSJON_DATO = convertDateTimeToString(LocalDateTime.now().minusDays(7).minusHours(23).minusMinutes(59));
-    public static final String MOTTAKER_ID = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID = "26016826020";
     public static final String DIGITAL_DISTRIBUTOR_ID = "996460320";
     public static final String ARKIV_KODE = "389426100";
     public static final String DOKUMENT_STATUS = "OPPRETTET";
@@ -45,7 +45,7 @@ public class TestDataUtils {
     public static final String PRODUKSJON_DATO_2 = convertDateTimeToString(LocalDateTime.now().minusDays(6).minusMinutes(23));
     public static final String DISTRIBUSJON_DATO_2 = convertDateTimeToString(LocalDateTime.now().minusHours(6).minusSeconds(59));
     public static final String ARKIV_KODE_2 = "389426102";
-    public static final String MOTTAKER_ID_2 = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID_2 = "26016826022";
     public static final String DOKUMENT_STATUS_2 = "OPPRETTET";
     public static final String DISTRIBUSJON_STATUS_2 = "OPPRETTET";
     public static final DistribusjonKanalCode DISTRIBUSJON_KANAL_2 = DistribusjonKanalCode.SDP;
@@ -55,7 +55,7 @@ public class TestDataUtils {
     public static final String FAGOMRADE_CODE_3 = "AAP";
     public static final LocalDateTime OPPRETTET_DATO_3 = LocalDateTime.now().minusHours(6).minusSeconds(3);
     public static final LocalDateTime DISTRIBUSJON_DATO_3 = LocalDateTime.now().minusHours(6).minusMinutes(1).minusSeconds(59);
-    public static final String MOTTAKER_ID_3 = "***gammelt_fnr***";
+    public static final String MOTTAKER_ID_3 = "26016826023";
     public static final String ARKIV_KODE_3 = "389426113";
     public static final String DIGITAL_DISTRIBUTOR_ID_3 = "984661183";
     public static final String DOKUMENT_STATUS_3 = "OVERSENDT";

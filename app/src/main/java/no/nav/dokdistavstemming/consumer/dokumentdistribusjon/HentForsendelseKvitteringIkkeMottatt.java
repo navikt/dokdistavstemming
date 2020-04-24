@@ -13,6 +13,6 @@ public interface HentForsendelseKvitteringIkkeMottatt {
 
 	List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer);
 
-	void oppdaterForsendelserAvstemDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo);
+	void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo);
 
 }
