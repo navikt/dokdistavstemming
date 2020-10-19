@@ -36,6 +36,12 @@
         <jackson.version>2.10.0</jackson.version>
         <opencsv.version>4.3.1</opencsv.version>
         <freg.sercurity.version>3.1.0</freg.sercurity.version>
+        <spring-cloud-wiremock.version>1.2.5.RELEASE</spring-cloud-wiremock.version>
+        <wiremock-standalone.version>2.19.0</wiremock-standalone.version>
+        <commons-io.version>2.6</commons-io.version>
+        <spring-context-support.version>5.1.9.RELEASE</spring-context-support.version>
+        <junit-jupiter-params.version>5.4.2</junit-jupiter-params.version>
+        <jira-rest-client-core.version>4.0.0</jira-rest-client-core.version>
     </properties>
 
     <dependencyManagement>
@@ -109,15 +115,36 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-wiremock</artifactId>
-                <version>1.2.5.RELEASE</version>
+                <version>${spring-cloud-wiremock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-standalone</artifactId>
+                <version>${wiremock-standalone.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-standalone</artifactId>
-                <version>2.19.0</version>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring-context-support.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter-params.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-rest-java-client-core</artifactId>
+                <version>${jira-rest-client-core.version}</version>
             </dependency>
 
             <!--Selftest metrics-->
