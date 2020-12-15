@@ -45,7 +45,7 @@ public class OppretteJiraSakRequestUtil {
 				.issuetype(issueType)
 				.reporter(reporter)
 				.labels(labels)
-				.summary(String.format("Dokumentdistribusjon Kanal-%s: Utsendelse av dokumenter/brev har ikke mottatt kvittering- %s", title,avvikSize))
+				.summary(String.format("Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering", title,avvikSize))
 				.description(String.format("Se i vedlegg oversikten av %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.", avvikSize))
 				.build();
 		issueInput.setFields(issueFields);
