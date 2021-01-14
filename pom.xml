@@ -28,7 +28,7 @@
         <javax.inject.version>1</javax.inject.version>
         <logstash-logback-encoder.version>6.3</logstash-logback-encoder.version>
         <lombok.version>1.18.4</lombok.version>
-        <junit5.version>5.3.2</junit5.version>
+        <junit5.version>5.7.0</junit5.version>
         <junit5.mockito.version>2.23.0</junit5.mockito.version>
         <resilience4j.version>0.11.0</resilience4j.version>
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
