@@ -88,7 +88,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
 		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/408")));
 		assertThat(result.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_PRINT));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
@@ -104,7 +104,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
 		assertThat(csvFiler.isFile(), is(true));
 		assertThat(csvFiler.length() != 0, is(true));
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/408")));
 
 	}
 
