@@ -3,6 +3,7 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -34,30 +36,31 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 @Slf4j
 public class Sdist002Service {
 
-    private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dok_request_functional_counter";
-    private static final Long ANTALL_TIMER = 10L;
-    private static final Long ANTALL_DAGER = 408L; // 120 timer er 5 dager
+    private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
     private static final String UKJENT = "Ukjent";
     private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
     private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
     private final CSVProdusere csvProdusere;
     private final MeterRegistry meterRegistry;
     private final JiraService jiraService;
+    private final DokdistavstemmingProp dokdistavstemmingProp;
 
-    public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt, CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService) {
+    public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt,
+                           CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService,
+                           DokdistavstemmingProp dokdistavstemmingProp) {
         this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
         this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
         this.csvProdusere = csvProdusere;
         this.meterRegistry = meterRegistry;
         this.jiraService = jiraService;
+        this.dokdistavstemmingProp = dokdistavstemmingProp;
     }
 
     public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
-        Long period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? ANTALL_DAGER : ANTALL_TIMER;
+        int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimePrint() : dokdistavstemmingProp.getDelayTimeSDP();
         List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 
-        return avstemForsendelseRequestTos.stream()
-                .collect(Collectors.toSet());
+        return new HashSet<>(avstemForsendelseRequestTos);
     }
 
 
@@ -83,7 +86,7 @@ public class Sdist002Service {
         return avstemForsendelseRequestTos.isEmpty() || avstemForsendelseRequestTos == null ? null :
                 avstemForsendelseRequestTos.stream()
                         .filter(Objects::nonNull)
-                        .map(hentForsendelse -> avstemForsendelseMapper.mapAvstemmForsendelser(hentForsendelse))
+                        .map(avstemForsendelseMapper::mapAvstemmForsendelser)
                         .flatMap(Collection::stream)
                         .sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
                         .map(avstemForsendelse -> {

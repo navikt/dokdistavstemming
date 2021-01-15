@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming.service;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottattConsumer;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
@@ -35,7 +36,8 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokDistAvstemmi
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -64,6 +66,8 @@ public class Sdist002ServiceTest {
 
 	@Mock
 	private JiraService jiraService;
+	
+	private DokdistavstemmingProp dokdistavstemmingProp;
 
 	@Mock
 	private Counter mockCounter;
@@ -74,14 +78,16 @@ public class Sdist002ServiceTest {
 		hentForsendelseKvitteringIkkeMottatt = mock(HentForsendelseKvitteringIkkeMottattConsumer.class);
 		csvProdusere = mock(CSVProdusereImpl.class);
 		argument = ArgumentCaptor.forClass(Long.class);
-		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry,jiraService);
+		dokdistavstemmingProp = new DokdistavstemmingProp();
+		
+		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry,jiraService, dokdistavstemmingProp);
 	}
 
 	@Test
 	void shouldCallHentForsendelseKvitteringIkkeMottattDistKanalSDP() {
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(createDokDistAvstemmingSDPRequestTo());
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(createDokDistAvstemmingSDPRequestTo());
 		Set<AvstemForsendelseRequestTo> result = sdist002Service.hentForsendelserKvitteringIkkeMottattService(SDP.name());
-		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), anyLong());
+		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 		assertThat(result.iterator().next().getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_3.name()));
 		assertThat(result.iterator().next().getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_3));
 		assertThat(result.iterator().next().getDistribusjonId(),is(DISTRIBUSJON_ID_3));
@@ -89,42 +95,42 @@ public class Sdist002ServiceTest {
 
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint(){
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(0)));
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Collections.singletonList(createDokDistAvstemmingRequestList().get(0)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL.name()));
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS));
-		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
+		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt());
 
 	}
 
 	@Test
 	public void shouldHentForsendelserDistKanalPrintReturnsNull(){
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Collections.emptyList());
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 		assertThat(avstemForsendelseResponseTos,nullValue());
-		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
+		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt());
 	}
 
 
 	@Test
 	public void shouldHentForsendelserDistKanalUtenPrint(){
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_3.name()));
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonStatus(),is(DISTRIBUSJON_STATUS_3));
-		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong());
+		verify(hentForsendelseKvitteringIkkeMottatt,times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt());
 
 	}
 
 	@Test
 	public void returnsNullWhenHentForsendelserKvitteringIkkeMottattGetNullorEmptyList(){
 
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Collections.emptyList());
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Collections.emptyList());
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
 		assertThat(avstemForsendelseResponseTos,nullValue());

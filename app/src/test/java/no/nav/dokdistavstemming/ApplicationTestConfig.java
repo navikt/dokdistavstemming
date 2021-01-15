@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming;
 
 
+import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +13,14 @@ import static org.mockito.Mockito.mock;
 
 @Configuration
 @Profile("itest,wiremock")
-@EnableConfigurationProperties({ServiceuserAlias.class})
+@EnableConfigurationProperties({ServiceuserAlias.class, DokdistavstemmingProp.class})
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")
 public class ApplicationTestConfig {
 
 	@Bean
 	public ServiceuserAlias serviceuserAlias(){return mock(ServiceuserAlias.class);}
+
+	@Bean
+	public DokdistavstemmingProp dokdistavstemmingProp(){return mock(DokdistavstemmingProp.class);}
 
 }

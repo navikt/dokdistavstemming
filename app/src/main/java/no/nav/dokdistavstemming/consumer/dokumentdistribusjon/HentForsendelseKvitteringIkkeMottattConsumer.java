@@ -10,7 +10,6 @@ import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +23,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,24 +48,23 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
     @Override
     @Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
     @Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"}, percentiles = {0.5, 0.95})
-    public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, Long antallTimer) {
+    public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
         MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
         try {
             HttpHeaders httpHeaders = createHeaders();
             log.info("{} mottat kall til å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
                     MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer);
-            ResponseEntity<List<AvstemForsendelseRequestTo>> responseEntity = restTemplate
-                    .exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer.intValue()),
-                            HttpMethod.GET, new HttpEntity<>(httpHeaders), new ParameterizedTypeReference<>() {
-                            });
+            ResponseEntity<AvstemForsendelseRequestTo[]> responseEntity = restTemplate
+                    .exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer),
+                            HttpMethod.GET, new HttpEntity<>(httpHeaders),  AvstemForsendelseRequestTo[].class );
 
-            return responseEntity.getBody() == null ? Collections.emptyList() : responseEntity.getBody();
+            return responseEntity.getBody() == null ? Collections.emptyList() : Arrays.asList(responseEntity.getBody());
         } catch (HttpClientErrorException e) {
             log.warn("{} Kall mot rdist001 feilet med status={}, feilmelding={}", MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage());
             throw new AvstemForsendelseFunctionalException(String.format("%s Kall mot rdist001 feilet med status=%s, feilmelding=%s",
                     e.getStatusCode(), e.getMessage()), e.getStatusCode());
         } catch (HttpServerErrorException e) {
-            log.warn("{} Kall mot rdist001 feilet teknisk. status={}, feilmedling={}", e.getStatusCode(), e.getResponseBodyAsString());
+            log.warn("Kall mot rdist001 feilet teknisk. status={}, feilmedling={}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new AvstemForsendelseTechnicalException(String.format("%s Kall mot rdist001 feilet teknisk. status=%s, feilmedling=%s",
                     e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode());
         }

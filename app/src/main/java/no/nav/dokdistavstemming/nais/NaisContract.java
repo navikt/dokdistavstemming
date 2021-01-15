@@ -100,7 +100,6 @@ public class NaisContract {
 	}
 
 	private void checkCriticalDependencies(List<DependencyCheckResult> results) {
-
 		Flowable.fromIterable(abstractDependencyCheckList)
 				.filter(dependency -> dependency.getImportance().equals(Importance.CRITICAL))
 				.parallel()
