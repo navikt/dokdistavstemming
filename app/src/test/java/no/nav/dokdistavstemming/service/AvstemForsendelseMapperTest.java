@@ -37,7 +37,7 @@ public class AvstemForsendelseMapperTest {
 	@Test
 	public void shouldConvertStringToDateTime(){
 		LocalDateTime distributsionDato = ConverterUtils.convertStringToLocalDateTime(DISTRIBUSJON_DATO);
-		assertThat(distributsionDato.getYear(),is(2020));
+		assertThat(distributsionDato.getYear(),is(2021));
 	}
 
 	public void assertResponse(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
