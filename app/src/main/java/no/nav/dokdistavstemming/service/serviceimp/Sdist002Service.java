@@ -87,7 +87,7 @@ public class Sdist002Service {
                         .flatMap(Collection::stream)
                         .sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
                         .map(avstemForsendelse -> {
-                            incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getOpprettetDato(), avstemForsendelse.getDistribusjonStatus(), avstemForsendelse.getJournalpostId());
+                            incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
                             log.info(String.format("Sdist002 har fant avvik forsendelser med forsendelseId=%s, dokumentId=%s, dokumentStatus=%s,opprettetDato=%s" +
                                             ",distribusjonKanal=%s,journalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDokumentId(), avstemForsendelse.getDokumentStatus(), avstemForsendelse.getOpprettetDato(),
                                     avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
@@ -101,8 +101,8 @@ public class Sdist002Service {
         return avstemtReferanse == null;
     }
 
-    private void incrementFunctionalMetrics(String distribusjonKanal, String opprettetDato,
-                                            String dokumentStatus, String journalpostId) {
+    private void incrementFunctionalMetrics(String distribusjonKanal,
+                                            String dokumentStatus) {
         meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
                 "distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
                 "dokumentStatus", dokumentStatus == null ? UKJENT : dokumentStatus).increment();

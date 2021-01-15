@@ -90,7 +90,7 @@ public class Sdist002ServiceTest {
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(0)));
-		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
+		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 
@@ -112,7 +112,7 @@ public class Sdist002ServiceTest {
 	@Test
 	public void shouldHentForsendelserDistKanalUtenPrint(){
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyLong())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
-		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
+		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
 		assertThat(avstemForsendelseResponseTos.get(0).getDistribusjonKanal(),is(DISTRIBUSJON_KANAL_3.name()));
