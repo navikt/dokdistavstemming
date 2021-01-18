@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.nais;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.metrics.DokMonitoringAspect;
@@ -15,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")
 @Configuration
-@EnableConfigurationProperties(value = {ServiceuserAlias.class, JiraServiceuserAlias.class})
+@EnableConfigurationProperties(value = {ServiceuserAlias.class, JiraServiceuserAlias.class, DokdistavstemmingProp.class})
 @EnableAspectJAutoProxy
 @EnableRetry
 @EnableScheduling

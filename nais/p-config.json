@@ -5,6 +5,7 @@
   "JIRA_V1_URL": "https://jira.adeo.no",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
+  "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
   "NAMESPACE": "default",
   "INGRESSES": [
     "https://dokdistavstemming.nais.adeo.no"

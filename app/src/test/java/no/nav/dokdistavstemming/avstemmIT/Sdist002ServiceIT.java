@@ -4,6 +4,7 @@ package no.nav.dokdistavstemming.avstemmIT;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
@@ -65,13 +66,15 @@ public class Sdist002ServiceIT extends AbstractIT {
 	private MeterRegistry meterRegistry;
 	@Inject
 	private JiraService jiraService;
+	@Inject
+	private DokdistavstemmingProp dokdistavstemmingProp;
 
 	@BeforeEach
 	public void setUp() {
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
-		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService);
+		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
 
 	}
 
@@ -88,7 +91,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint();
 		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/408")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 		assertThat(result.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_PRINT));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
@@ -104,7 +107,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
 		assertThat(csvFiler.isFile(), is(true));
 		assertThat(csvFiler.length() != 0, is(true));
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/408")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
 
 	}
 
