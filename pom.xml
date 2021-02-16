@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
+        <version>2.4.0</version>
     </parent>
 
     <groupId>no.nav.dokdistavstemming</groupId>
@@ -21,20 +21,18 @@
 
     <properties>
         <application.version>${project.version}</application.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
         <javax.inject.version>1</javax.inject.version>
-        <logstash-logback-encoder.version>6.3</logstash-logback-encoder.version>
-        <lombok.version>1.18.4</lombok.version>
-        <junit5.mockito.version>2.23.0</junit5.mockito.version>
+        <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
+        <lombok.version>1.18.18</lombok.version>
+        <junit5.mockito.version>3.7.7</junit5.mockito.version>
         <resilience4j.version>0.17.0</resilience4j.version>
         <rxjava2.version>2.2.20</rxjava2.version>
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
         <opencsv.version>4.3.1</opencsv.version>
         <freg.sercurity.version>3.1.0</freg.sercurity.version>
-        <spring-cloud-wiremock.version>2.2.5.RELEASE</spring-cloud-wiremock.version>
+        <spring-cloud-wiremock.version>3.0.1</spring-cloud-wiremock.version>
         <commons-io.version>2.6</commons-io.version>
-        <spring-context-support.version>5.3.2</spring-context-support.version>
+        <jackson-dataformat-csv.version>2.12.1</jackson-dataformat-csv.version>
     </properties>
 
     <dependencyManagement>
@@ -48,6 +46,12 @@
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash-logback-encoder.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-csv</artifactId>
+                <version>${jackson-dataformat-csv.version}</version>
             </dependency>
 
             <dependency>
@@ -69,7 +73,7 @@
                 <artifactId>freg-security-oidc</artifactId>
                 <version>${freg.sercurity.version}</version>
             </dependency>
-
+            <!-- test -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
@@ -82,23 +86,12 @@
                 <version>${spring-cloud-wiremock.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-standalone</artifactId>
-                <version>${wiremock-standalone.version}</version>
-                <scope>test</scope>
-            </dependency>
 
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring-context-support.version}</version>
             </dependency>
 
             <dependency>
