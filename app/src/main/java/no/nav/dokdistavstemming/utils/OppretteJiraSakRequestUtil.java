@@ -4,6 +4,7 @@ import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Priority;
 import com.pep1.jira.client.domain.issue.Reporter;
+import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OppretteJiraSakRequestUtil {
+	private static final String KLAR_FOR_ARBEID = "Klar for arbeid";
 
 	private OppretteJiraSakRequestUtil() {
 	}
@@ -40,8 +42,12 @@ public class OppretteJiraSakRequestUtil {
 
 		custemField.put("customfield_20211", customObject);
 
+		Status status = new Status();
+		status.setName(KLAR_FOR_ARBEID);
+
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
+				.status(status)
 				.issuetype(issueType)
 				.reporter(reporter)
 				.labels(labels)
