@@ -2,7 +2,6 @@ package no.nav.dokdistavstemming.consumer.jira;
 
 import com.pep1.jira.client.domain.field.Field;
 import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import com.pep1.jira.client.error.JIRAClientException;
@@ -134,29 +133,15 @@ public class JiraConsumer {
 		}
 	}
 
-	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
-	public List<Field> listFields() throws JIRAClientException {
-
-		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
-		try {
-			return restTemplate.exchange(jiraBaseUri + FIELD_HENT,
-					HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<Field>>() {
-					}).getBody();
-
-		} catch (JiraClientException e) {
-			throw new JiraClientException(String.format("Feil, fant ikke meta fields med feilmelding=%s", e.getMessage()));
-		}
-	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
-	public IssueFields hentIssueTypeByProjectIdAndIssuetypeId(@Valid @RequestParam(value = "projectKeys") String projectKey,
-														  @Valid @RequestParam(value = "issuetypeNames") String issuetypeNames) throws JIRAClientException {
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "updateIssue"}, percentiles = {0.5, 0.95})
+	public Issue updateStatus(final String key, @Valid @NonNull IssueInput issueInput) throws JIRAClientException {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+
 		try {
-			return restTemplate.exchange( String.format("%s%s?projectKeys=%s&issuetypeNames=%s&expand=projects.issuetypes.fields",jiraBaseUri,META_FIELDS ,projectKey,issuetypeNames),
-					HttpMethod.GET, new HttpEntity<>(headers), IssueFields.class).getBody();
+			return  restTemplate.exchange(apiBaseUri + "/" + key, HttpMethod.PUT,
+					new HttpEntity<>(issueInput, headers), Issue.class).getBody();
 
 		} catch (JiraClientException e) {
 			throw new JiraClientException(String.format("Feil, fant ikke meta fields med feilmelding=%s", e.getMessage()));

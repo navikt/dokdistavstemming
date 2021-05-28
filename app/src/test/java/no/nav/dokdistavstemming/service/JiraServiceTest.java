@@ -6,6 +6,7 @@ import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Reporter;
+import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
@@ -56,6 +57,7 @@ class JiraServiceTest {
     public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
         when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
         when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
+        when(jiraConsumer.updateStatus(anyString(), any(IssueInput.class))).thenReturn(updateIssue());
         File avvikFil = new File(new ClassPathResource("__files/csvfil_print.csv").getFile().toString());
         when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn("https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments");
 
@@ -123,6 +125,36 @@ class JiraServiceTest {
 
         return issue;
 
+    }
+
+
+    private final Issue updateIssue() {
+
+        Issue issue = new Issue();
+        issue.setSelf("https://jira-q1.adeo.no/rest/api/2/issue/534999");
+        Project project = new Project();
+        project.setKey("MMA");
+        issue.setKey("MMA-134");
+        issue.setId("534999");
+        IssueFields issueFields = new IssueFields();
+        Component component = new Component();
+        component.setSelf("https://jira-q1.adeo.no/rest/api/2/component/26154");
+        component.setId("26154");
+        component.setName("Dokumentdistribusjon");
+        Reporter reporter = new Reporter();
+        reporter.setName("srvjiradokdistavstemming");
+        reporter.setKey("srvjiradokdistavstemming");
+        reporter.setSelf("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
+        issueFields.setComponents(Arrays.asList(component));
+        issueFields.setProject(project);
+        Status status = new Status();
+        status.setId("26154");
+        status.setSelf("https://jira-q1.adeo.no/rest/api/2/status/26154");
+        status.setName("Klar for arbeid");
+        issueFields.setStatus(status);
+        issue.setFields(issueFields);
+
+        return issue;
     }
 
 }

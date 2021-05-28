@@ -24,6 +24,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappilyUpdateSaken;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
@@ -56,6 +57,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemFrosendelse();
 		jiraHappyPostVedleggDokument();
+		jiraHappilyUpdateSaken("MMA-134");
 		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
 		File fil = csvProdusere.oppretteCsvFil(result);
 		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil,result.size());

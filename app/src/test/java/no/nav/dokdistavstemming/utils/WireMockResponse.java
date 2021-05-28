@@ -9,6 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 
@@ -46,6 +47,13 @@ public class WireMockResponse {
                 .willReturn(aResponse().withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withBody(classpathToString("__files/jira/jiraresponse.json"))));
+    }
+
+    public static void jiraHappilyUpdateSaken(String key) throws Exception {
+        stubFor(put(urlEqualTo(JIRA_OPPRETTE_URL + "/" + key))
+                .willReturn(aResponse().withStatus(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .withBody(classpathToString("__files/jira/updatestatusresponse.json"))));
     }
 
     public static void jiraHappyHentProjectDetails() throws Exception {

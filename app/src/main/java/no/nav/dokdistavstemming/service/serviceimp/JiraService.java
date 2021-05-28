@@ -2,6 +2,8 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import com.pep1.jira.client.domain.issue.Issue;
+import com.pep1.jira.client.domain.issue.IssueFields;
+import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
@@ -27,6 +29,7 @@ import java.net.URL;
 public class JiraService {
 
     private static final String BROWSE = "/browse";
+    private static final String KLAR_FOR_ARBEID = "Klar for arbeid";
     private JiraConsumer jiraConsumer;
 
     public JiraService(JiraConsumer jiraConsumer) {
@@ -54,6 +57,7 @@ public class JiraService {
             jiraConsumer.leggVedlegg(issue.getKey(), fil);
             log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
                     MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
+            updateJiraStatus(issue);
             JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
                     .jiraSakKey(issue.getKey())
                     .message(String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
@@ -68,6 +72,25 @@ public class JiraService {
             throw new AvstemForsendelseFunctionalException(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
                     e.getMessage()));
         }
+    }
+
+    private void updateJiraStatus(Issue issue) {
+
+        IssueFields issueFields = issue.getFields();
+        if (issueFields != null) {
+            if (issueFields.getStatus() != null) {
+                Status status = issueFields.getStatus();
+                status.setName(KLAR_FOR_ARBEID);
+                issueFields.setStatus(status);
+            } else {
+                Status status = new Status();
+                status.setName(KLAR_FOR_ARBEID);
+                issueFields.setStatus(status);
+            }
+        }
+        Issue updatedIssue = jiraConsumer.updateStatus(issue.getKey(), new IssueInput(issueFields));
+        log.info("Oppdatert sak med key={} til status ={}", issue.getKey(), updatedIssue.getFields().getStatus().getName());
+
     }
 
     private void validateInput(IssueInput issueInput) {
