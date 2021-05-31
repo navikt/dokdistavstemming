@@ -9,7 +9,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 
@@ -34,11 +33,11 @@ public class WireMockResponse {
                         .withBody(classpathToString("__files/rdist001/hentuekspedereforsendelse-empty.json"))));
     }
 
-    public static void happilyHentForsendelseKvitteringIkkeMottattKanalPrint() throws Exception {
+    public static void happilyHentForsendelseKvitteringIkkeMottattKanalPrint(String filePath) throws Exception {
         stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
                 .willReturn(aResponse().withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(classpathToString("__files/rdist001/henteforsendelse-print-overfemdager.json"))));
+                        .withBody(classpathToString(filePath))));
     }
 
 
@@ -49,11 +48,17 @@ public class WireMockResponse {
                         .withBody(classpathToString("__files/jira/jiraresponse.json"))));
     }
 
-    public static void jiraHappilyUpdateSaken(String key) throws Exception {
-        stubFor(put(urlEqualTo(JIRA_OPPRETTE_URL + "/" + key))
+    public static void jiraHappyGetIssue() throws Exception {
+        stubFor(get(urlMatching(JIRA_OPPRETTE_URL + "/MMA-134"))
                 .willReturn(aResponse().withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(classpathToString("__files/jira/updatestatusresponse.json"))));
+                        .withBody(classpathToString("__files/jira/jiraresponse.json"))));
+    }
+
+    public static void jiraHappilyUpdateSaken(String key) throws Exception {
+        stubFor(post(urlMatching(JIRA_OPPRETTE_URL + "/" + key + "/transitions"))
+                .willReturn(aResponse().withStatus(HttpStatus.NO_CONTENT.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)));
     }
 
     public static void jiraHappyHentProjectDetails() throws Exception {

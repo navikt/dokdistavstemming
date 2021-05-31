@@ -2,12 +2,11 @@ package no.nav.dokdistavstemming.service.serviceimp;
 
 
 import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.IssueFields;
-import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
@@ -29,7 +28,7 @@ import java.net.URL;
 public class JiraService {
 
     private static final String BROWSE = "/browse";
-    private static final String KLAR_FOR_ARBEID = "Klar for arbeid";
+    private static final String TRANSITION_ID = "121";
     private JiraConsumer jiraConsumer;
 
     public JiraService(JiraConsumer jiraConsumer) {
@@ -75,21 +74,9 @@ public class JiraService {
     }
 
     private void updateJiraStatus(Issue issue) {
-
-        IssueFields issueFields = issue.getFields();
-        if (issueFields != null) {
-            if (issueFields.getStatus() != null) {
-                Status status = issueFields.getStatus();
-                status.setName(KLAR_FOR_ARBEID);
-                issueFields.setStatus(status);
-            } else {
-                Status status = new Status();
-                status.setName(KLAR_FOR_ARBEID);
-                issueFields.setStatus(status);
-            }
-        }
-        Issue updatedIssue = jiraConsumer.updateStatus(issue.getKey(), new IssueInput(issueFields));
-        log.info("Oppdatert sak med key={} til status ={}", issue.getKey(), updatedIssue.getFields().getStatus().getName());
+        Issue updateIssue = jiraConsumer.updateStatus(issue.getKey(), JiraTransition.builder()
+                .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
+        log.info("Oppdatert sak med key={} til status ={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
 
     }
 
