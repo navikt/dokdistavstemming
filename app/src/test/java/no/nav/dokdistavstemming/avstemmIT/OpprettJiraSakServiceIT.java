@@ -25,7 +25,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappilyUpdateSaken;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
@@ -59,7 +59,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         jiraHappyHentProjectDetails();
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
-        jiraHappilyUpdateSaken("MMA-134");
+        jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
         List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
         File fil = csvProdusere.oppretteCsvFil(result);
@@ -75,12 +75,12 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
     }
 
     @Test
-    void shouldHappilyOppretteJiraSakForEhandel() throws Exception {
+    void shouldHappOppretteJiraSakForEhandel() throws Exception {
         happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/ehandel.json");
         jiraHappyHentProjectDetails();
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
-        jiraHappilyUpdateSaken("MMA-134");
+        jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
         List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(E_HANDEL.name());
         File fil = csvProdusere.oppretteCsvFil(result);

@@ -43,7 +43,7 @@
       "issueTypes" : [ {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
         "id" : "10901",
-        "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+        "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
         "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
         "name" : "Oppgave",
         "subtask" : false,
@@ -557,7 +557,7 @@
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",
-      "description" : "Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+      "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
       "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
       "name" : "Oppgave",
       "subtask" : false,
@@ -573,7 +573,7 @@
       "active" : null,
       "timeZone" : null
     },
-    "description" : "Se i vedlegg oversikten av 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+    "description" : "Se vedlegg for oversikt over 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
     "labels" : [ "dokumentdistribusjon_avvik" ]
   }
 }

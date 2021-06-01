@@ -55,7 +55,7 @@ public class WireMockResponse {
                         .withBody(classpathToString("__files/jira/jiraresponse.json"))));
     }
 
-    public static void jiraHappilyUpdateSaken(String key) throws Exception {
+    public static void jiraHappyUpdateSak(String key) throws Exception {
         stubFor(post(urlMatching(JIRA_OPPRETTE_URL + "/" + key + "/transitions"))
                 .willReturn(aResponse().withStatus(HttpStatus.NO_CONTENT.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)));

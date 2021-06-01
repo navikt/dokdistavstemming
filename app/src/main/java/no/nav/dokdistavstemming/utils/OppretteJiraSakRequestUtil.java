@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class OppretteJiraSakRequestUtil {
 
+    private static final String DESCRIPTION = "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.";
 
     private OppretteJiraSakRequestUtil() {
     }
@@ -27,7 +28,7 @@ public class OppretteJiraSakRequestUtil {
         project.setComponents(componenter);
 
         IssueType issueType = project.getIssueTypes().stream().filter(issueType1 -> "Oppgave".equals(issueType1.getName())).findFirst().get();
-        issueType.setDescription("Se i vedlegg oversikten av dokumenter/brev som skulle ha fått «ekspedert» kvittering status.");
+        issueType.setDescription(DESCRIPTION);
 
         String[] labels = {"dokumentdistribusjon_avvik"};
         Reporter reporter = new Reporter();
@@ -49,7 +50,7 @@ public class OppretteJiraSakRequestUtil {
                 .reporter(reporter)
                 .labels(labels)
                 .summary(String.format("Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering", title, avvikSize))
-                .description(String.format("Se i vedlegg oversikten av %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.", avvikSize))
+                .description(String.format("Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.", avvikSize))
                 .build();
         issueInput.setFields(issueFields);
         return issueInput;

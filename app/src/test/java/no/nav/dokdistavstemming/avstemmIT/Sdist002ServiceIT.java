@@ -39,7 +39,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappilyUpdateSaken;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
@@ -120,7 +120,7 @@ public class Sdist002ServiceIT extends AbstractIT {
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
         oppdaterAvstemFrosendelseInfo();
-        jiraHappilyUpdateSaken("MMA-134");
+        jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
         sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
@@ -136,7 +136,7 @@ public class Sdist002ServiceIT extends AbstractIT {
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
         oppdaterAvstemFrosendelseInfoFeil();
-        jiraHappilyUpdateSaken("MMA-134");
+        jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
         assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
@@ -155,7 +155,7 @@ public class Sdist002ServiceIT extends AbstractIT {
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
         oppdaterAvstemFrosendelseInfoFeilWithInternalServerError();
-        jiraHappilyUpdateSaken("MMA-134");
+        jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
         assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
         verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));

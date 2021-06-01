@@ -76,7 +76,7 @@ public class JiraService {
     private void updateJiraStatus(Issue issue) {
         Issue updateIssue = jiraConsumer.updateStatus(issue.getKey(), JiraTransition.builder()
                 .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
-        log.info("Oppdatert sak med key={} til status ={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
+        log.info("Oppdatert sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
 
     }
 
