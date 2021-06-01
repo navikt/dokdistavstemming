@@ -29,6 +29,7 @@
         <rxjava2.version>2.2.20</rxjava2.version>
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
         <opencsv.version>4.3.1</opencsv.version>
+        <freg.sercurity.version>3.1.0</freg.sercurity.version>
         <spring-cloud-wiremock.version>3.0.1</spring-cloud-wiremock.version>
         <commons-io.version>2.6</commons-io.version>
         <jackson-dataformat-csv.version>2.12.1</jackson-dataformat-csv.version>
@@ -67,6 +68,11 @@
                 <type>pom</type>
             </dependency>
 
+            <dependency>
+                <groupId>no.nav.freg</groupId>
+                <artifactId>freg-security-oidc</artifactId>
+                <version>${freg.sercurity.version}</version>
+            </dependency>
             <!-- test -->
             <dependency>
                 <groupId>org.mockito</groupId>
