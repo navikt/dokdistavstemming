@@ -553,7 +553,7 @@
         "userStartDate" : null
       } ]
     },
-    "summary" : "Dokumentdistribusjon Kanal-PRINT: Utsendelse av 5 dokumenter/brev har ikke mottatt kvittering",
+    "summary" : "Dokumentdistribusjon Kanal-E_HANDEL: Utsendelse av 5 dokumenter/brev har ikke mottatt kvittering",
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",

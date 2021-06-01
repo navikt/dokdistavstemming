@@ -6,6 +6,7 @@ import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
@@ -27,6 +28,7 @@ import java.net.URL;
 public class JiraService {
 
     private static final String BROWSE = "/browse";
+    private static final String TRANSITION_ID = "121";
     private JiraConsumer jiraConsumer;
 
     public JiraService(JiraConsumer jiraConsumer) {
@@ -54,6 +56,7 @@ public class JiraService {
             jiraConsumer.leggVedlegg(issue.getKey(), fil);
             log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
                     MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
+            updateJiraStatus(issue);
             JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
                     .jiraSakKey(issue.getKey())
                     .message(String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
@@ -68,6 +71,13 @@ public class JiraService {
             throw new AvstemForsendelseFunctionalException(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
                     e.getMessage()));
         }
+    }
+
+    private void updateJiraStatus(Issue issue) {
+        Issue updateIssue = jiraConsumer.updateStatus(issue.getKey(), JiraTransition.builder()
+                .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
+        log.info("Oppdatert sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
+
     }
 
     private void validateInput(IssueInput issueInput) {

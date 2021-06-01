@@ -6,11 +6,13 @@ import com.pep1.jira.client.domain.issue.Issue;
 import com.pep1.jira.client.domain.issue.IssueFields;
 import com.pep1.jira.client.domain.issue.IssueType;
 import com.pep1.jira.client.domain.issue.Reporter;
+import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,7 @@ class JiraServiceTest {
 
 
     private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
+    private static final String ATTACHMENT_URL = "https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments";
 
     @Mock
     private JiraConsumer jiraConsumer;
@@ -56,8 +59,24 @@ class JiraServiceTest {
     public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
         when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
         when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
-        File avvikFil = new File(new ClassPathResource("__files/csvfil_print.csv").getFile().toString());
-        when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn("https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments");
+        when(jiraConsumer.updateStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
+        File avvikFil = new File(new ClassPathResource("__files/csv/csvfil_print.csv").getFile().toString());
+        when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
+
+        JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
+
+        verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
+        verify(jiraConsumer, times(1)).hentProjekt(anyString());
+        assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
+    }
+
+    @Test
+    public void shouldUpdateStatusToKlarForArbeid() throws Exception {
+        when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
+        when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
+        when(jiraConsumer.updateStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
+        File avvikFil = new File(new ClassPathResource("__files/csv/dokdist1.csv").getFile().toString());
+        when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
 
@@ -117,12 +136,47 @@ class JiraServiceTest {
         reporter.setName("srvjiradokdistavstemming");
         reporter.setKey("srvjiradokdistavstemming");
         reporter.setSelf("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
+        Status status = new Status();
+        status.setId("26154");
+        status.setSelf("https://jira-q1.adeo.no/rest/api/2/status/26154");
+        status.setName("Klar for arbeid");
+        issueFields.setStatus(status);
         issueFields.setComponents(Arrays.asList(component));
         issueFields.setProject(project);
         issue.setFields(issueFields);
 
         return issue;
 
+    }
+
+
+    private final Issue updateIssue() {
+
+        Issue issue = new Issue();
+        issue.setSelf("https://jira-q1.adeo.no/rest/api/2/issue/534999");
+        Project project = new Project();
+        project.setKey("MMA");
+        issue.setKey("MMA-134");
+        issue.setId("534999");
+        IssueFields issueFields = new IssueFields();
+        Component component = new Component();
+        component.setSelf("https://jira-q1.adeo.no/rest/api/2/component/26154");
+        component.setId("26154");
+        component.setName("Dokumentdistribusjon");
+        Reporter reporter = new Reporter();
+        reporter.setName("srvjiradokdistavstemming");
+        reporter.setKey("srvjiradokdistavstemming");
+        reporter.setSelf("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
+        issueFields.setComponents(Arrays.asList(component));
+        issueFields.setProject(project);
+        Status status = new Status();
+        status.setId("26154");
+        status.setSelf("https://jira-q1.adeo.no/rest/api/2/status/26154");
+        status.setName("Klar for arbeid");
+        issueFields.setStatus(status);
+        issue.setFields(issueFields);
+
+        return issue;
     }
 
 }

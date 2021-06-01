@@ -22,5 +22,7 @@ public class DokdistavstemmingProp {
     private int delayTimePrint;
     @Min(1)
     private int delayTimeSDP;
+    @Min(1)
+    private int delayTimeEhandel;
 
 }
