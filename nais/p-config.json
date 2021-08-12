@@ -6,9 +6,8 @@
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
-  "NAMESPACE": "default",
+  "NAMESPACE": "teamdokumenthandtering",
   "INGRESSES": [
-    "https://dokdistavstemming.nais.adeo.no"
-
+    "https://dokdistavstemming.intern.nav.no"
   ]
 }
