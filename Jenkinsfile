@@ -1,5 +1,5 @@
 naiseratorPipeline {
     applicationName = "dokdistavstemming"
     dockerfileDir = "."
-    deployEnvironmentQ = "q1"
+    deployEnvironmentQ = "dev"
 }
