@@ -35,6 +35,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 
 	private static final String CSV_FILTER_FIL = "dokdistcvs";
+	private static final String baseTmpDirectory = "/tmp/";
 
 	public File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) {
 		File produced = null;
@@ -54,7 +55,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 		String distribusjonKanal = avstemForsendelseResponseTo.get(0).getDistribusjonKanal();
 		try {
-			produced = new File("dokdistavstemming-" + distribusjonKanal +"-" + localDate  +".csv");
+			produced = new File(baseTmpDirectory+"dokdistavstemming-" + distribusjonKanal +"-" + localDate  +".csv");
 			FileOutputStream fos = new FileOutputStream(produced);
 			log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
 			csvMapper.setFilterProvider(filterProvider);
