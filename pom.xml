@@ -20,6 +20,8 @@
     </modules>
 
     <properties>
+        <java.version>17</java.version>
+
         <application.version>${project.version}</application.version>
         <javax.inject.version>1</javax.inject.version>
 
@@ -111,7 +113,7 @@
                 <configuration>
                     <toolchains>
                         <jdk>
-                            <version>11</version>
+                            <version>17</version>
                             <vendor>openjdk</vendor>
                         </jdk>
                     </toolchains>
