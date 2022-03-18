@@ -12,8 +12,8 @@ import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.List;
 
@@ -55,17 +55,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Sdist002ServiceIT extends AbstractIT {
 
-    @Inject
+    @Autowired
     private Sdist002Service sdist002Service;
-    @Inject
+    @Autowired
     private HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
-    @Inject
+    @Autowired
     private CSVProdusere csvProdusere;
-    @Inject
+    @Autowired
     private MeterRegistry meterRegistry;
-    @Inject
+    @Autowired
     private JiraService jiraService;
-    @Inject
+    @Autowired
     private DokdistavstemmingProp dokdistavstemmingProp;
 
     @BeforeEach

@@ -9,6 +9,7 @@ import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
     private final String administrerforsendelseV1Url;
     private final RestTemplate restTemplate;
 
-    @Inject
+    @Autowired
     public HentForsendelseKvitteringIkkeMottattConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
                                                         RestTemplate restTemplate) {
         this.administrerforsendelseV1Url = administrerforsendelseV1Url;

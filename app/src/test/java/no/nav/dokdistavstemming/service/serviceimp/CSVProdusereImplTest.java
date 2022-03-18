@@ -7,10 +7,10 @@ import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 class CSVProdusereImplTest {
 
-	@Inject
+	@Autowired
 	private CSVProdusere csvProdusere;
 
 

@@ -10,6 +10,7 @@ import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.util.UUID;
 
 
@@ -32,13 +32,13 @@ import java.util.UUID;
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractIT {
 
-	@Inject
+	@Autowired
 	public JiraConsumer jiraConsumer;
-	@Inject
+	@Autowired
 	public JiraService jiraService;
-	@Inject
+	@Autowired
 	public CSVProdusere csvProdusere;
-	@Inject
+	@Autowired
 	public Sdist002Service sdist002Service;
 
 	public static String CALL_ID = UUID.randomUUID().toString();

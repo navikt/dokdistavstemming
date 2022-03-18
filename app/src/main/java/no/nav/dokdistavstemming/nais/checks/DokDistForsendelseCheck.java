@@ -6,12 +6,12 @@ import no.nav.dokdistavstemming.nais.selftest.AbstractDependencyCheck;
 import no.nav.dokdistavstemming.nais.selftest.ApplicationNotReadyException;
 import no.nav.dokdistavstemming.nais.selftest.DependencyType;
 import no.nav.dokdistavstemming.nais.selftest.Importance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import java.time.Duration;
 
 @Component
@@ -19,7 +19,7 @@ public class DokDistForsendelseCheck extends AbstractDependencyCheck {
 
 	private final RestTemplate restTemplate;
 
-	@Inject
+	@Autowired
 	public DokDistForsendelseCheck(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
 								   MeterRegistry meterRegistry, RestTemplateBuilder restTemplateBuilder, final ServiceuserAlias serviceuserAlias) {
 		super(DependencyType.REST,"dokumentdistribusjon",administrerforsendelseV1Url, Importance.WARNING,meterRegistry);

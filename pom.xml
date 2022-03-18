@@ -23,7 +23,6 @@
         <java.version>17</java.version>
 
         <application.version>${project.version}</application.version>
-        <javax.inject.version>1</javax.inject.version>
 
         <!-- Bytt ut med token-support -->
         <freg.sercurity.version>3.1.0</freg.sercurity.version>
@@ -37,11 +36,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${javax.inject.version}</version>
-            </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
