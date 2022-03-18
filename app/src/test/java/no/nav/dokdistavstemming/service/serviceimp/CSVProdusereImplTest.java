@@ -16,14 +16,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isNotNull;
-import static org.mockito.Mockito.mock;
 
-@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AvstemForsendelseConfig.class})
+@ExtendWith(SpringExtension.class)
 class CSVProdusereImplTest {
 
 	@Inject
@@ -31,10 +27,10 @@ class CSVProdusereImplTest {
 
 
 	@Test
-	public void shouldProdusereCSVFil()  throws Exception{
+	public void shouldProdusereCSVFil() {
 		AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 		List<AvstemForsendelseResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
-				.map(hentUekspederForsendelse -> mapper.mapAvstemmForsendelser(hentUekspederForsendelse))
+				.map(mapper::mapAvstemmForsendelser)
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 

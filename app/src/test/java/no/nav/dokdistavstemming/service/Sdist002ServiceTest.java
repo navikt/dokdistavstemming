@@ -5,25 +5,24 @@ import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottattConsumer;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
-import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
+import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.service.serviceimp.CSVProdusereImpl;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_3;
@@ -36,7 +35,6 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokDistAvstemmi
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -51,8 +49,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class Sdist002ServiceTest {
 
-	private ArgumentCaptor<Long> argument;
-
 	@InjectMocks
 	private Sdist002Service sdist002Service;
 
@@ -66,8 +62,6 @@ public class Sdist002ServiceTest {
 
 	@Mock
 	private JiraService jiraService;
-	
-	private DokdistavstemmingProp dokdistavstemmingProp;
 
 	@Mock
 	private Counter mockCounter;
@@ -77,8 +71,7 @@ public class Sdist002ServiceTest {
 	public void setUp() {
 		hentForsendelseKvitteringIkkeMottatt = mock(HentForsendelseKvitteringIkkeMottattConsumer.class);
 		csvProdusere = mock(CSVProdusereImpl.class);
-		argument = ArgumentCaptor.forClass(Long.class);
-		dokdistavstemmingProp = new DokdistavstemmingProp();
+		DokdistavstemmingProp dokdistavstemmingProp = new DokdistavstemmingProp();
 		
 		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry,jiraService, dokdistavstemmingProp);
 	}
@@ -95,7 +88,7 @@ public class Sdist002ServiceTest {
 
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint(){
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Collections.singletonList(createDokDistAvstemmingRequestList().get(0)));
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(singletonList(createDokDistAvstemmingRequestList().get(0)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
@@ -117,7 +110,7 @@ public class Sdist002ServiceTest {
 
 	@Test
 	public void shouldHentForsendelserDistKanalUtenPrint(){
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(Arrays.asList(createDokDistAvstemmingRequestList().get(2)));
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(),anyInt())).thenReturn(singletonList(createDokDistAvstemmingRequestList().get(2)));
 		when(meterRegistry.counter(anyString(),anyString(),anyString(),anyString(),anyString())).thenReturn(mockCounter);
 		List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = sdist002Service.getForsendelserByDistirbusjonKanal(SDP.name());
 
@@ -135,6 +128,5 @@ public class Sdist002ServiceTest {
 
 		assertThat(avstemForsendelseResponseTos,nullValue());
 	}
-
 
 }

@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 
 public class AvstemForsendelseMapperTest {
 
-	private AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
+	private final AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
@@ -36,8 +36,8 @@ public class AvstemForsendelseMapperTest {
 
 	@Test
 	public void shouldConvertStringToDateTime(){
-		LocalDateTime distributsionDato = ConverterUtils.convertStringToLocalDateTime(DISTRIBUSJON_DATO);
-		assertThat(distributsionDato.getYear(),is(2021));
+		LocalDateTime distribusjonsdato = ConverterUtils.convertStringToLocalDateTime(DISTRIBUSJON_DATO);
+		assertThat(distribusjonsdato.getYear(), is(2022));
 	}
 
 	public void assertResponse(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {

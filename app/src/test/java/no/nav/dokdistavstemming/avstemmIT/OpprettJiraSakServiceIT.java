@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.avstemmIT;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
@@ -25,11 +24,11 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -47,10 +46,8 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
     @BeforeEach
     public void setUp() {
+        super.setUp();
         jiraService = new JiraService(jiraConsumer);
-        WireMock.reset();
-        WireMock.resetAllRequests();
-        WireMock.removeAllMappings();
     }
 
     @Test

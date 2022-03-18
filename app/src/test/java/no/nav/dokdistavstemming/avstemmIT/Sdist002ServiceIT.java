@@ -1,7 +1,5 @@
 package no.nav.dokdistavstemming.avstemmIT;
 
-
-import com.github.tomakehurst.wiremock.client.WireMock;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
@@ -39,11 +37,11 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.dokDistHappyHentUekspedereFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfo;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeil;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeilWithInternalServerError;
@@ -56,7 +54,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 
 public class Sdist002ServiceIT extends AbstractIT {
-
 
     @Inject
     private Sdist002Service sdist002Service;
@@ -73,9 +70,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 
     @BeforeEach
     public void setUp() {
-        WireMock.reset();
-        WireMock.resetAllRequests();
-        WireMock.removeAllMappings();
+        super.setUp();
         sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
 
     }
@@ -88,7 +83,6 @@ public class Sdist002ServiceIT extends AbstractIT {
         assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
     }
 
-
     @Test
     public void shouldHentListOkStatusKanalPrint() throws Exception {
         happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
@@ -98,7 +92,6 @@ public class Sdist002ServiceIT extends AbstractIT {
         assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
         assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
         assertThat(result.get(0).getDistribusjonDato().toString(), is(DISRIBUSJON_DATO_J));
-
     }
 
     @Test
@@ -110,7 +103,6 @@ public class Sdist002ServiceIT extends AbstractIT {
         assertThat(csvFiler.isFile(), is(true));
         assertThat(csvFiler.length() != 0, is(true));
         verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-
     }
 
     @Test
@@ -126,7 +118,6 @@ public class Sdist002ServiceIT extends AbstractIT {
 
         verify(7, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
                 .withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
-
     }
 
     @Test
@@ -145,7 +136,6 @@ public class Sdist002ServiceIT extends AbstractIT {
         verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
         verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
         verify(1, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
-
     }
 
     @Test
@@ -163,8 +153,6 @@ public class Sdist002ServiceIT extends AbstractIT {
         verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
         verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
         verify(3, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
-
     }
-
 
 }
