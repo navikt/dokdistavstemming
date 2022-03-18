@@ -52,7 +52,7 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
         MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
         try {
             HttpHeaders httpHeaders = createHeaders();
-            log.info("{} mottat kall til å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
+            log.info("{} har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
                     MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer);
             ResponseEntity<AvstemForsendelseRequestTo[]> responseEntity = restTemplate
                     .exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer),
@@ -77,7 +77,7 @@ public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsend
 
         try {
             HttpEntity httpEntity = new HttpEntity<>(oppdaterForsendelserAvstemtInfo, createHeaders());
-            log.info("{} mottat kall til å oppdatere forsendelser fra rdist001 med avstemtReferanse={}",
+            log.info("{} har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}",
                     MDC.get(MDCConstants.MDC_CONSUMER_ID), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
             restTemplate.exchange(administrerforsendelseV1Url + "/avstemforsendelser", HttpMethod.PUT, httpEntity, Object.class);
             log.info("Forsendelser med forsendelseIder={} oppdatert", oppdaterForsendelserAvstemtInfo.getForsendelser());
