@@ -24,9 +24,6 @@
 
         <application.version>${project.version}</application.version>
 
-        <!-- Bytt ut med token-support -->
-        <freg.sercurity.version>3.1.0</freg.sercurity.version>
-
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
 
         <logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
@@ -56,11 +53,6 @@
                 <type>pom</type>
             </dependency>
 
-            <dependency>
-                <groupId>no.nav.freg</groupId>
-                <artifactId>freg-security-oidc</artifactId>
-                <version>${freg.sercurity.version}</version>
-            </dependency>
             <!-- test -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
