@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
+        <version>2.6.4</version>
     </parent>
 
     <groupId>no.nav.dokdistavstemming</groupId>
@@ -22,17 +22,15 @@
     <properties>
         <application.version>${project.version}</application.version>
         <javax.inject.version>1</javax.inject.version>
-        <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
-        <lombok.version>1.18.18</lombok.version>
-        <junit5.mockito.version>3.7.7</junit5.mockito.version>
-        <resilience4j.version>0.17.0</resilience4j.version>
-        <rxjava2.version>2.2.20</rxjava2.version>
-        <pep1-jira-client.version>0.5</pep1-jira-client.version>
-        <opencsv.version>4.3.1</opencsv.version>
+
+        <!-- Bytt ut med token-support -->
         <freg.sercurity.version>3.1.0</freg.sercurity.version>
-        <spring-cloud-wiremock.version>3.0.1</spring-cloud-wiremock.version>
-        <commons-io.version>2.6</commons-io.version>
-        <jackson-dataformat-csv.version>2.12.1</jackson-dataformat-csv.version>
+
+        <logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
+        <resilience4j.version>1.7.1</resilience4j.version>
+        <pep1-jira-client.version>0.5</pep1-jira-client.version>
+        <spring-cloud-wiremock.version>3.1.1</spring-cloud-wiremock.version>
+        <jackson-dataformat-csv.version>2.13.2</jackson-dataformat-csv.version>
     </properties>
 
     <dependencyManagement>
@@ -55,13 +53,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>com.pep1.jira</groupId>
                 <artifactId>jira-spring-boot-client-starter</artifactId>
                 <version>${pep1-jira-client.version}</version>
@@ -75,22 +66,9 @@
             </dependency>
             <!-- test -->
             <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${junit5.mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-wiremock</artifactId>
                 <version>${spring-cloud-wiremock.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -103,11 +81,6 @@
             <!--Selftest metrics-->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-boot</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-timelimiter</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
@@ -116,24 +89,15 @@
                 <artifactId>resilience4j-circuitbreaker</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>io.reactivex.rxjava2</groupId>
-                <artifactId>rxjava</artifactId>
-                <version>${rxjava2.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
             <plugin>
                 <artifactId>maven-toolchains-plugin</artifactId>
                 <version>3.0.0</version>
@@ -152,27 +116,6 @@
                         </jdk>
                     </toolchains>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <additionalClasspathElements>${basedir}/target/classes</additionalClasspathElements>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
