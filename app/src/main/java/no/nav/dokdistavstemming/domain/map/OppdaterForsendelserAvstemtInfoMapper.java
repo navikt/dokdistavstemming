@@ -12,23 +12,21 @@ import java.util.stream.Collectors;
  */
 public class OppdaterForsendelserAvstemtInfoMapper {
 
+	public OppdaterForsendelserAvstemtInfo map(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList, JiraSakResponseTo jiraSakResponseTo) {
 
-    public OppdaterForsendelserAvstemtInfo map(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList, JiraSakResponseTo jiraSakResponseTo) {
+		return OppdaterForsendelserAvstemtInfo.builder()
+				.avstemtReferanse(jiraSakResponseTo.getJiraSakKey())
+				.forsendelser(mapForsendelseIder(avstemForsendelseResponseToList))
+				.build();
+	}
 
-        return OppdaterForsendelserAvstemtInfo.builder()
-                .avstemtReferanse(jiraSakResponseTo.getJiraSakKey())
-                .forsendelser(mapForsendelseIder(avstemForsendelseResponseToList))
-                .build();
-    }
+	List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList) {
 
-    List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList) {
-
-        return avstemForsendelseResponseToList.stream()
-                .map(avstemForsendelseResponseTo -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
-                        .forsendelseId(avstemForsendelseResponseTo.getForsendelseId())
-                        .build())
-                .collect(Collectors.toList());
-
-    }
+		return avstemForsendelseResponseToList.stream()
+				.map(avstemForsendelseResponseTo -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
+						.forsendelseId(avstemForsendelseResponseTo.getForsendelseId())
+						.build())
+				.collect(Collectors.toList());
+	}
 
 }
