@@ -27,9 +27,10 @@
         <!-- Bytt ut med token-support -->
         <freg.sercurity.version>3.1.0</freg.sercurity.version>
 
+        <pep1-jira-client.version>0.5</pep1-jira-client.version>
+
         <logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
         <resilience4j.version>1.7.1</resilience4j.version>
-        <pep1-jira-client.version>0.5</pep1-jira-client.version>
         <spring-cloud-wiremock.version>3.1.1</spring-cloud-wiremock.version>
         <jackson-dataformat-csv.version>2.13.2</jackson-dataformat-csv.version>
     </properties>
@@ -66,12 +67,6 @@
                 <artifactId>spring-cloud-contract-wiremock</artifactId>
                 <version>${spring-cloud-wiremock.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-rest-java-client-core</artifactId>
-                <version>${jira-rest-client-core.version}</version>
             </dependency>
 
             <!--Selftest metrics-->
