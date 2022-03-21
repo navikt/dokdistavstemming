@@ -102,7 +102,7 @@ public class JiraConsumer {
             return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, String.class).getBody();
 
         } catch (JiraClientException e) {
-            log.error(String.format("En feil oppsto. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
+            log.error(String.format("En feil oppstod. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
                     file.getName(), e.getMessage()));
             throw new JiraClientException(e.getStatus(), e.getErrorMessage());
         }
@@ -163,6 +163,5 @@ public class JiraConsumer {
         headers.setContentType(mediaType);
         return headers;
     }
-
 
 }

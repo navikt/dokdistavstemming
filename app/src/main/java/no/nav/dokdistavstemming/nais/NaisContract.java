@@ -10,6 +10,7 @@ import no.nav.dokdistavstemming.nais.selftest.DependencyCheckResult;
 import no.nav.dokdistavstemming.nais.selftest.Importance;
 import no.nav.dokdistavstemming.nais.selftest.Result;
 import no.nav.dokdistavstemming.nais.selftest.SelftestResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,13 +31,13 @@ public class NaisContract {
 	private static final String APPLICATION_ALIVE = "Application is alive!";
 	private static final String APPLICATION_READY = "Application is ready for traffic!";
 	private static final String APPLICATION_NOT_READY = "Application is not ready for traffic :-(";
-	private static AtomicInteger isReady = new AtomicInteger(1);
+	private static final AtomicInteger isReady = new AtomicInteger(1);
 	private final List<AbstractDependencyCheck> abstractDependencyCheckList;
 	private final String appNavn;
 	private final String versjon;
-	private AtomicInteger app_status = new AtomicInteger();
+	private final AtomicInteger app_status = new AtomicInteger();
 
-	@Inject
+	@Autowired
 	public NaisContract(MeterRegistry meterRegistry, List<AbstractDependencyCheck> abstractDependencyCheckList,
 						@Value("${application.name}") String appNavn, @Value("${application.version}") String versjon) {
 		Gauge.builder("dok_app_is_ready", isReady, AtomicInteger::get).register(meterRegistry);

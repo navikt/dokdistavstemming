@@ -25,7 +25,6 @@ public class AvstemForsendelseRequestTo {
 	private String opprettetDato;
 	private String distribusjonDato;
 
-
 	@Data
 	@Builder
 	public static class DokumentInfoTo {

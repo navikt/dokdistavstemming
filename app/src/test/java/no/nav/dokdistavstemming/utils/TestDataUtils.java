@@ -1,19 +1,9 @@
 package no.nav.dokdistavstemming.utils;
 
-import com.pep1.jira.client.domain.issue.Attachment;
-import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.IssueFields;
-import com.pep1.jira.client.domain.issue.IssueType;
-import com.pep1.jira.client.domain.issue.Priority;
-import com.pep1.jira.client.domain.issue.Reporter;
-import com.pep1.jira.client.domain.issue.request.IssueInput;
-import com.pep1.jira.client.domain.project.Project;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;

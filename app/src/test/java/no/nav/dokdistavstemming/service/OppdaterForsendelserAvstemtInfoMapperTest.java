@@ -2,8 +2,8 @@ package no.nav.dokdistavstemming.service;
 
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
-import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
+import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -22,14 +22,13 @@ import static org.hamcrest.Matchers.is;
 
 class OppdaterForsendelserAvstemtInfoMapperTest {
 
-
-    private OppdaterForsendelserAvstemtInfoMapper mapper = new OppdaterForsendelserAvstemtInfoMapper();
-    private AvstemForsendelseMapper avstemtInfoMapper = new AvstemForsendelseMapper();
+    private final OppdaterForsendelserAvstemtInfoMapper mapper = new OppdaterForsendelserAvstemtInfoMapper();
+    private final AvstemForsendelseMapper avstemtInfoMapper = new AvstemForsendelseMapper();
 
     @Test
     public void shouldHentAvstemmingForsendelseResponse() {
         List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList = createDokDistAvstemmingRequestList().stream()
-                .map(avstemForsendelseRequestTo -> avstemtInfoMapper.mapAvstemmForsendelser(avstemForsendelseRequestTo))
+                .map(avstemtInfoMapper::mapAvstemmForsendelser)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 

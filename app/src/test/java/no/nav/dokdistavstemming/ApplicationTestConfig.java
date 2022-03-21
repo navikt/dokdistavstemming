@@ -14,7 +14,6 @@ import static org.mockito.Mockito.mock;
 @Configuration
 @Profile("itest,wiremock")
 @EnableConfigurationProperties({ServiceuserAlias.class, DokdistavstemmingProp.class})
-@ComponentScan(basePackages = "no.nav.dokdistavstemming")
 public class ApplicationTestConfig {
 
 	@Bean

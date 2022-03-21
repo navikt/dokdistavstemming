@@ -6,7 +6,6 @@
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
-  "NAMESPACE": "teamdokumenthandtering",
   "INGRESSES": [
     "https://dokdistavstemming.intern.nav.no"
   ]

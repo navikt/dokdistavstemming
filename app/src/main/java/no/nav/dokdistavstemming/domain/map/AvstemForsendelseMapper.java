@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -27,28 +28,24 @@ public class AvstemForsendelseMapper {
 			throw new AvstemForsendelseFunctionalException(DOKUMENTINFO_FEIL);
 		}
 
-		return dokumentInfoTo.stream().filter(dokumentInfo-> dokumentInfo!=null)
-				.map(dokumentInfo -> {
-					return AvstemForsendelseResponseTo.builder()
-							.forsendelseId(dokumentInfo.getForsendelseId())
-							.distribusjonId(forsendelseRequestTo.getDistribusjonId())
-							.dokumentId(dokumentInfo.getDokumentId())
-							.konversasjonId(dokumentInfo.getKonversasjonId())
-							.journalpostId(dokumentInfo.getJournalpostId() == null ? null : dokumentInfo.getJournalpostId())
-							.distribusjonDato(forsendelseRequestTo.getDistribusjonDato())
-							.opprettetDato(forsendelseRequestTo.getOpprettetDato())
-							.distribusjonKanal(forsendelseRequestTo.getDistribusjonKanal())
-							.distribusjonStatus(forsendelseRequestTo.getDistribusjonStatus())
-							.dokumentStatus(dokumentInfo.getDokumentStatus())
-							.bestillendeFagsystem(dokumentInfo.getBestillendeFagsystem())
-							.fagomradeCode(dokumentInfo.getFagomradeCode())
-							.brevProduksjonApplikasjon(dokumentInfo.getBrevProduksjonApplikasjon())
-							.avstemtDato(dokumentInfo.getAvstemtDato())
-							.avstemtReferanse(dokumentInfo.getAvstemtReferanse())
-							.build();
-				}).collect(Collectors.toList());
-
+		return dokumentInfoTo.stream().filter(Objects::nonNull)
+				.map(dokumentInfo -> AvstemForsendelseResponseTo.builder()
+						.forsendelseId(dokumentInfo.getForsendelseId())
+						.distribusjonId(forsendelseRequestTo.getDistribusjonId())
+						.dokumentId(dokumentInfo.getDokumentId())
+						.konversasjonId(dokumentInfo.getKonversasjonId())
+						.journalpostId(dokumentInfo.getJournalpostId() == null ? null : dokumentInfo.getJournalpostId())
+						.distribusjonDato(forsendelseRequestTo.getDistribusjonDato())
+						.opprettetDato(forsendelseRequestTo.getOpprettetDato())
+						.distribusjonKanal(forsendelseRequestTo.getDistribusjonKanal())
+						.distribusjonStatus(forsendelseRequestTo.getDistribusjonStatus())
+						.dokumentStatus(dokumentInfo.getDokumentStatus())
+						.bestillendeFagsystem(dokumentInfo.getBestillendeFagsystem())
+						.fagomradeCode(dokumentInfo.getFagomradeCode())
+						.brevProduksjonApplikasjon(dokumentInfo.getBrevProduksjonApplikasjon())
+						.avstemtDato(dokumentInfo.getAvstemtDato())
+						.avstemtReferanse(dokumentInfo.getAvstemtReferanse())
+						.build()).collect(Collectors.toList());
 	}
-
 
 }

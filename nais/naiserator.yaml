@@ -2,7 +2,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: dokdistavstemming
-  namespace: {{ NAMESPACE }}
+  namespace: teamdokumenthandtering
   labels:
     team: teamdokumenthandtering
 spec:
@@ -49,5 +49,3 @@ spec:
         mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
       - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
-      - kvPath: {{ DOKDISTAVSTEMMING_VAULT }}
-        mountPath: "/var/run/secrets/nais.io/vault"

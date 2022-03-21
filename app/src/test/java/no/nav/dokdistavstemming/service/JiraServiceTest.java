@@ -24,9 +24,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,13 +37,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
 
-
     private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
     private static final String ATTACHMENT_URL = "https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments";
 
     @Mock
     private JiraConsumer jiraConsumer;
-
 
     @InjectMocks
     private JiraService jiraService;
@@ -52,7 +49,6 @@ class JiraServiceTest {
     @BeforeEach
     public void setUp() {
         jiraService = new JiraService(jiraConsumer);
-
     }
 
     @Test
@@ -113,13 +109,13 @@ class JiraServiceTest {
         project.setId("19954");
         project.setKey("MMA");
         project.setName("Team Dokumentløsninger");
-        project.setIssueTypes(Collections.singletonList(issueType));
-        project.setComponents(Collections.singletonList(component));
+        project.setIssueTypes(singletonList(issueType));
+        project.setComponents(singletonList(component));
         return project;
     }
 
 
-    private final Issue createIssue() {
+    private Issue createIssue() {
 
         Issue issue = new Issue();
         issue.setSelf("https://jira-q1.adeo.no/rest/api/2/issue/534999");
@@ -141,7 +137,7 @@ class JiraServiceTest {
         status.setSelf("https://jira-q1.adeo.no/rest/api/2/status/26154");
         status.setName("Klar for arbeid");
         issueFields.setStatus(status);
-        issueFields.setComponents(Arrays.asList(component));
+        issueFields.setComponents(singletonList(component));
         issueFields.setProject(project);
         issue.setFields(issueFields);
 
@@ -150,7 +146,7 @@ class JiraServiceTest {
     }
 
 
-    private final Issue updateIssue() {
+    private Issue updateIssue() {
 
         Issue issue = new Issue();
         issue.setSelf("https://jira-q1.adeo.no/rest/api/2/issue/534999");
@@ -167,7 +163,7 @@ class JiraServiceTest {
         reporter.setName("srvjiradokdistavstemming");
         reporter.setKey("srvjiradokdistavstemming");
         reporter.setSelf("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
-        issueFields.setComponents(Arrays.asList(component));
+        issueFields.setComponents(singletonList(component));
         issueFields.setProject(project);
         Status status = new Status();
         status.setId("26154");
