@@ -9,8 +9,6 @@ import java.util.List;
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
-
 public interface CSVProdusere {
-
 	File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo);
 }

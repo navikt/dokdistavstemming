@@ -37,80 +37,80 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 @Slf4j
 public class Sdist002Service {
 
-    private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
-    private static final String UKJENT = "Ukjent";
-    private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
-    private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
-    private final CSVProdusere csvProdusere;
-    private final MeterRegistry meterRegistry;
-    private final JiraService jiraService;
-    private final DokdistavstemmingProp dokdistavstemmingProp;
+	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
+	private static final String UKJENT = "Ukjent";
+	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
+	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
+	private final CSVProdusere csvProdusere;
+	private final MeterRegistry meterRegistry;
+	private final JiraService jiraService;
+	private final DokdistavstemmingProp dokdistavstemmingProp;
 
-    public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt,
-                           CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService,
-                           DokdistavstemmingProp dokdistavstemmingProp) {
-        this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
-        this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
-        this.csvProdusere = csvProdusere;
-        this.meterRegistry = meterRegistry;
-        this.jiraService = jiraService;
-        this.dokdistavstemmingProp = dokdistavstemmingProp;
-    }
+	public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt,
+						   CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService,
+						   DokdistavstemmingProp dokdistavstemmingProp) {
+		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
+		this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
+		this.csvProdusere = csvProdusere;
+		this.meterRegistry = meterRegistry;
+		this.jiraService = jiraService;
+		this.dokdistavstemmingProp = dokdistavstemmingProp;
+	}
 
-    public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
-        int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimeEhandel() : dokdistavstemmingProp.getDelayTimeSDP();
-        List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
+	public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
+		int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimeEhandel() : dokdistavstemmingProp.getDelayTimeSDP();
+		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 
-        return new HashSet<>(avstemForsendelseRequestTos);
-    }
-
-
-    public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
-        Arrays.stream(DistribusjonKanalCode.values())
-                .forEach(distribusjonKanal -> {
-                    List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getForsendelserByDistirbusjonKanal(distribusjonKanal.name());
-                    if (avstemForsendelseResponseTos == null) {
-                        return;
-                    } else {
-                        File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
-                        JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
-                        hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
-                    }
-                });
-
-    }
+		return new HashSet<>(avstemForsendelseRequestTos);
+	}
 
 
-    public List<AvstemForsendelseResponseTo> getForsendelserByDistirbusjonKanal(String distribusjonKanal) {
-        AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
-        Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
-        return avstemForsendelseRequestTos.isEmpty() || avstemForsendelseRequestTos == null ? null :
-                avstemForsendelseRequestTos.stream()
-                        .filter(Objects::nonNull)
-                        .map(avstemForsendelseMapper::mapAvstemmForsendelser)
-                        .flatMap(Collection::stream)
-                        .sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
-                        .map(avstemForsendelse -> {
-                            incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
-                            log.info(String.format("Sdist002 har fant avvik forsendelser med forsendelseId=%s, dokumentId=%s, dokumentStatus=%s,opprettetDato=%s" +
-                                            ",distribusjonKanal=%s,journalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDokumentId(), avstemForsendelse.getDokumentStatus(), avstemForsendelse.getOpprettetDato(),
-                                    avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
-                            return avstemForsendelse;
-                        })
-                        .filter(avstemForsendelseResponseTo -> isAvstemtReferanseNull(avstemForsendelseResponseTo.getAvstemtReferanse()))
-                        .collect(Collectors.toList());
-    }
+	public void oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal() {
+		Arrays.stream(DistribusjonKanalCode.values())
+				.forEach(distribusjonKanal -> {
+					List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getForsendelserByDistribusjonKanal(distribusjonKanal.name());
+					if (avstemForsendelseResponseTos == null) {
+						return;
+					} else {
+						File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
+						JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
+						hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
+					}
+				});
 
-    private boolean isAvstemtReferanseNull(String avstemtReferanse) {
-        return avstemtReferanse == null;
-    }
+	}
 
-    private void incrementFunctionalMetrics(String distribusjonKanal,
-                                            String dokumentStatus) {
-        meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
-                "distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
-                "dokumentStatus", dokumentStatus == null ? UKJENT : dokumentStatus).increment();
-    }
+
+	public List<AvstemForsendelseResponseTo> getForsendelserByDistribusjonKanal(String distribusjonKanal) {
+		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
+		Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
+		log.info("Sdist002 fant antall={} forsendelser som ikke har mottat kvittering for distribusjonKanal={}", avstemForsendelseRequestTos.size(), distribusjonKanal);
+		return avstemForsendelseRequestTos.isEmpty() ? null :
+				avstemForsendelseRequestTos.stream()
+						.filter(Objects::nonNull)
+						.map(avstemForsendelseMapper::mapAvstemmedeForsendelser)
+						.flatMap(Collection::stream)
+						.sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
+						.peek(avstemForsendelse -> {
+							incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
+							log.info(String.format("Sdist002 fant avvik forsendelser med forsendelseId=%s, dokumentId=%s, dokumentStatus=%s, opprettetDato=%s" +
+											",distribusjonKanal=%s, journalpostId=%s", avstemForsendelse.getForsendelseId(), avstemForsendelse.getDokumentId(), avstemForsendelse.getDokumentStatus(), avstemForsendelse.getOpprettetDato(),
+									avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getJournalpostId()));
+						})
+						.filter(avstemForsendelseResponseTo -> isAvstemtReferanseNull(avstemForsendelseResponseTo.getAvstemtReferanse()))
+						.collect(Collectors.toList());
+	}
+
+	private boolean isAvstemtReferanseNull(String avstemtReferanse) {
+		return avstemtReferanse == null;
+	}
+
+	private void incrementFunctionalMetrics(String distribusjonKanal,
+											String dokumentStatus) {
+		meterRegistry.counter(DOK_REQUEST_FUNCTIONAL_COUNTER,
+				"distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
+				"dokumentStatus", dokumentStatus == null ? UKJENT : dokumentStatus).increment();
+	}
 
 
 }

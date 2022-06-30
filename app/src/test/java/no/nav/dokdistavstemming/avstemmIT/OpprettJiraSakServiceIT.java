@@ -58,7 +58,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         jiraHappyPostVedleggDokument();
         jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
+        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
         File fil = csvProdusere.oppretteCsvFil(result);
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size());
 
@@ -79,7 +79,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         jiraHappyPostVedleggDokument();
         jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(E_HANDEL.name());
+        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL.name());
         File fil = csvProdusere.oppretteCsvFil(result);
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(E_HANDEL.name(), fil, result.size());
 
@@ -96,7 +96,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
     @Test
     void opprettJiraSakThrowsBadRequestErrorMelding() throws Exception {
         happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistirbusjonKanal(PRINT.name());
+        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
         jiraHappyHentProjectDetails();
         jiraFeilToOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();
