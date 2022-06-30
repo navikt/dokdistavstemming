@@ -84,11 +84,11 @@ public class Sdist002Service {
 	public List<AvstemForsendelseResponseTo> getForsendelserByDistribusjonKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
 		Set<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelserKvitteringIkkeMottattService(distribusjonKanal);
-		log.info("Sdist002 fant antall={} forsendelser som ikke har mottat kvittering for distribusjonKanal={}", avstemForsendelseRequestTos.size(), distribusjonKanal);
+		log.info("Sdist002 fant antall={} forsendelser som ikke har mottatt kvittering for distribusjonKanal={}", avstemForsendelseRequestTos.size(), distribusjonKanal);
 		return avstemForsendelseRequestTos.isEmpty() ? null :
 				avstemForsendelseRequestTos.stream()
 						.filter(Objects::nonNull)
-						.map(avstemForsendelseMapper::mapAvstemmedeForsendelser)
+						.map(avstemForsendelseMapper::mapAvstemteForsendelser)
 						.flatMap(Collection::stream)
 						.sorted(Comparator.comparing(AvstemForsendelseResponseTo::getOpprettetDato))
 						.peek(avstemForsendelse -> {

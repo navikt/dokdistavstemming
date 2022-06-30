@@ -28,7 +28,7 @@ class OppdaterForsendelserAvstemtInfoMapperTest {
     @Test
     public void shouldHentAvstemmingForsendelseResponse() {
         List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList = createDokDistAvstemmingRequestList().stream()
-                .map(avstemtInfoMapper::mapAvstemmedeForsendelser)
+                .map(avstemtInfoMapper::mapAvstemteForsendelser)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 

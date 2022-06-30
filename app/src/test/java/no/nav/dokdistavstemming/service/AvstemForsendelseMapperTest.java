@@ -30,7 +30,7 @@ public class AvstemForsendelseMapperTest {
 
 	@Test
 	public void shouldHentAvstemmingForsendelseResponse() {
-		AvstemForsendelseResponseTo hentAvstemming = mapper.mapAvstemmedeForsendelser(TestDataUtils.createDokDistAvstemmingRequestTo()).get(0);
+		AvstemForsendelseResponseTo hentAvstemming = mapper.mapAvstemteForsendelser(TestDataUtils.createDokDistAvstemmingRequestTo()).get(0);
 		assertResponse(hentAvstemming);
 	}
 

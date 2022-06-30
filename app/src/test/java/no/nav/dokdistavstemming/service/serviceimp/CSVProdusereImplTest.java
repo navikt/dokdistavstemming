@@ -29,7 +29,7 @@ class CSVProdusereImplTest {
 	public void shouldProdusereCSVFil() {
 		AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 		List<AvstemForsendelseResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
-				.map(mapper::mapAvstemmedeForsendelser)
+				.map(mapper::mapAvstemteForsendelser)
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 
