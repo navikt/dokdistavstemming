@@ -16,7 +16,7 @@ public class AvstemForsendelseMapper {
 
 	private static final String DOKUMENTINFO_FEIL ="Det Mangler dokumentInfo og avstemforsendelse kan ikke mapp dokumentInfo ";
 
-	public List<AvstemForsendelseResponseTo> mapAvstemmForsendelser(AvstemForsendelseRequestTo forsendelseRequestTo) {
+	public List<AvstemForsendelseResponseTo> mapAvstemteForsendelser(AvstemForsendelseRequestTo forsendelseRequestTo) {
 
 		if (forsendelseRequestTo == null) {
 			throw new AvstemForsendelseFunctionalException("Fant ikke distribusjonInfo.");

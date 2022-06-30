@@ -25,21 +25,18 @@ class CSVProdusereImplTest {
 	@Autowired
 	private CSVProdusere csvProdusere;
 
-
 	@Test
 	public void shouldProdusereCSVFil() {
 		AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
 		List<AvstemForsendelseResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
-				.map(mapper::mapAvstemmForsendelser)
+				.map(mapper::mapAvstemteForsendelser)
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 
 		File fil = csvProdusere.oppretteCsvFil(dokDistAvStemmingResponseTo);
 
 		assertTrue(fil.exists());
-		assertTrue(fil.length()>0);
+		assertTrue(fil.length() > 0);
 
 	}
-
-
 }

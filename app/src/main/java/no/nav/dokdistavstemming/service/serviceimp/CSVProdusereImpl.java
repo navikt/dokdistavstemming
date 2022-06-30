@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -28,14 +25,12 @@ import java.util.List;
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
-
 @Component
 @Slf4j
 public class CSVProdusereImpl implements CSVProdusere {
 
-
 	private static final String CSV_FILTER_FIL = "dokdistcvs";
-	private static final String baseTmpDirectory = "/tmp/";
+	private static final String BASE_TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
 
 	public File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) {
 		File produced = null;
@@ -55,7 +50,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 		String distribusjonKanal = avstemForsendelseResponseTo.get(0).getDistribusjonKanal();
 		try {
-			produced = new File(baseTmpDirectory+"dokdistavstemming-" + distribusjonKanal +"-" + localDate  +".csv");
+			produced = new File(BASE_TMP_DIRECTORY + "/dokdistavstemming-" + distribusjonKanal + "-" + localDate + ".csv");
 			FileOutputStream fos = new FileOutputStream(produced);
 			log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
 			csvMapper.setFilterProvider(filterProvider);
@@ -72,7 +67,6 @@ public class CSVProdusereImpl implements CSVProdusere {
 		}
 		return produced;
 	}
-
 
 	private static class CsvAnnotationIntrospector extends JacksonAnnotationIntrospector {
 		@Override
