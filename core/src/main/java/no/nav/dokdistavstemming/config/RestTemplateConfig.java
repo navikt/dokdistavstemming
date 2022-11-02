@@ -15,7 +15,6 @@ public class RestTemplateConfig {
 	public static final Duration DURATION_READTIMEOUT = Duration.ofMillis(600000L);
 	public static final Duration DURATION = Duration.ofMillis(30000L);
 
-
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder,
 									 final ServiceuserAlias serviceuserAlias) {
@@ -25,8 +24,5 @@ public class RestTemplateConfig {
 				.setConnectTimeout(DURATION)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
-
 	}
-
-
 }

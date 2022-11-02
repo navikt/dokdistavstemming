@@ -26,7 +26,7 @@ import static no.nav.dokdistavstemming.metrics.MetricUtils.isFunctionalException
  */
 
 @Aspect
-@Incubating(since ="1.0.0" )
+@Incubating(since = "1.0.0")
 @NonNullApi
 @Slf4j
 public class DokMonitoringAspect {
@@ -82,7 +82,6 @@ public class DokMonitoringAspect {
 					.register(registry));
 		}
 	}
-
 
 	private void logException(Exception e) {
 		if (isFunctionalException(e)) {

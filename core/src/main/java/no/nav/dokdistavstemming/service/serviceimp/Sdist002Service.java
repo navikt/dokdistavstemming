@@ -71,15 +71,13 @@ public class Sdist002Service {
 					List<AvstemForsendelseResponseTo> avstemForsendelseResponseTos = getForsendelserByDistribusjonKanal(distribusjonKanal.name());
 					if (avstemForsendelseResponseTos == null) {
 						return;
-					} else {
-						File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
-						JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
-						hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
 					}
+					File csvFil = csvProdusere.oppretteCsvFil(avstemForsendelseResponseTos);
+					JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonKanal.name(), csvFil, avstemForsendelseResponseTos.size());
+					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(avstemForsendelseResponseTos, jiraSakResponseTo));
+
 				});
-
 	}
-
 
 	public List<AvstemForsendelseResponseTo> getForsendelserByDistribusjonKanal(String distribusjonKanal) {
 		AvstemForsendelseMapper avstemForsendelseMapper = new AvstemForsendelseMapper();
@@ -111,6 +109,4 @@ public class Sdist002Service {
 				"distribusjonKanal", distribusjonKanal == null ? UKJENT : distribusjonKanal,
 				"dokumentStatus", dokumentStatus == null ? UKJENT : dokumentStatus).increment();
 	}
-
-
 }
