@@ -18,7 +18,7 @@ spec:
       {{/each}}
   leaderElection: true
   liveness:
-    path: /internal/isAlive
+    path: /actuator/health/liveness
     port: 8080
     initialDelay: 30
     failureThreshold: 10
@@ -27,7 +27,7 @@ spec:
     enabled: true
     path: /actuator/prometheus
   readiness:
-    path: /internal/isReady
+    path: /actuator/health/readiness
     port: 8080
     initialDelay: 30
     timeout: 3
@@ -49,3 +49,7 @@ spec:
         mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
       - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
+  azure:
+    application:
+      enabled: true
+  webproxy: true

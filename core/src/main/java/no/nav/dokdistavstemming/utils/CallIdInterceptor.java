@@ -10,13 +10,16 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 
+import static no.nav.dokdistavstemming.mdc.MDCConstants.MDC_CALL_ID;
+import static no.nav.dokdistavstemming.mdc.MDCConstants.MDC_USER_ID;
+
 @Configuration
 public class CallIdInterceptor implements ClientHttpRequestInterceptor {
 	@Override
 	public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] body, ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-		httpRequest.getHeaders().set(MDCConstants.MDC_CALL_ID, MDC.get(MDCConstants.MDC_CALL_ID));
-		String userId = MDC.get(MDCConstants.MDC_USER_ID);
-		httpRequest.getHeaders().add(MDCConstants.MDC_USER_ID, userId == null ? "UKJENT" : userId);
+		httpRequest.getHeaders().set(MDC_CALL_ID, MDC.get(MDC_CALL_ID));
+		String userId = MDC.get(MDC_USER_ID);
+		httpRequest.getHeaders().add(MDC_USER_ID, userId == null ? "UKJENT" : userId);
 		return clientHttpRequestExecution.execute(httpRequest, body);
 	}
 }

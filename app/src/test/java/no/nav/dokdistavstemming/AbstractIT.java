@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming;
 import no.nav.dokdistavstemming.config.alias.ServiceuserAlias;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.mdc.MDCConstants;
-import no.nav.dokdistavstemming.nais.ApplicationConfig;
 import no.nav.dokdistavstemming.service.CSVProdusere;
 import no.nav.dokdistavstemming.service.serviceimp.JiraService;
 import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;

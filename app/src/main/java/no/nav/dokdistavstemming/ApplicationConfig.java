@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.nais;
+package no.nav.dokdistavstemming;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
@@ -19,12 +19,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableRetry
 @EnableScheduling
 public class ApplicationConfig {
-
 	@Bean
 	public DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokMonitoringAspect(meterRegistry);
 	}
-
-
-
 }
