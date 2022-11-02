@@ -27,5 +27,4 @@ public class OppdaterForsendelserAvstemtInfo {
     public static class Forsendelse {
         private String forsendelseId;
     }
-
 }

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotEmpty;
 @ToString
 @ConfigurationProperties("serviceuser")
 @Validated
-public class ServiceuserAlias {
+public class ServiceuserProperties {
 	@NotEmpty
 	private String username;
 	@NotEmpty

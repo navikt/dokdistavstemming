@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
+import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

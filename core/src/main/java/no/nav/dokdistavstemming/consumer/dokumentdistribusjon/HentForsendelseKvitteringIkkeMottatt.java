@@ -1,7 +1,10 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 
+import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 
 import java.util.List;
@@ -15,4 +18,7 @@ public interface HentForsendelseKvitteringIkkeMottatt {
 
 	void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo);
 
+	void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest);
+
+	HentEkspederteForsendelserResponse hentEkspederteforsendelser(HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest);
 }

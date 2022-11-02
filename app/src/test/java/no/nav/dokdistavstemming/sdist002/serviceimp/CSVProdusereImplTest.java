@@ -1,9 +1,10 @@
-package no.nav.dokdistavstemming.service.serviceimp;
+package no.nav.dokdistavstemming.sdist002.serviceimp;
 
+import no.nav.dokdistavstemming.CoreConfig;
 import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
-import no.nav.dokdistavstemming.service.CSVProdusere;
+import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,5 @@ class CSVProdusereImplTest {
 
 		assertTrue(fil.exists());
 		assertTrue(fil.length() > 0);
-
 	}
 }

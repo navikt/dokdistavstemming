@@ -7,9 +7,9 @@ import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvi
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
-import no.nav.dokdistavstemming.service.CSVProdusere;
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
-import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
+import no.nav.dokdistavstemming.sdist002.CSVProdusere;
+import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
+import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
 
-public class Sdist002ServiceIT extends AbstractIT {
+public class Sdist002ServiceITest extends AbstractIT {
 
     @Autowired
     private Sdist002Service sdist002Service;

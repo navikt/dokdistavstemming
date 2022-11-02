@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service;
+package no.nav.dokdistavstemming.sdist002;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -7,9 +7,9 @@ import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvi
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottattConsumer;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
-import no.nav.dokdistavstemming.service.serviceimp.CSVProdusereImpl;
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
-import no.nav.dokdistavstemming.service.serviceimp.Sdist002Service;
+import no.nav.dokdistavstemming.sdist002.serviceimp.CSVProdusereImpl;
+import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
+import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

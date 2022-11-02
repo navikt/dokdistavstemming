@@ -1,105 +1,126 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
-
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.config.WebClientBasicAuthentication;
+import no.nav.dokdistavstemming.config.alias.ServiceuserProperties;
+import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
+import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
-import no.nav.dokdistavstemming.mdc.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CONSUMER_ID;
+import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
+import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
+import static org.springframework.http.HttpMethod.GET;
 
-@Component
 @Slf4j
+@Component
 public class HentForsendelseKvitteringIkkeMottattConsumer implements HentForsendelseKvitteringIkkeMottatt {
 
-    private final String administrerforsendelseV1Url;
-    private final RestTemplate restTemplate;
+	private final WebClient webClient;
 
-    @Autowired
-    public HentForsendelseKvitteringIkkeMottattConsumer(@Value("${administrerforsendelse.v1.url}") String administrerforsendelseV1Url,
-                                                        RestTemplate restTemplate) {
-        this.administrerforsendelseV1Url = administrerforsendelseV1Url;
-        this.restTemplate = restTemplate;
-    }
+	@Autowired
+	public HentForsendelseKvitteringIkkeMottattConsumer(ServiceuserProperties serviceuserProperties,
+														@Qualifier("rdist001Client") WebClient webClient) {
+		this.webClient = webClient.mutate()
+				.filter(new WebClientBasicAuthentication(serviceuserProperties))
+				.build();
+	}
 
-    @Override
-    @Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
-    @Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"}, percentiles = {0.5, 0.95})
-    public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
-        MDC.put(MDCConstants.MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
-        try {
-            HttpHeaders httpHeaders = createHeaders();
-            log.info("{} har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
-                    MDC.get(MDCConstants.MDC_CONSUMER_ID), distribusjonKanal, antallTimer);
-            ResponseEntity<AvstemForsendelseRequestTo[]> responseEntity = restTemplate
-                    .exchange(String.format("%s/henteuekspederforsendelse/%s/%s", administrerforsendelseV1Url, distribusjonKanal, antallTimer),
-                            HttpMethod.GET, new HttpEntity<>(httpHeaders),  AvstemForsendelseRequestTo[].class );
+	@Override
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"})
+	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
+		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 
-            return responseEntity.getBody() == null ? Collections.emptyList() : Arrays.asList(responseEntity.getBody());
-        } catch (HttpClientErrorException e) {
-            log.warn("{} Kall mot rdist001 feilet med status={}, feilmelding={}", MDC.get(MDCConstants.MDC_CONSUMER_ID), e.getStatusCode(), e.getMessage());
-            throw new AvstemForsendelseFunctionalException(
-                    String.format("Kall mot rdist001 feilet med status=%s, feilmelding=%s", e.getStatusCode(), e.getMessage()), e.getStatusCode()
-            );
-        } catch (HttpServerErrorException e) {
-            log.warn("Kall mot rdist001 feilet teknisk. status={}, feilmelding={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new AvstemForsendelseTechnicalException(
-                    String.format("Kall mot rdist001 feilet teknisk. status=%s, feilmelding=%s", e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode()
-            );
-        }
-    }
+		log.info("{} har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
+				MDC.get(MDC_CONSUMER_ID), distribusjonKanal, antallTimer);
+		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClient.get()
+				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
+				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<AvstemForsendelseRequestTo>>() {
+				})
+				.doOnError(this::handleError).block();
 
-    @Override
-    @Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 500, multiplier = 2))
-    @Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"}, percentiles = {0.5, 0.95})
-    public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
+		return avstemForsendelseRequestTos == null ? Collections.emptyList() : avstemForsendelseRequestTos;
+	}
 
-        try {
-            HttpEntity<OppdaterForsendelserAvstemtInfo> httpEntity = new HttpEntity<>(oppdaterForsendelserAvstemtInfo, createHeaders());
-            log.info("{} har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}",
-                    MDC.get(MDCConstants.MDC_CONSUMER_ID), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
-            restTemplate.exchange(administrerforsendelseV1Url + "/avstemforsendelser", HttpMethod.PUT, httpEntity, Object.class);
-            log.info("Forsendelser med forsendelseIder={} oppdatert", oppdaterForsendelserAvstemtInfo.getForsendelser());
-        } catch (HttpClientErrorException e) {
-            log.warn("Kall mot rdist001 feilet med status={}, feilmelding={}", e.getStatusCode(), e.getMessage());
-            throw new AvstemForsendelseFunctionalException(
-                    String.format("Kall mot rdist001 feilet med status=%s, feilmelding=%s", e.getStatusCode(), e.getMessage()), e.getStatusCode()
-            );
-        } catch (HttpServerErrorException e) {
-            log.warn("Kall mot rdist001 feilet teknisk. status={}, feilmelding={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new AvstemForsendelseTechnicalException(
-                    String.format("Kall mot rdist001 feilet teknisk. status=%s, feilmelding=%s", e.getStatusCode(), e.getResponseBodyAsString()), e, e.getStatusCode()
-            );
-        }
-    }
+	@Override
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
+	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
+		log.info("{} har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}",
+				MDC.get(MDC_CONSUMER_ID), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
+		webClient.put()
+				.uri("/avstemforsendelser")
+				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
+				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
+				.retrieve()
+				.toBodilessEntity()
+				.doOnError(this::handleError).block();
+		log.info("Forsendelser med forsendelseIder={} oppdatert", oppdaterForsendelserAvstemtInfo.getForsendelser().size());
+	}
 
-    private HttpHeaders createHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(MDCConstants.MDC_CALL_ID, MDC.get(MDCConstants.MDC_CALL_ID));
-        return headers;
-    }
+	@Override
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
+	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
+		log.info("{} har mottatt kall om å oppdatere i total avstem ekspedert dato fra rdist001",
+				MDC.get(MDC_CONSUMER_ID), avstemEkspederteForsendelserRequest.getForsendelser().size());
+		webClient.put()
+				.uri("/avstemekspederteforsendelser")
+				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
+				.body(Mono.just(avstemEkspederteForsendelserRequest), AvstemEkspederteForsendelserRequest.class)
+				.retrieve()
+				.toBodilessEntity()
+				.doOnError(this::handleError).block();
+		log.info("Forsendelser med forsendelseIder={} oppdatert", avstemEkspederteForsendelserRequest.getForsendelser().size());
+	}
+
+	@Override
+	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
+	public HentEkspederteForsendelserResponse hentEkspederteforsendelser(HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest) {
+		return webClient.method(GET)
+				.uri("/hentekspederteforsendelser")
+				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
+				.body(Mono.just(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
+				.retrieve()
+				.bodyToMono(HentEkspederteForsendelserResponse.class)
+				.doOnError(this::handleError)
+				.block();
+	}
+
+	private void handleError(Throwable error) {
+		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+			throw new AvstemForsendelseFunctionalException(
+					String.format("Kall mot rdist001 feilet med status=%s, feilmelding=%s",
+							response.getRawStatusCode(),
+							response.getMessage()),
+					error);
+		} else {
+			throw new AvstemForsendelseTechnicalException(
+					String.format("Kall mot rdist001 feilet med feilmelding=%s", error.getMessage()),
+					error);
+		}
+	}
 }

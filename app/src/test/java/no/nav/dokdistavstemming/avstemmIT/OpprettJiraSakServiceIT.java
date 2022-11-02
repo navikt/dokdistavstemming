@@ -4,7 +4,7 @@ import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

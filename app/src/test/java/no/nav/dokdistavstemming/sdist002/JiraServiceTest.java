@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service;
+package no.nav.dokdistavstemming.sdist002;
 
 
 import com.pep1.jira.client.domain.issue.Component;
@@ -13,7 +13,7 @@ import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
-import no.nav.dokdistavstemming.service.serviceimp.JiraService;
+import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

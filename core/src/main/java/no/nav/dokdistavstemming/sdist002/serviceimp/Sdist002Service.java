@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service.serviceimp;
+package no.nav.dokdistavstemming.sdist002.serviceimp;
 
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -11,7 +11,7 @@ import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
-import no.nav.dokdistavstemming.service.CSVProdusere;
+import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import org.springframework.stereotype.Component;
 
 import java.io.File;

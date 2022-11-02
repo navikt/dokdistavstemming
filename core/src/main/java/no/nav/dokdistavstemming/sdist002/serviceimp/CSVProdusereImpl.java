@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service.serviceimp;
+package no.nav.dokdistavstemming.sdist002.serviceimp;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
-import no.nav.dokdistavstemming.service.CSVProdusere;
+import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import org.springframework.stereotype.Component;
 
 import java.io.File;

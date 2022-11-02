@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.utils;
 
-import no.nav.dokdistavstemming.mdc.MDCConstants;
 import org.slf4j.MDC;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpRequest;
@@ -10,8 +9,8 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 
-import static no.nav.dokdistavstemming.mdc.MDCConstants.MDC_CALL_ID;
-import static no.nav.dokdistavstemming.mdc.MDCConstants.MDC_USER_ID;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_USER_ID;
 
 @Configuration
 public class CallIdInterceptor implements ClientHttpRequestInterceptor {

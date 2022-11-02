@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.mdc;
+package no.nav.dokdistavstemming.constants;
 
 public class MDCConstants {
 	public static final String MDC_APP_ID = "appId";

@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service;
+package no.nav.dokdistavstemming.sdist002;
 
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 

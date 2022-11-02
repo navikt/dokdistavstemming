@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.service.serviceimp;
+package no.nav.dokdistavstemming.sdist002.serviceimp;
 
 
 import com.pep1.jira.client.domain.issue.Issue;
@@ -8,7 +8,7 @@ import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
-import no.nav.dokdistavstemming.mdc.MDCConstants;
+import no.nav.dokdistavstemming.constants.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.OppretteJiraSakRequestUtil;
 import org.slf4j.MDC;
