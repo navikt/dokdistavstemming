@@ -9,10 +9,7 @@ import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 
 import java.util.List;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-public interface HentForsendelseKvitteringIkkeMottatt {
+public interface Rdist001administrerforsendelse {
 
 	List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer);
 

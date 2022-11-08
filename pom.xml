@@ -27,6 +27,7 @@
         <application.version>${project.version}</application.version>
 
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
 
         <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
         <resilience4j.version>1.7.1</resilience4j.version>
@@ -55,6 +56,11 @@
                 <artifactId>jira-spring-boot-client-starter</artifactId>
                 <version>${pep1-jira-client.version}</version>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
 
             <!-- test -->

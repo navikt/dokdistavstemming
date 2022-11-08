@@ -36,6 +36,8 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.time.Duration;
 
+import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
+
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
@@ -66,7 +68,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
 	public Issue oppretteJiraSak(@Valid @NotNull IssueInput issueInputRequest) {
 		try {
 			HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
@@ -85,7 +87,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "leggVedlegg"}, percentiles = {0.5, 0.95})
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "leggVedlegg"}, percentiles = {0.5, 0.95})
 	public String leggVedlegg(String key, @NonNull File file) {
 		if (key == null) {
 			throw new IllegalArgumentException("MMA Key er null og kan ikke legge fil til jira saken");
@@ -107,7 +109,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "hentProjekt"}, percentiles = {0.5, 0.95})
 	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
 
 		if (projectKey == null) {
@@ -126,7 +128,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "getIssue"}, percentiles = {0.5, 0.95})
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "getIssue"}, percentiles = {0.5, 0.95})
 	public Issue getIssue(final String sakKey) {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 		try {
@@ -139,7 +141,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = "dokdist_consumer_request", extraTags = {"consumer", "JIRA", "process_code", "updateStatus"}, percentiles = {0.5, 0.95})
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "updateStatus"}, percentiles = {0.5, 0.95})
 	public Issue updateStatus(final String key, @Valid @NonNull JiraTransition transition) throws JIRAClientException {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 

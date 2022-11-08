@@ -4,7 +4,7 @@ package no.nav.dokdistavstemming.sdist002.serviceimp;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
@@ -39,14 +39,14 @@ public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
 	private static final String UKJENT = "Ukjent";
-	private final HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
+	private final Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt;
 	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 	private final JiraService jiraService;
 	private final DokdistavstemmingProp dokdistavstemmingProp;
 
-	public Sdist002Service(HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt,
+	public Sdist002Service(Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt,
 						   CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService,
 						   DokdistavstemmingProp dokdistavstemmingProp) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;

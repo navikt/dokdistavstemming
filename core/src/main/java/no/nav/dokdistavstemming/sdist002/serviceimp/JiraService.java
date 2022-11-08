@@ -19,6 +19,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
+
 /**
  * @author Tsigab Angosom Gebremedhin, NAV.
  */
@@ -35,7 +37,7 @@ public class JiraService {
         this.jiraConsumer = jiraConsumer;
     }
 
-    @Monitor(value = "dokdist_request", extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
+    @Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
     public JiraSakResponseTo oppretteMMAJiraSak(String distribusjonKanal, File fil, int size) {
 
         MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");

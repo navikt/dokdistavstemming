@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.avstemmIT;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.HentForsendelseKvitteringIkkeMottatt;
+import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
@@ -55,104 +55,102 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Sdist002ServiceITest extends AbstractIT {
 
-    @Autowired
-    private Sdist002Service sdist002Service;
-    @Autowired
-    private HentForsendelseKvitteringIkkeMottatt hentForsendelseKvitteringIkkeMottatt;
-    @Autowired
-    private CSVProdusere csvProdusere;
-    @Autowired
-    private MeterRegistry meterRegistry;
-    @Autowired
-    private JiraService jiraService;
-    @Autowired
-    private DokdistavstemmingProp dokdistavstemmingProp;
+	@Autowired
+	private Sdist002Service sdist002Service;
+	@Autowired
+	private Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt;
+	@Autowired
+	private CSVProdusere csvProdusere;
+	@Autowired
+	private MeterRegistry meterRegistry;
+	@Autowired
+	private JiraService jiraService;
+	@Autowired
+	private DokdistavstemmingProp dokdistavstemmingProp;
 
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-        sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
+	@BeforeEach
+	public void setUp() {
+		super.setUp();
+		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
+	}
 
-    }
+	@Test
+	public void shouldHentListOkStatus() throws Exception {
+		dokDistHappyHentUekspedereFrosendelse();
+		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = sdist002Service.getForsendelserByDistribusjonKanal(SDP.name());
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
+	}
 
-    @Test
-    public void shouldHentListOkStatus() throws Exception {
-        dokDistHappyHentUekspedereFrosendelse();
-        List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = sdist002Service.getForsendelserByDistribusjonKanal(SDP.name());
-        verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
-        assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
-    }
+	@Test
+	public void shouldHentListOkStatusKanalPrint() throws Exception {
+		happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
+		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		assertThat(result.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_PRINT));
+		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
+		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
+		assertThat(result.get(0).getDistribusjonDato(), is(DISRIBUSJON_DATO_J));
+	}
 
-    @Test
-    public void shouldHentListOkStatusKanalPrint() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
-        verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-        assertThat(result.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_PRINT));
-        assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
-        assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
-        assertThat(result.get(0).getDistribusjonDato().toString(), is(DISRIBUSJON_DATO_J));
-    }
+	@Test
+	public void shouldOppretteCSVFilList() throws Exception {
 
-    @Test
-    public void shouldOppretteCSVFilList() throws Exception {
+		happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
+		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
+		File csvFiler = csvProdusere.oppretteCsvFil(result);
+		assertThat(csvFiler.isFile(), is(true));
+		assertThat(csvFiler.length() != 0, is(true));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+	}
 
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
-        File csvFiler = csvProdusere.oppretteCsvFil(result);
-        assertThat(csvFiler.isFile(), is(true));
-        assertThat(csvFiler.length() != 0, is(true));
-        verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
-    }
+	@Test
+	public void shouldOppdatertForsendelserAvstemDatoOgReferanse() throws Exception {
+		happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
+		jiraHappyHentProjectDetails();
+		jiraHappyOpprettSakForAvstemFrosendelse();
+		jiraHappyPostVedleggDokument();
+		oppdaterAvstemFrosendelseInfo();
+		jiraHappyUpdateSak("MMA-134");
+		jiraHappyGetIssue();
+		sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
-    @Test
-    public void shouldOppdatertForsendelserAvstemDatoOgReferanse() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
-        jiraHappyHentProjectDetails();
-        jiraHappyOpprettSakForAvstemFrosendelse();
-        jiraHappyPostVedleggDokument();
-        oppdaterAvstemFrosendelseInfo();
-        jiraHappyUpdateSak("MMA-134");
-        jiraHappyGetIssue();
-        sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
+		verify(7, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
+				.withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
+	}
 
-        verify(7, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
-                .withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
-    }
+	@Test
+	public void shouldOppdatertForsendelserThrowsBadRequestException() throws Exception {
+		dokDistHappyHentUekspedereFrosendelse();
+		jiraHappyHentProjectDetails();
+		jiraHappyOpprettSakForAvstemFrosendelse();
+		jiraHappyPostVedleggDokument();
+		oppdaterAvstemFrosendelseInfoFeil();
+		jiraHappyUpdateSak("MMA-134");
+		jiraHappyGetIssue();
+		assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
-    @Test
-    public void shouldOppdatertForsendelserThrowsBadRequestException() throws Exception {
-        dokDistHappyHentUekspedereFrosendelse();
-        jiraHappyHentProjectDetails();
-        jiraHappyOpprettSakForAvstemFrosendelse();
-        jiraHappyPostVedleggDokument();
-        oppdaterAvstemFrosendelseInfoFeil();
-        jiraHappyUpdateSak("MMA-134");
-        jiraHappyGetIssue();
-        assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
+		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(1, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
+	}
 
-        verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
-        verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
-        verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
-        verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
-        verify(1, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
-    }
-
-    @Test
-    public void shouldOppdatertForsendelserThrowsInternalServerException() throws Exception {
-        dokDistHappyHentUekspedereFrosendelse();
-        jiraHappyHentProjectDetails();
-        jiraHappyOpprettSakForAvstemFrosendelse();
-        jiraHappyPostVedleggDokument();
-        oppdaterAvstemFrosendelseInfoFeilWithInternalServerError();
-        jiraHappyUpdateSak("MMA-134");
-        jiraHappyGetIssue();
-        assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
-        verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
-        verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
-        verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
-        verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
-        verify(3, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
-    }
-
+	@Test
+	public void shouldOppdatertForsendelserThrowsInternalServerException() throws Exception {
+		dokDistHappyHentUekspedereFrosendelse();
+		jiraHappyHentProjectDetails();
+		jiraHappyOpprettSakForAvstemFrosendelse();
+		jiraHappyPostVedleggDokument();
+		oppdaterAvstemFrosendelseInfoFeilWithInternalServerError();
+		jiraHappyUpdateSak("MMA-134");
+		jiraHappyGetIssue();
+		assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
+		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
+		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(3, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
+	}
 }

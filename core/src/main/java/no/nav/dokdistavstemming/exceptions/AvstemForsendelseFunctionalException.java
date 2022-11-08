@@ -6,11 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
-
 @ResponseStatus(BAD_REQUEST)
 public class AvstemForsendelseFunctionalException extends RuntimeException {
 
@@ -30,6 +25,4 @@ public class AvstemForsendelseFunctionalException extends RuntimeException {
 		super(message, cause);
 		this.httpStatus = BAD_REQUEST;
 	}
-
-
 }

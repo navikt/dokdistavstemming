@@ -30,7 +30,7 @@ public class AzureConfig {
 	private String appClientSecret;
 
 	@Bean("azureClient")
-	public WebClient webClient(WebClient.Builder webClientBuilder) {
+	public WebClient azureClient(WebClient.Builder webClientBuilder) {
 		HttpClient httpClient = HttpClient.create().proxyWithSystemProperties();
 		return webClientBuilder.clone()
 				.clientConnector(new ReactorClientHttpConnector(httpClient))

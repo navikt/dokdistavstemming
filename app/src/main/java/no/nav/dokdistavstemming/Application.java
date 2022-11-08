@@ -1,19 +1,14 @@
 package no.nav.dokdistavstemming;
 
-import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
-import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-@Import(value = {
-		ApplicationConfig.class,
-		Sdist002ScheduleConfig.class,
-		AvstemForsendelseConfig.class
+@Import({
+		CoreConfig.class,
 })
 @SpringBootApplication
 public class Application {
-
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}

@@ -1,0 +1,36 @@
+package no.nav.dokdistavstemming;
+
+import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
+import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.String.valueOf;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+public class AvstemEkspederteForsendelserMapper {
+
+	public AvstemEkspederteForsendelserRequest mapAvstemEkspederteForsendelser(HentEkspederteForsendelserResponse ekspederteForsendelserResponse,
+																			   JournalpostResultResponse journalpostResultResponse) {
+		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
+				.map(ekspederteForsendelse ->
+						bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId()))
+				.collect(Collectors.toList());
+
+		return AvstemEkspederteForsendelserRequest.builder()
+				.forsendelser(forsendelser)
+				.build();
+	}
+
+	public AvstemEkspederteForsendelserRequest.Forsendelse bulkOppdaterDistribusjonsinfo(JournalpostResultResponse journalpostResultResponse,
+																						 String journalpostId, Long forsendelseId) {
+		return journalpostResultResponse.getOppdatert().stream()
+				.filter(jp -> isBlank(jp.getErrormessage()) && valueOf(jp.getJournalpostId()).equals(journalpostId))
+				.map(journalpostResponse -> AvstemEkspederteForsendelserRequest.Forsendelse.builder()
+						.forsendelseId(forsendelseId)
+						.build())
+				.findAny().orElse(null);
+	}
+}

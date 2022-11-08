@@ -92,7 +92,6 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
     }
 
-
     @Test
     void opprettJiraSakThrowsBadRequestErrorMelding() throws Exception {
         happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
