@@ -1,6 +1,5 @@
 {
   "ADMINISTRERFORSENDELSE_V1_URL": "https://app-q2.adeo.no/dokdist/rest/v1/administrerforsendelse",
-  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
   "JIRA_V1_URL": "https://jira-q1.adeo.no",
   "JOURNALPOSTAPI_URL": "https://dokarkiv.intern.nav.no/rest/journalpostapi/v1/bulkOppdaterDistribusjonsinfo",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
