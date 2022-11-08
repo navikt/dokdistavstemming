@@ -1,8 +1,8 @@
 {
   "ADMINISTRERFORSENDELSE_V1_URL": "https://app.adeo.no/dokdist/rest/v1/administrerforsendelse",
-  "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
-  "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "JIRA_V1_URL": "https://jira.adeo.no",
+  "JOURNALPOSTAPI_URL": "https://dokarkiv.dev.intern.nav.no/rest/journalpostapi/v1/bulkOppdaterDistribusjonsinfo",
+  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",

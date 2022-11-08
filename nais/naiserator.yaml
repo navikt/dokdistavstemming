@@ -11,6 +11,8 @@ spec:
       value: {{ ADMINISTRERFORSENDELSE_V1_URL }}
     - name: JIRA_V1_URL
       value: {{ JIRA_V1_URL }}
+    - name: JOURNALPOSTAPI_URL
+      value: {{ JOURNALPOSTAPI_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

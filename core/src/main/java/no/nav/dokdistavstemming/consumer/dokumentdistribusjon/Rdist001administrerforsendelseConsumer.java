@@ -41,7 +41,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	private final WebClient webClient;
 
 	@Autowired
-	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.url}") String baseUrl,
+	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
 												  ServiceuserProperties serviceuserProperties,
 												  WebClient webClient) {
 		this.webClient = webClient.mutate()

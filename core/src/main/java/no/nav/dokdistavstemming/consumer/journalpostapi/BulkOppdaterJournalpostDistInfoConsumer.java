@@ -61,13 +61,4 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 					error);
 		}
 	}
-
-	private Long validateJournalpostId(String journalpostId) {
-		try {
-			return Long.valueOf(journalpostId);
-		} catch (NumberFormatException e) {
-			throw new JournalpostApiTechnicalException(
-					format("%s er ikke en gyldig journalpostId. Kan ikke kalle journalpostApi.", journalpostId), e);
-		}
-	}
 }
