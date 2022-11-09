@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 
 @Import({
 		CoreConfig.class,
-		Sdist004Scheduler.class
+		Sdist004Config.class
 })
 @SpringBootApplication
 public class Application {
