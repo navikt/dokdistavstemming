@@ -33,7 +33,6 @@ public class LeaderElectionConsumer {
 					.uri("http://" + electorPath)
 					.retrieve()
 					.bodyToMono(String.class)
-					.doOnError(this::handleError)
 					.block();
 			String leader = mapper.readTree(response).get("name").asText();
 			String hostname = InetAddress.getLocalHost().getHostName();
@@ -42,9 +41,5 @@ public class LeaderElectionConsumer {
 			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
 			return true;
 		}
-	}
-
-	private void handleError(Throwable error) {
-		log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", error.getMessage()), error);
 	}
 }
