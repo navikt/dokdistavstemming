@@ -21,7 +21,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 
 @SpringBootTest(webEnvironment = RANDOM_PORT,
-		classes = {CoreConfig.class})
+		classes = {CoreConfig.class, Sdist004Scheduler.class})
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
