@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -24,9 +23,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT,
 		classes = {CoreConfig.class})
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")
-@Import({
-		MeterRegisteryConfig.class
-})
 @AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
 @ExtendWith(SpringExtension.class)

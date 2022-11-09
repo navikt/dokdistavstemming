@@ -17,5 +17,5 @@ public interface Rdist001administrerforsendelse {
 
 	void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest);
 
-	HentEkspederteForsendelserResponse hentEkspederteforsendelser(HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest);
+	HentEkspederteForsendelserResponse hentEkspederteforsendelser();
 }

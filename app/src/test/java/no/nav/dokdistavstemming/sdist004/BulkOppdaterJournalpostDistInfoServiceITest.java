@@ -1,22 +1,18 @@
-package no.nav.dokdistavstemming.itest;
+package no.nav.dokdistavstemming.sdist004;
 
-
+import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.Sdist004BulkOppdaterJournalpostDistInfoService;
-import no.nav.dokdistavstemming.config.AbstractIT;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
-import no.nav.dokdistavstemming.utils.DataUtils;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static no.nav.dokdistavstemming.utils.WireMockResponse.getEkspederteForsendelser;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemArkivFrosendelseInfo;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterJournalpost;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
 
-
-@Disabled
 public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@Autowired
@@ -31,7 +27,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
-		 sdist004BulkOppdaterService = new Sdist004BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
+		sdist004BulkOppdaterService = new Sdist004BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
 	}
 
 	@Test
@@ -39,7 +35,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 		getEkspederteForsendelser();
 		oppdaterAvstemArkivFrosendelseInfo();
 		oppdaterJournalpost();
-
+		postAzureToken();
 
 		sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo();
 	}

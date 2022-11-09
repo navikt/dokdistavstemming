@@ -28,7 +28,7 @@ public class Sdist004BulkOppdaterJournalpostDistInfoService {
 
 	public void oppdaterAvstemOgJournalpostDistInfo() {
 
-		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser(null);
+		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
 		if (hentEkspederteForsendelserResponse != null || !hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
 			log.info("Hentet i total {} ekspederteforsendelse fra dokdist-rdist001 tjeneste.", hentEkspederteForsendelserResponse.getForsendelser().size());

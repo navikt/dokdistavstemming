@@ -42,7 +42,7 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
-		return webClient.method(PUT)
+		return webClient.post()
 				.uri("/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()

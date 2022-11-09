@@ -1,6 +1,10 @@
 package no.nav.dokdistavstemming.utils;
 
+import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.MimeTypeUtils;
+
+import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -21,6 +25,9 @@ public class WireMockResponse {
     public static final String JIRA_OPPRETTE_URL = "/rest/api/2/issue";
     public static final String JIRA_VEDLEGG_URL = "/rest/api/2/issue/MMA-134/attachments";
     public static final String JIRA_MMA_URL = "/rest/api/2/project/MMA";
+    public static final String EKSPEDERTEFORSENDELSER_URL = "/administrerforsendelse/hentekspederteforsendelser";
+    public static final String AVSTEMFORSENDELSE_URL = "/administrerforsendelse/avstemekspederteforsendelser";
+    public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/bulkOppdaterDistribusjonsinfo";
 
     public static void dokDistHappyHentUekspedereFrosendelse() throws Exception {
         stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
@@ -77,7 +84,6 @@ public class WireMockResponse {
                         .withBody(classpathToString("__files/jira/jiraresponse.json"))));
     }
 
-
     public static void oppdaterAvstemFrosendelseInfo() {
         stubFor(put(urlMatching(ADMINISTRERFORSENDELSE_URL))
                 .willReturn(aResponse().withStatus(OK.value())
@@ -95,4 +101,31 @@ public class WireMockResponse {
                         .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
     }
 
+    public static void getEkspederteForsendelser() throws Exception {
+        stubFor(get(urlMatching(EKSPEDERTEFORSENDELSER_URL))
+                .willReturn(aResponse().withStatus(OK.value())
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                        .withBody(classpathToString("__files/rdist001/ekspedertforsendelse.json"))));
+    }
+
+    public static void oppdaterAvstemArkivFrosendelseInfo() {
+        stubFor(put(urlMatching(AVSTEMFORSENDELSE_URL))
+                .willReturn(aResponse().withStatus(OK.value())
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
+    }
+
+    public static void oppdaterJournalpost() throws IOException {
+        stubFor(post(urlMatching(JOURNALPOST_API_URL))
+                .willReturn(aResponse().withStatus(OK.value())
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                        .withBody(classpathToString("__files/rdist001/journalpost_distinfo_ok_response.json"))));
+    }
+
+    public static void postAzureToken() {
+        stubFor(post("/azure_token")
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+                        .withBodyFile("azure/token_response.json")));
+    }
 }

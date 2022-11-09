@@ -1,0 +1,188 @@
+{
+  "forsendelser": [
+    {
+      "forsendelseId": "257403",
+      "journalpostId": "453814607",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 09:50:58",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257408",
+      "journalpostId": "453814610",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 09:50:59",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257404",
+      "journalpostId": "453814608",
+      "distribusjonsKanal": "PRINT",
+      "ekspedertDato": "2022-10-07 09:50:59",
+      "postadresse": {
+        "adresselinje1": "adresselinje1",
+        "adresselinje2": "adresselinje2",
+        "adresselinje3": "adresselinje3",
+        "postnummer": "postnummer",
+        "poststed": "poststed",
+        "landkode": "landkode"
+      },
+      "digitalpostkasse": null,
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257405",
+      "journalpostId": "453814606",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 09:50:59",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257407",
+      "journalpostId": "453814611",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 10:01:03",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257434",
+      "journalpostId": "453814663",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 12:02:25",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257442",
+      "journalpostId": "453814672",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 13:40:41",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257445",
+      "journalpostId": "453814673",
+      "distribusjonsKanal": "DITTNAV",
+      "ekspedertDato": "2022-10-07 14:11:56",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": {
+        "digitalkontaktinformasjon": "EPOST : epostaddress3@nav.no",
+        "varseltekst": "EPOST: Du har fått brev fra NAV"
+      }
+    },
+    {
+      "forsendelseId": "257443",
+      "journalpostId": "453814674",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 14:11:56",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257444",
+      "journalpostId": "453814675",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 14:11:57",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "0000487236",
+        "digitalpostkasseleverandor": "123456789"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "257444",
+      "journalpostId": "453814675",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-10-07 14:11:57",
+      "postadresse": null,
+      "digitalpostkasse": null,
+      "varsel": null
+    },
+    {
+      "forsendelseId": "260791",
+      "journalpostId": "453818922",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-11-01 18:27:27",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "tom.tom#2541",
+        "digitalpostkasseleverandor": "984661185"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "260790",
+      "journalpostId": "453818921",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-11-01 18:27:27",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "tom.tom#2541",
+        "digitalpostkasseleverandor": "984661185"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "260792",
+      "journalpostId": "453818923",
+      "distribusjonsKanal": "SDP",
+      "ekspedertDato": "2022-11-01 18:29:28",
+      "postadresse": null,
+      "digitalpostkasse": {
+        "digitalpostkasseadresse": "tom.tom#2541",
+        "digitalpostkasseleverandor": "984661185"
+      },
+      "varsel": null
+    },
+    {
+      "forsendelseId": "260793",
+      "journalpostId": "453818924",
+      "distribusjonsKanal": "DITTNAV",
+      "ekspedertDato": "2022-11-01 18:34:32",
+      "postadresse": null,
+      "digitalpostkasse": null,
+      "varsel": {
+        "digitalkontaktinformasjon": "EPOST : epostaddress3@nav.no, SMS: 11111111",
+        "varseltekst": "EPOST: Du har fått brev fra NAV, SMS: Du har fått brev fra NAV"
+      }
+    }
+  ]
+}

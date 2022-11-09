@@ -8,20 +8,22 @@ import no.nav.dokdistavstemming.domain.EkspederteForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
 import no.nav.dokdistavstemming.utils.ConverterUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class BulkOppdaterDistribusjonsinfoMapper {
 
 	public BulkOppdaterDistribusjonsinfoRequest map(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
 		List<JournalpostWithDistribusjonsinfo> journalpostWithDistribusjonsinfos = hentEkspederteForsendelser.getForsendelser().stream()
-				.filter(ekspederteForsendelse -> StringUtils.isNotBlank(ekspederteForsendelse.getJournalpostId()))
+				.filter(ekspederteForsendelse -> isNotBlank(ekspederteForsendelse.getJournalpostId()))
+				.filter(this::isPostadresseDigitalPostInfoOgVarselNonNull)
 				.map(ekspederteForsendelse -> journalpostWithDistribusjonsinfo(ekspederteForsendelse))
 				.collect(Collectors.toList());
 		return BulkOppdaterDistribusjonsinfoRequest.builder()
@@ -69,5 +71,10 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 						.digitalkontaktinformasjon(dittNavVarsel.getDigitalkontaktinformasjon())
 						.build() : null;
 
+	}
+
+	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspederteForsendelse ekspederteForsendelse) {
+		return nonNull(ekspederteForsendelse.getPostadresse()) || nonNull(ekspederteForsendelse.getDigitalpostkasse())
+				|| nonNull(ekspederteForsendelse.getVarsel());
 	}
 }

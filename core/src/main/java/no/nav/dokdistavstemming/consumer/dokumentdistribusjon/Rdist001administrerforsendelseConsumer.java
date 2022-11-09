@@ -90,7 +90,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
-		log.info("{} har mottatt kall om å oppdatere i total avstem ekspedert dato fra rdist001",
+		log.info("{} har mottatt kall om å oppdatere i total {} avstemArkivDato i dokdist database",
 				MDC.get(MDC_CONSUMER_ID), avstemEkspederteForsendelserRequest.getForsendelser().size());
 		webClient.put()
 				.uri("/avstemekspederteforsendelser")
@@ -105,13 +105,17 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
-	public HentEkspederteForsendelserResponse hentEkspederteforsendelser(HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest) {
+	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
+		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
+				.maksForsendelser(0)
+				.build();
 		return webClient.method(GET)
 				.uri("/hentekspederteforsendelser")
 				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
-				.body(Mono.just(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
+				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.retrieve()
-				.bodyToMono(HentEkspederteForsendelserResponse.class)
+				.bodyToMono(new ParameterizedTypeReference<HentEkspederteForsendelserResponse>() {
+				})
 				.doOnError(this::handleError)
 				.block();
 	}
