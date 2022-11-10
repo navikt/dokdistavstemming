@@ -1,8 +1,8 @@
 {
   "ADMINISTRERFORSENDELSE_V1_URL": "https://app.adeo.no/dokdist/rest/v1/administrerforsendelse",
   "JIRA_V1_URL": "https://jira.adeo.no",
-  "JOURNALPOSTAPI_URL": "https://dokarkiv.intern.nav.no/rest/journalpostapi/v1",
-  "AZURE_APP_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
+  "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest/journalpostapi/v1",
+  "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",

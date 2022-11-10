@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.sdist002.serviceimp;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
@@ -44,11 +44,11 @@ public class Sdist002Service {
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
 	private final JiraService jiraService;
-	private final DokdistavstemmingProp dokdistavstemmingProp;
+	private final DokdistavstemmingProperties dokdistavstemmingProp;
 
 	public Sdist002Service(Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt,
 						   CSVProdusere csvProdusere, MeterRegistry meterRegistry, JiraService jiraService,
-						   DokdistavstemmingProp dokdistavstemmingProp) {
+						   DokdistavstemmingProperties dokdistavstemmingProp) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
 		this.csvProdusere = csvProdusere;
@@ -58,7 +58,8 @@ public class Sdist002Service {
 	}
 
 	public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
-		int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getDelayTimeEhandel() : dokdistavstemmingProp.getDelayTimeSDP();
+		int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getSdist002().getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ?
+				dokdistavstemmingProp.getSdist002().getDelayTimeEhandel() : dokdistavstemmingProp.getSdist002().getDelayTimeSDP();
 		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 
 		return new HashSet<>(avstemForsendelseRequestTos);

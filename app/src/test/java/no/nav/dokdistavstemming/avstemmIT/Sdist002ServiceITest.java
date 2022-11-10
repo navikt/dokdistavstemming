@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.avstemmIT;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
@@ -66,7 +66,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 	@Autowired
 	private JiraService jiraService;
 	@Autowired
-	private DokdistavstemmingProp dokdistavstemmingProp;
+	private DokdistavstemmingProperties dokdistavstemmingProp;
 
 	@BeforeEach
 	public void setUp() {

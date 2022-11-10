@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.config;
 
-import no.nav.dokdistavstemming.config.alias.ServiceuserProperties;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -9,16 +8,16 @@ import reactor.core.publisher.Mono;
 
 public class WebClientBasicAuthentication implements ExchangeFilterFunction {
 
-	private final ServiceuserProperties serviceuserProperties;
+	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
-	public WebClientBasicAuthentication(ServiceuserProperties serviceuserProperties) {
-		this.serviceuserProperties = serviceuserProperties;
+	public WebClientBasicAuthentication(DokdistavstemmingProperties dokdistavstemmingProperties) {
+		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
 	}
 
 	@Override
 	public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 		return next.exchange(ClientRequest.from(request).headers((headers) -> {
-			headers.setBasicAuth(serviceuserProperties.getUsername(), serviceuserProperties.getPassword());
+			headers.setBasicAuth(dokdistavstemmingProperties.getServiceuser().getUsername(), dokdistavstemmingProperties.getServiceuser().getPassword());
 		}).build());
 	}
 }

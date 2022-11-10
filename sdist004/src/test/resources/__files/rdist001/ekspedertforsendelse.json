@@ -168,8 +168,14 @@
       "postadresse": null,
       "digitalpostkasse": null,
       "varsel": {
-        "digitalkontaktinformasjon": "EPOST : epostaddress3@nav.no, SMS: 11111111",
-        "varseltekst": "EPOST: Du har fått brev fra NAV, SMS: Du har fått brev fra NAV"
+        "digitalkontaktinformasjon": {
+          "epost": "epostaddress3@nav.no",
+          "sms": "11111111"
+        },
+        "varseltekst": {
+          "epost": "Du har fått brev fra NAV",
+          "sms": "Du har fått brev fra NAV"
+        }
       }
     }
   ]

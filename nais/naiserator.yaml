@@ -11,10 +11,10 @@ spec:
       value: {{ ADMINISTRERFORSENDELSE_V1_URL }}
     - name: JIRA_V1_URL
       value: {{ JIRA_V1_URL }}
-    - name: JOURNALPOSTAPI_URL
-      value: {{ JOURNALPOSTAPI_URL }}
-    - name: AZURE_APP_SCOPE
-      value: {{ AZURE_APP_SCOPE}}
+    - name: DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL
+      value: {{ DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL }}
+    - name: DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE
+      value: {{ DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

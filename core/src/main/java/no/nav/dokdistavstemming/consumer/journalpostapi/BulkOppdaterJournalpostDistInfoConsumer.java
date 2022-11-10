@@ -2,12 +2,12 @@ package no.nav.dokdistavstemming.consumer.journalpostapi;
 
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,6 @@ import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
@@ -29,13 +28,13 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 	private final WebClient webClient;
 
 	@Autowired
-	public BulkOppdaterJournalpostDistInfoConsumer(@Value("${journalpostapi.url}") String baseUrl,
-												   WebClient webClient,
+	public BulkOppdaterJournalpostDistInfoConsumer(WebClient webClient,
+												   DokdistavstemmingProperties dokdistavstemmingProp,
 												   AzureToken azureToken) {
 		this.webClient = webClient.mutate()
-				.baseUrl(baseUrl)
+				.baseUrl(dokdistavstemmingProp.getEndpoints().getDokarkiv().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.filter(new WebClientAzureAuthentication(azureToken))
+				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp))
 				.build();
 	}
 

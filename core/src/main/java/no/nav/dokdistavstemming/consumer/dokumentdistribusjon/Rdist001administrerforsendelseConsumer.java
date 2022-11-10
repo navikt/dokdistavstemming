@@ -1,8 +1,8 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.WebClientBasicAuthentication;
-import no.nav.dokdistavstemming.config.alias.ServiceuserProperties;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
@@ -42,11 +42,11 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Autowired
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
-												  ServiceuserProperties serviceuserProperties,
+												 DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClient) {
 		this.webClient = webClient.mutate()
 				.baseUrl(baseUrl)
-				.filter(new WebClientBasicAuthentication(serviceuserProperties))
+				.filter(new WebClientBasicAuthentication(dokdistavstemmingProperties))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
 	}

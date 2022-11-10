@@ -1,13 +1,10 @@
 package no.nav.dokdistavstemming;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import no.nav.dokdistavstemming.azure.AzureConfig;
 import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.WebClientConfig;
-import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
-import no.nav.dokdistavstemming.config.alias.ServiceuserProperties;
 import no.nav.dokdistavstemming.metrics.DokMonitoringAspect;
 import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,9 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableRetry
 @EnableScheduling
 @EnableConfigurationProperties(value = {
-		ServiceuserProperties.class,
-		JiraServiceuserAlias.class,
-		DokdistavstemmingProp.class,
+		DokdistavstemmingProperties.class,
 		AzureConfig.class
 })
 @EnableAspectJAutoProxy

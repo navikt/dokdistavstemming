@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class DittNavVarsel {
-	private final String digitalkontaktinformasjon;
-	private final String varseltekst;
+	private final DigitalkontakInfo digitalkontaktinformasjon;
+	private final DigitalkontakInfo varseltekst;
 }

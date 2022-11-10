@@ -30,7 +30,8 @@ public class AzureToken {
 	private final ObjectMapper objectMapper;
 	private final AzureConfig azureConfig;
 
-	public AzureToken(@Qualifier("azureClient") WebClient webClient, ObjectMapper objectMapper, AzureConfig azureConfig) {
+	public AzureToken(@Qualifier("azureClient") WebClient webClient, ObjectMapper objectMapper,
+					  AzureConfig azureConfig) {
 		this.webClient = webClient;
 		this.objectMapper = objectMapper;
 		this.azureConfig = azureConfig;
@@ -39,17 +40,17 @@ public class AzureToken {
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Cacheable(AZURE_TOKEN_CACHE)
-	public String accessToken() {
-		return fetchAccessToken();
+	public String accessToken(String scope) {
+		return fetchAccessToken(scope);
 	}
 
-	private String fetchAccessToken() {
+	private String fetchAccessToken(String scope) {
 
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		formData.add("client_id", azureConfig.getAppClientId());
 		formData.add("client_secret", azureConfig.getAppClientSecret());
 		formData.add("grant_type", "client_credentials");
-		formData.add("scope", azureConfig.getAppScope());
+		formData.add("scope", scope);
 
 		String responseJson = webClient.post()
 				.body(BodyInserters.fromFormData(formData))

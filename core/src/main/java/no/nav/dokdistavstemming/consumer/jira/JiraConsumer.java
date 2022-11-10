@@ -6,14 +6,13 @@ import com.pep1.jira.client.domain.project.Project;
 import com.pep1.jira.client.error.JIRAClientException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.config.alias.JiraServiceuserAlias;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JiraClientException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.CallIdInterceptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -53,18 +52,18 @@ public class JiraConsumer {
 	private final String jiraBaseUri;
 	private final String apiBaseUri;
 	private final RestTemplate restTemplate;
-	private final JiraServiceuserAlias jiraServiceuserAlias;
+	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
-	public JiraConsumer(@Value("${jira.v1.url}") String jiraBaseUri, RestTemplateBuilder restTemplateBuilder, JiraServiceuserAlias jiraServiceuserAlias) {
-		this.jiraBaseUri = jiraBaseUri;
+	public JiraConsumer(RestTemplateBuilder restTemplateBuilder, DokdistavstemmingProperties dokdistavstemmingProperties) {
+		this.jiraBaseUri = dokdistavstemmingProperties.getJira().getUrl();
 		this.restTemplate = restTemplateBuilder
 				.interceptors(new CallIdInterceptor())
 				.setReadTimeout(DURATION)
 				.setConnectTimeout(DURATION)
-				.basicAuthentication(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword())
+				.basicAuthentication(dokdistavstemmingProperties.getJira().getUsername(), dokdistavstemmingProperties.getJira().getPassword())
 				.build();
 		this.apiBaseUri = UriComponentsBuilder.fromUriString(jiraBaseUri).path(ISSUE_CREATE).build().toString();
-		this.jiraServiceuserAlias = jiraServiceuserAlias;
+		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
 	}
 
 	@Retryable(include = AvstemForsendelseTechnicalException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
@@ -157,7 +156,7 @@ public class JiraConsumer {
 
 	private HttpHeaders createSecurityHeaders(MediaType mediaType) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBasicAuth(jiraServiceuserAlias.getUsername(), jiraServiceuserAlias.getPassword());
+		headers.setBasicAuth(dokdistavstemmingProperties.getJira().getUsername(), dokdistavstemmingProperties.getJira().getPassword());
 		headers.add("X-Atlassian-Token", "no-check");
 		headers.setContentType(mediaType);
 		return headers;

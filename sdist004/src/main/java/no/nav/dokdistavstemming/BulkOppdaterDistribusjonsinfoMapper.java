@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
+import no.nav.dokdistavstemming.domain.DigitalkontakInfo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
 import no.nav.dokdistavstemming.domain.DittNavVarsel;
 import no.nav.dokdistavstemming.domain.EkspederteForsendelse;
@@ -67,14 +68,24 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 	private DittNavVarsel mapDittNavVarsel(DittNavVarsel dittNavVarsel, String kanal) {
 		return DITTNAV.name().equals(kanal) && dittNavVarsel != null ?
 				DittNavVarsel.builder()
-						.varseltekst(dittNavVarsel.getVarseltekst())
-						.digitalkontaktinformasjon(dittNavVarsel.getDigitalkontaktinformasjon())
-						.build() : null;
+						.varseltekst(DigitalkontakInfo.builder()
+								.epost(isKontaktInfoNull(dittNavVarsel.getVarseltekst()) ? null : dittNavVarsel.getVarseltekst().getEpost())
+						.sms(isKontaktInfoNull(dittNavVarsel.getVarseltekst()) ? null : dittNavVarsel.getVarseltekst().getSms())
+						.build())
+						.digitalkontaktinformasjon(DigitalkontakInfo.builder()
+								.epost(isKontaktInfoNull(dittNavVarsel.getDigitalkontaktinformasjon()) ? null : dittNavVarsel.getDigitalkontaktinformasjon().getEpost())
+								.sms(isKontaktInfoNull(dittNavVarsel.getDigitalkontaktinformasjon()) ? null : dittNavVarsel.getDigitalkontaktinformasjon().getSms())
+								.build())
+				.build() :null;
 
 	}
 
 	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspederteForsendelse ekspederteForsendelse) {
 		return nonNull(ekspederteForsendelse.getPostadresse()) || nonNull(ekspederteForsendelse.getDigitalpostkasse())
 				|| nonNull(ekspederteForsendelse.getVarsel());
+	}
+
+	private boolean isKontaktInfoNull(DigitalkontakInfo digitalkontakInfo) {
+		return digitalkontakInfo == null;
 	}
 }

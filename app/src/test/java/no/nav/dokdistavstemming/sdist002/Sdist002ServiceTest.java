@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming.sdist002;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProp;
+import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelseConsumer;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
@@ -71,7 +71,7 @@ public class Sdist002ServiceTest {
 	public void setUp() {
 		hentForsendelseKvitteringIkkeMottatt = mock(Rdist001administrerforsendelseConsumer.class);
 		csvProdusere = mock(CSVProdusereImpl.class);
-		DokdistavstemmingProp dokdistavstemmingProp = new DokdistavstemmingProp();
+		DokdistavstemmingProperties dokdistavstemmingProp = new DokdistavstemmingProperties();
 		
 		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere,meterRegistry,jiraService, dokdistavstemmingProp);
 	}

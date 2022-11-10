@@ -30,13 +30,13 @@ public class Sdist004BulkOppdaterJournalpostDistInfoService {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
 		if (hentEkspederteForsendelserResponse != null || !hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
-			log.info("Hentet i total {} ekspederteforsendelse fra dokdist-rdist001 tjeneste.", hentEkspederteForsendelserResponse.getForsendelser().size());
+			log.info("sdist004 hentet totalt {} ekspederteforsendelse fra dokdist-rdist001.", hentEkspederteForsendelserResponse.getForsendelser().size());
 			BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = bulkOppdaterDistribusjonsinfoMapper.map(hentEkspederteForsendelserResponse);
 
 			BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(bulkOppdaterDistribusjonsinfoRequest);
 
 			AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
-			log.info("Sdist004 oppdatert i total {} journalposter distribusjon informasjon på dokarkiv", avstemEkspederteForsendelserRequest.getForsendelser().size());
+			log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", avstemEkspederteForsendelserRequest.getForsendelser().size());
 			rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
 		}
 	}
