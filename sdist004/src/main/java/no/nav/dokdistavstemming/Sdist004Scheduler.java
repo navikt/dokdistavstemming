@@ -29,15 +29,14 @@ public class Sdist004Scheduler implements SchedulingConfigurer {
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-
-		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-
-		taskScheduler.setPoolSize(POOL_SIZE);
-		taskScheduler.setThreadNamePrefix("sdist004-scheduled-task-pool-");
-		taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
-		taskScheduler.initialize();
-		scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
 		if (leaderElection.isLeader()) {
+			ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+			taskScheduler.setPoolSize(POOL_SIZE);
+			taskScheduler.setThreadNamePrefix("sdist004-scheduled-task-pool-");
+			taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+			taskScheduler.initialize();
+			scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
+
 			scheduledTaskRegistrar.addCronTask(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo, sdist004Schedule);
 		}
 	}

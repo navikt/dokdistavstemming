@@ -7,11 +7,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.InetAddress;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
 public class LeaderElectionConsumer {
+
+	private static final String ELECTOR_PATH = "ELECTOR_PATH";
 
 	private final WebClient webClient;
 	private final ObjectMapper mapper;
@@ -22,8 +24,8 @@ public class LeaderElectionConsumer {
 	}
 
 	public boolean isLeader() {
-		String electorPath = System.getenv("ELECTOR_PATH");
-		if (isNotBlank(electorPath)) {
+		String electorPath = System.getenv(ELECTOR_PATH);
+		if (isBlank(electorPath)) {
 			log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel ELECTOR_PATH.");
 			return true;
 		}

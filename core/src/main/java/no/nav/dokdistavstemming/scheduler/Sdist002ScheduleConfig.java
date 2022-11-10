@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -19,31 +20,32 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Slf4j
 public class Sdist002ScheduleConfig implements SchedulingConfigurer {
 
-    private static final int POOL_SIZE = 4;
+	private static final int POOL_SIZE = 4;
 
-    private final String jiraSchedule;
-    private final Sdist002Service sdist002Service;
+	private final String jiraSchedule;
+	private final Sdist002Service sdist002Service;
+	private final LeaderElectionConsumer leaderElection;
 
 
-    public Sdist002ScheduleConfig(@Value("${scheduler_jira_cron}") String jiraSchedule,
-                                  Sdist002Service sdist002Service) {
-        this.sdist002Service = sdist002Service;
-        this.jiraSchedule = jiraSchedule;
+	public Sdist002ScheduleConfig(@Value("${scheduler_jira_cron}") String jiraSchedule,
+								  Sdist002Service sdist002Service, LeaderElectionConsumer leaderElection) {
+		this.sdist002Service = sdist002Service;
+		this.jiraSchedule = jiraSchedule;
+		this.leaderElection = leaderElection;
+	}
 
-    }
+	@Override
+	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-
-        taskScheduler.setPoolSize(POOL_SIZE);
-        taskScheduler.setThreadNamePrefix("dokdistavstemming-scheduled-task-pool-");
-        taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
-        taskScheduler.initialize();
-
-        scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
-        scheduledTaskRegistrar.addCronTask(sdist002Service::oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal, jiraSchedule);
-    }
+		if (leaderElection.isLeader()) {
+			ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+			taskScheduler.setPoolSize(POOL_SIZE);
+			taskScheduler.setThreadNamePrefix("dokdistavstemming-scheduled-task-pool-");
+			taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+			taskScheduler.initialize();
+			scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
+			scheduledTaskRegistrar.addCronTask(sdist002Service::oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal, jiraSchedule);
+		}
+	}
 
 }
