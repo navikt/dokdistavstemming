@@ -6,7 +6,7 @@ import no.nav.dokdistavstemming.utils.ConverterUtils;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static no.nav.dokdistavstemming.utils.TestDataUtils.ARKIV_KODE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.BESTILLENDE_FAGSYSTEM;
@@ -36,7 +36,7 @@ public class AvstemForsendelseMapperTest {
 
 	@Test
 	public void shouldConvertStringToDateTime(){
-		LocalDateTime distribusjonsdato = ConverterUtils.convertStringToLocalDateTime(DISTRIBUSJON_DATO);
+		OffsetDateTime distribusjonsdato = ConverterUtils.convertStringToDateTime(DISTRIBUSJON_DATO);
 		assertThat(distribusjonsdato.getYear(), is(2022));
 	}
 

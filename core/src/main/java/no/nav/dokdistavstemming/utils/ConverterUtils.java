@@ -1,25 +1,21 @@
 package no.nav.dokdistavstemming.utils;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ConverterUtils {
 
-    private ConverterUtils() {
-    }
+	private ConverterUtils() {
+	}
 
-    public static LocalDateTime convertStringToLocalDateTime(String parameter) {
+	public static OffsetDateTime convertStringToDateTime(String parameter) {
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return parameter == null ? null : LocalDateTime.parse(parameter, dateTimeFormatter);
-    }
-
-    public static <T extends Enum<T>> T stringToEnum(String value, Class<T> clazz) {
-        if (value == null) {
-            return null;
-        }
-
-        return Enum.valueOf(clazz, value);
-    }
-
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		LocalDateTime parse = LocalDateTime.parse(parameter, dateTimeFormatter);
+		return isBlank(parameter) ? null : OffsetDateTime.of(parse, ZoneId.of("Europe/Oslo").getRules().getOffset(parse));
+	}
 }

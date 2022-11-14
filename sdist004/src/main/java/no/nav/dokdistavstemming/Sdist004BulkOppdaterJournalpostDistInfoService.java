@@ -29,15 +29,22 @@ public class Sdist004BulkOppdaterJournalpostDistInfoService {
 	public void oppdaterAvstemOgJournalpostDistInfo() {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
-		if (hentEkspederteForsendelserResponse != null || !hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
+		if (hentEkspederteForsendelserResponse != null || isValidForsendelse(hentEkspederteForsendelserResponse)) {
 			log.info("sdist004 hentet totalt {} ekspederteforsendelse fra dokdist-rdist001.", hentEkspederteForsendelserResponse.getForsendelser().size());
 			BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = bulkOppdaterDistribusjonsinfoMapper.map(hentEkspederteForsendelserResponse);
 
 			BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(bulkOppdaterDistribusjonsinfoRequest);
 
 			AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
-			log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", avstemEkspederteForsendelserRequest.getForsendelser().size());
-			rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
+
+			if (avstemEkspederteForsendelserRequest != null) {
+				log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", bulkOppdaterDistribusjonsinfoResponse.getJournalposter().getOppdatert().size());
+				rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
+			}
 		}
+	}
+
+	private boolean isValidForsendelse(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
+		return hentEkspederteForsendelser.getForsendelser() != null || hentEkspederteForsendelser.getForsendelser().isEmpty();
 	}
 }

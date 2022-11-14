@@ -7,7 +7,7 @@ import no.nav.dokdistavstemming.domain.Digitalpostkasse;
 import no.nav.dokdistavstemming.domain.DittNavVarsel;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -16,7 +16,7 @@ public class JournalpostWithDistribusjonsinfo {
 	private String utsendingsKanal;
 	private Long forsendelseId;
 	private Long journalpostId;
-	private LocalDateTime ekspedertDato;
+	private OffsetDateTime ekspedertDato;
 	private PostadresseTo postadresse;
 	private Digitalpostkasse digitalpostkasse;
 	private DittNavVarsel varsel;

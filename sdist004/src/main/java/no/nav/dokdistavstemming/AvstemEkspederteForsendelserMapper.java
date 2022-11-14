@@ -14,6 +14,10 @@ public class AvstemEkspederteForsendelserMapper {
 
 	public AvstemEkspederteForsendelserRequest mapAvstemEkspederteForsendelser(HentEkspederteForsendelserResponse ekspederteForsendelserResponse,
 																			   JournalpostResultResponse journalpostResultResponse) {
+		if (journalpostResultResponse.getOppdatert()==null || journalpostResultResponse.getOppdatert().isEmpty()) {
+			return null;
+		}
+
 		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
 				.map(ekspederteForsendelse ->
 						bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId()))

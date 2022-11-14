@@ -24,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
@@ -42,7 +43,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Autowired
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
-												 DokdistavstemmingProperties dokdistavstemmingProperties,
+												  DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClient) {
 		this.webClient = webClient.mutate()
 				.baseUrl(baseUrl)
@@ -57,8 +58,8 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
 		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 
-		log.info("{} har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
-				MDC.get(MDC_CONSUMER_ID), distribusjonKanal, antallTimer);
+		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
+				distribusjonKanal, antallTimer);
 		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClient.get()
 				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
 				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
@@ -74,8 +75,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
-		log.info("{} har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}",
-				MDC.get(MDC_CONSUMER_ID), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
+		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}", oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
 		webClient.put()
 				.uri("/avstemforsendelser")
 				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
@@ -90,8 +90,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
-		log.info("{} har mottatt kall om å oppdatere i total {} avstemArkivDato i dokdist database",
-				MDC.get(MDC_CONSUMER_ID), avstemEkspederteForsendelserRequest.getForsendelser().size());
+		log.info("oppdaterAvstemEkspderteForsendelser har mottatt kall om å oppdatere i total {} avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
 		webClient.put()
 				.uri("/avstemekspederteforsendelser")
 				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
@@ -106,6 +105,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
+		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
 				.maksForsendelser(0)
 				.build();
