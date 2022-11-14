@@ -12,7 +12,7 @@ import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.utils.TestUtils.convertDateTimeToString;
 
 public class TestDataUtils {
-	
+
 	public static final String KONVERSASJON_ID = "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb26131";
 	public static final String DISTRIBUSJON_ID = "7882d37e-34f7-11e9-b677-d663bd953d61";
 	public static final String BESTILLENDE_FAGSYSTEM = "ARENA";
