@@ -62,7 +62,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				distribusjonKanal, antallTimer);
 		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClient.get()
 				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
-				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<AvstemForsendelseRequestTo>>() {
 				})
@@ -78,7 +77,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}", oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
 		webClient.put()
 				.uri("/avstemforsendelser")
-				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
 				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
 				.retrieve()
 				.toBodilessEntity()
@@ -93,12 +91,11 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 		log.info("oppdaterAvstemEkspderteForsendelser har mottatt kall om å oppdatere i total {} avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
 		webClient.put()
 				.uri("/avstemekspederteforsendelser")
-				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
 				.body(Mono.just(avstemEkspederteForsendelserRequest), AvstemEkspederteForsendelserRequest.class)
 				.retrieve()
 				.toBodilessEntity()
 				.doOnError(this::handleError).block();
-		log.info("Forsendelser med forsendelseIder={} oppdatert", avstemEkspederteForsendelserRequest.getForsendelser().size());
+		log.info("avstemekspederteforsendelser oppdetert totalt {} forsendelser - avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
 	}
 
 	@Override
@@ -111,7 +108,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.build();
 		return webClient.method(GET)
 				.uri("/hentekspederteforsendelser")
-				.header(MDC_CALL_ID, MDC.get(MDC_CALL_ID))
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<HentEkspederteForsendelserResponse>() {

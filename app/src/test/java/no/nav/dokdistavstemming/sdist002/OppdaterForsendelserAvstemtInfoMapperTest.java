@@ -30,7 +30,7 @@ class OppdaterForsendelserAvstemtInfoMapperTest {
         List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList = createDokDistAvstemmingRequestList().stream()
                 .map(avstemtInfoMapper::mapAvstemteForsendelser)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
 
         OppdaterForsendelserAvstemtInfo forsendelserAvstemtInfo = mapper.map(avstemForsendelseResponseToList, createJiraSakResponseTo());
         assertOppdaterForsendelserAvstemtInfoMapper(forsendelserAvstemtInfo);

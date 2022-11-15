@@ -7,7 +7,7 @@ then
 fi
 if test -f /var/run/secrets/nais.io/srvdokdistavstemming/password;
 then
-    echo "Setting SERVICEUSER_PASSWORD"
+    echo "Setting dokdistavstemming_serviceuser_password"
     export dokdistavstemming_serviceuser_password=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
 fi
 

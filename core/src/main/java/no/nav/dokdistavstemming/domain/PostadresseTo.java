@@ -1,15 +1,19 @@
 package no.nav.dokdistavstemming.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostadresseTo {
-	private final String adresselinje1;
-	private final String adresselinje2;
-	private final String adresselinje3;
-	private final String postnummer;
-	private final String poststed;
-	private final String landkode;
+	private String adresselinje1;
+	private String adresselinje2;
+	private String adresselinje3;
+	private String postnummer;
+	private String poststed;
+	private String landkode;
 }

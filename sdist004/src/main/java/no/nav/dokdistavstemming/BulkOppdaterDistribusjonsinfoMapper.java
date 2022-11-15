@@ -9,7 +9,6 @@ import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
@@ -25,7 +24,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.filter(ekspederteForsendelse -> isNotBlank(ekspederteForsendelse.getJournalpostId()))
 				.filter(this::isPostadresseDigitalPostInfoOgVarselNonNull)
 				.map(this::journalpostWithDistribusjonsinfo)
-				.collect(Collectors.toList());
+				.toList();
 		return BulkOppdaterDistribusjonsinfoRequest.builder()
 				.journalposter(journalpostWithDistribusjonsinfos)
 				.build();
@@ -37,6 +36,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.forsendelseId(ekspederteForsendelse.getForsendelseId())
 				.ekspedertDato(convertStringToDateTime(ekspederteForsendelse.getEkspedertDato()))
 				.utsendingsKanal(ekspederteForsendelse.getDistribusjonsKanal())
+				.settStatusEkspedert(true)
 				.digitalpostkasse(mapDigitalpostkasse(ekspederteForsendelse.getDigitalpostkasse(), ekspederteForsendelse.getDistribusjonsKanal()))
 				.postadresse(mapPostadresse(ekspederteForsendelse.getPostadresse(), ekspederteForsendelse.getDistribusjonsKanal()))
 				.varsel(mapDittNavVarsel(ekspederteForsendelse.getVarsel(), ekspederteForsendelse.getDistribusjonsKanal()))

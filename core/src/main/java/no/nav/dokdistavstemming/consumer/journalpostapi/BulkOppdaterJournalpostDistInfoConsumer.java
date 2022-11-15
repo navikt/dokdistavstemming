@@ -1,5 +1,6 @@
 package no.nav.dokdistavstemming.consumer.journalpostapi;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
@@ -22,6 +23,7 @@ import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @Component
 public class BulkOppdaterJournalpostDistInfoConsumer {
 
@@ -41,6 +43,7 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
+		log.info("bulkOppdaterJournalpostDistribusjonsInfo mottatt kall til å oppdatere journalposter distribusjon info.");
 		return webClient.post()
 				.uri("/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)

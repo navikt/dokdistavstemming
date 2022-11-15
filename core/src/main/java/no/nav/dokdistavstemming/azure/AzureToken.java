@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.AzureTokenException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -21,6 +20,8 @@ import java.util.Map;
 import static no.nav.dokdistavstemming.cache.LokalCacheConfig.AZURE_TOKEN_CACHE;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 @Slf4j
 @Component
@@ -30,9 +31,12 @@ public class AzureToken {
 	private final ObjectMapper objectMapper;
 	private final AzureConfig azureConfig;
 
-	public AzureToken(@Qualifier("azureClient") WebClient webClient, ObjectMapper objectMapper,
+	public AzureToken(WebClient webClient, ObjectMapper objectMapper,
 					  AzureConfig azureConfig) {
-		this.webClient = webClient;
+		this.webClient = webClient.mutate()
+				.baseUrl(azureConfig.getOpenidConfigTokenEndpoint())
+				.defaultHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+				.build();
 		this.objectMapper = objectMapper;
 		this.azureConfig = azureConfig;
 	}
@@ -68,7 +72,7 @@ public class AzureToken {
 	}
 
 	private void handleError(Throwable error) {
-		if(error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new AzureTokenException(
 					String.format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s",
 							response.getRawStatusCode(),

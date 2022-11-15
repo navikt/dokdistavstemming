@@ -21,7 +21,7 @@ public class AvstemEkspederteForsendelserMapper {
 		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
 				.map(ekspederteForsendelse ->
 						bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId()))
-				.collect(Collectors.toList());
+				.toList();
 
 		return AvstemEkspederteForsendelserRequest.builder()
 				.forsendelser(forsendelser)
