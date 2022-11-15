@@ -7,14 +7,12 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 
 @Configuration
-@Profile({"nais", "local"})
 public class LokalCacheConfig {
 
 	public static final String AZURE_TOKEN_CACHE = "AzureToken";

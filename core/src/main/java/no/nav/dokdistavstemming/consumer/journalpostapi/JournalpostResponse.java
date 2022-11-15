@@ -2,10 +2,10 @@ package no.nav.dokdistavstemming.consumer.journalpostapi;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
 @Builder
-@Getter
+@Data
 @AllArgsConstructor
 public class JournalpostResponse {
 	private Long journalpostId;

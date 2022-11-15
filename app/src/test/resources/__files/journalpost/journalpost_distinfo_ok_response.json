@@ -36,12 +36,16 @@
       },
       {
         "journalpostId": "453814922"
+      }
+    ],
+    "feilet": [
+      {
+        "journalpostId": 453814923,
+        "errormessage": "Kan ikke ekspedere journalpost med status E"
       },
       {
-        "journalpostId": "453814923"
-      },
-      {
-        "journalpostId": "453814924"
+        "journalpostId": 453814924,
+        "errormessage": "Kan ikke ekspedere journalpost med status E"
       }
     ]
   }
