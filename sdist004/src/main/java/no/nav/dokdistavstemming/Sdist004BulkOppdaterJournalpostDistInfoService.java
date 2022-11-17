@@ -49,7 +49,7 @@ public class Sdist004BulkOppdaterJournalpostDistInfoService {
 	}
 
 	private boolean isForsendelseNullOrEmpy(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
-		return hentEkspederteForsendelser.getForsendelser() == null || hentEkspederteForsendelser.getForsendelser().isEmpty();
+		return hentEkspederteForsendelser.getForsendelser() == null;
 	}
 
 	private void logMelding(BulkOppdaterDistribusjonsinfoResponse response) {
