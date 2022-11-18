@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.avstemmIT;
+package no.nav.dokdistavstemming.avstemIT;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;

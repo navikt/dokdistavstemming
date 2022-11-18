@@ -2,7 +2,7 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
-import no.nav.dokdistavstemming.domain.EkspederteForsendelse;
+import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +20,8 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 	@Test
 	public void shouldMapOKBulkOppdaterDistribusjonsinfo() throws IOException {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserFromJson = getHentEkspederteForsendelserFromJson("__files/rdist001/ekspedertforsendelse.json");
-		EkspederteForsendelse sdpEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(0);
-		EkspederteForsendelse printEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(2);
+		EkspedertForsendelse sdpEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(0);
+		EkspedertForsendelse printEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(2);
 
 		BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = mapper.map(hentEkspederteForsendelserFromJson);
 
@@ -51,7 +51,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoPrint.getVarsel());
 		assertNull(jpDistInfoPrint.getDigitalpostkasse());
 
-		EkspederteForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(13);
+		EkspedertForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(13);
 		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(12);
 
 		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());

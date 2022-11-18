@@ -108,7 +108,7 @@ public class WireMockResponse {
 						.withBody(classpathToString("__files/rdist001/ekspedertforsendelse.json"))));
 	}
 
-	public static void oppdaterAvstemArkivFrosendelseInfo() {
+	public static void oppdaterAvstemArkivForsendelseInfo() {
 		stubFor(put(urlMatching(AVSTEMFORSENDELSE_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));

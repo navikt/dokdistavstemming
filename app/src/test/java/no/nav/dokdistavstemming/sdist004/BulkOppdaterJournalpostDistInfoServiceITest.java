@@ -20,7 +20,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.AVSTEMFORSENDELSE_
 import static no.nav.dokdistavstemming.utils.WireMockResponse.EKSPEDERTEFORSENDELSER_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JOURNALPOST_API_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.getEkspederteForsendelser;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemArkivFrosendelseInfo;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemArkivForsendelseInfo;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterJournalpost;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterJournalpostFeil;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
@@ -46,7 +46,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 	@Test
 	public void shouldHenteBulkForsendelseOgOppdatereJouralpost() throws Exception {
 		getEkspederteForsendelser();
-		oppdaterAvstemArkivFrosendelseInfo();
+		oppdaterAvstemArkivForsendelseInfo();
 		oppdaterJournalpost("__files/journalpost/journalpost_distinfo_ok_response.json");
 		postAzureToken();
 
@@ -60,7 +60,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 	@Test
 	public void shouldHenteBulkForsendelseOgFeilTilOppdatereJournalpost() throws Exception {
 		getEkspederteForsendelser();
-		oppdaterAvstemArkivFrosendelseInfo();
+		oppdaterAvstemArkivForsendelseInfo();
 		oppdaterJournalpost("__files/journalpost/journalpost_distinfo_feil_response.json");
 		postAzureToken();
 

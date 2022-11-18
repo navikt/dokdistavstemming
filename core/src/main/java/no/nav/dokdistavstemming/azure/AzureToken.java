@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.exceptions.AzureTokenException;
+import no.nav.dokdistavstemming.exceptions.AzureTokenTechnicalException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -79,7 +80,7 @@ public class AzureToken {
 							response.getMessage()),
 					error);
 		} else {
-			throw new AzureTokenException(
+			throw new AzureTokenTechnicalException(
 					String.format("Kall mot Azure feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}

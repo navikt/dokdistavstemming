@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 @Builder
 public class HentEkspederteForsendelserResponse {
-	private final List<EkspederteForsendelse> forsendelser;
+	private final List<EkspedertForsendelse> forsendelser;
 }

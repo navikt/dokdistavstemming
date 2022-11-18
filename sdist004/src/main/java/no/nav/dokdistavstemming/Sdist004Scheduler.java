@@ -22,7 +22,7 @@ public class Sdist004Scheduler implements SchedulingConfigurer {
 	private final ThreadPoolTaskScheduler taskScheduler;
 
 	public Sdist004Scheduler(Sdist004BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterJournalpostDistInfo,
-							 @Value("${scheduler_sdist004_cron}") String sdist004Schedule, LeaderElectionConsumer leaderElection) {
+							 @Value("${sdist004.cron.job}") String sdist004Schedule, LeaderElectionConsumer leaderElection) {
 		this.sdist004BulkOppdaterJournalpostDistInfo = sdist004BulkOppdaterJournalpostDistInfo;
 		this.sdist004Schedule = sdist004Schedule;
 		this.leaderElection = leaderElection;
@@ -32,7 +32,7 @@ public class Sdist004Scheduler implements SchedulingConfigurer {
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 		if (leaderElection.isLeader()) {
-			log.info("starter sdist004 cron-jobben.");
+			log.info("Starter sdist004 cron-jobb ...");
 			taskScheduler.setPoolSize(POOL_SIZE);
 			taskScheduler.setThreadNamePrefix("sdist004-scheduled-task-pool-");
 			taskScheduler.setWaitForTasksToCompleteOnShutdown(true);

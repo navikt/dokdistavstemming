@@ -4,7 +4,7 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
 import no.nav.dokdistavstemming.domain.DittNavVarsel;
-import no.nav.dokdistavstemming.domain.EkspederteForsendelse;
+import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
 
@@ -30,7 +30,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.build();
 	}
 
-	private JournalpostWithDistribusjonsinfo journalpostWithDistribusjonsinfo(EkspederteForsendelse ekspederteForsendelse) {
+	private JournalpostWithDistribusjonsinfo journalpostWithDistribusjonsinfo(EkspedertForsendelse ekspederteForsendelse) {
 		return JournalpostWithDistribusjonsinfo.builder()
 				.journalpostId(Long.valueOf(ekspederteForsendelse.getJournalpostId()))
 				.forsendelseId(ekspederteForsendelse.getForsendelseId())
@@ -73,7 +73,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 
 	}
 
-	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspederteForsendelse ekspederteForsendelse) {
+	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspedertForsendelse ekspederteForsendelse) {
 		return nonNull(ekspederteForsendelse.getPostadresse()) || nonNull(ekspederteForsendelse.getDigitalpostkasse())
 				|| nonNull(ekspederteForsendelse.getVarsel());
 	}

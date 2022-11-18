@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.avstemmIT;
+package no.nav.dokdistavstemming.avstemIT;
 
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;

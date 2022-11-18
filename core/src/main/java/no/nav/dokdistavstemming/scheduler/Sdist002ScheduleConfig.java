@@ -25,9 +25,8 @@ public class Sdist002ScheduleConfig implements SchedulingConfigurer {
 	private final String jiraSchedule;
 	private final Sdist002Service sdist002Service;
 	private final LeaderElectionConsumer leaderElection;
-
-
-	public Sdist002ScheduleConfig(@Value("${scheduler_jira_cron}") String jiraSchedule,
+	
+	public Sdist002ScheduleConfig(@Value("${sdist002.cron.job}") String jiraSchedule,
 								  Sdist002Service sdist002Service, LeaderElectionConsumer leaderElection) {
 		this.sdist002Service = sdist002Service;
 		this.jiraSchedule = jiraSchedule;

@@ -8,8 +8,8 @@ Sdist002 cron-jobben for Jira-oppgåver køyrer
 - Prod: Kl. 11 kvar måndag-fredag
 
 
-Sdist004 cron-jobben oppdaterer journalpost distribusjon informasjon i dokarkiv. 
-- Prod: kjører hver time  måndag-søndag
+Sdist004 cron-jobben oppdaterer journalpost distribusjonsinformasjon i dokarkiv. 
+- Prod: kjører hver time  mandag-søndag
 
 ## Førespurnadar
 Spørsmål om koda eller prosjektet kan stillast på Slack-kanalen til Team Dokumentløsninger:

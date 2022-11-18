@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		Sdist002ScheduleConfig.class,
 		AvstemForsendelseConfig.class,
 		CoreConfig.class,
-		Sdist004Scheduler.class
+		Sdist004SchedulerConfig.class
 })
 @SpringBootApplication
 public class Application {

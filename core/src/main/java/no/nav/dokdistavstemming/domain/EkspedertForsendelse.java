@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EkspederteForsendelse {
+public class EkspedertForsendelse {
 	private final Long forsendelseId;
 	private final String journalpostId;
 	private final String distribusjonsKanal;
