@@ -4,8 +4,10 @@ import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.metrics.DokMonitoringAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+@EnableRetry
 @Configuration
 public class CoreConfig {
 
