@@ -4,6 +4,7 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.domain.UtsendingsKanalCode;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoSdp.getPostadresse());
 
 		assertEquals(Long.valueOf(printEkspederteForsendelse.getJournalpostId()), jpDistInfoPrint.getJournalpostId());
-		assertEquals(printEkspederteForsendelse.getDistribusjonsKanal(), jpDistInfoPrint.getUtsendingsKanal());
+		assertEquals(UtsendingsKanalCode.S.name(), jpDistInfoPrint.getUtsendingsKanal());
 		assertEquals(printEkspederteForsendelse.getPostadresse().getAdresselinje1(), jpDistInfoPrint.getPostadresse().getAdresselinje1());
 		assertEquals(printEkspederteForsendelse.getPostadresse().getAdresselinje2(), jpDistInfoPrint.getPostadresse().getAdresselinje2());
 		assertEquals(printEkspederteForsendelse.getPostadresse().getAdresselinje3(), jpDistInfoPrint.getPostadresse().getAdresselinje3());
@@ -55,7 +56,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(12);
 
 		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
-		assertEquals(dittNavEkspederteForsendelse.getDistribusjonsKanal(), jpDistInfoDittNav.getUtsendingsKanal());
+		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
 		assertEquals(dittNavEkspederteForsendelse.getVarsel().getVarseltekst(), jpDistInfoDittNav.getVarsel().getVarseltekst());
 		assertEquals(dittNavEkspederteForsendelse.getVarsel().getDigitalkontaktinformasjon(), jpDistInfoDittNav.getVarsel().getDigitalkontaktinformasjon());
 		assertTrue(jpDistInfoDittNav.getSettStatusEkspedert());

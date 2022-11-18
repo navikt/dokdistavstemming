@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class Sdist004BulkOppdaterJournalpostDistInfoService {
+public class BulkOppdaterJournalpostDistInfoService {
 
 	private final BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer;
 	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
 
-	public Sdist004BulkOppdaterJournalpostDistInfoService(BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer,
-														  Rdist001administrerforsendelse rdist001administrerforsendelse) {
+	public BulkOppdaterJournalpostDistInfoService(BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer,
+												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
 		this.oppdaterJournalpostDistInfoConsumer = oppdaterJournalpostDistInfoConsumer;
 		this.rdist001administrerforsendelse = rdist001administrerforsendelse;
 		this.bulkOppdaterDistribusjonsinfoMapper = new BulkOppdaterDistribusjonsinfoMapper();

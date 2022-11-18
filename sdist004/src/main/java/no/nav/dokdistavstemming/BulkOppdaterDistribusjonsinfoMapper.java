@@ -3,10 +3,12 @@ package no.nav.dokdistavstemming;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
+import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.DittNavVarsel;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
+import no.nav.dokdistavstemming.domain.UtsendingsKanalCode;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.journalpostId(Long.valueOf(ekspederteForsendelse.getJournalpostId()))
 				.forsendelseId(ekspederteForsendelse.getForsendelseId())
 				.ekspedertDato(convertStringToDateTime(ekspederteForsendelse.getEkspedertDato()))
-				.utsendingsKanal(ekspederteForsendelse.getDistribusjonsKanal())
+				.utsendingsKanal(mapUtsendingsKanalCode(ekspederteForsendelse.getDistribusjonsKanal()))
 				.settStatusEkspedert(true)
 				.digitalpostkasse(mapDigitalpostkasse(ekspederteForsendelse.getDigitalpostkasse(), ekspederteForsendelse.getDistribusjonsKanal()))
 				.postadresse(mapPostadresse(ekspederteForsendelse.getPostadresse(), ekspederteForsendelse.getDistribusjonsKanal()))
@@ -71,6 +73,30 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 						.digitalkontaktinformasjon(dittNavVarsel.getDigitalkontaktinformasjon())
 						.build() : null;
 
+	}
+
+	private String mapUtsendingsKanalCode(String distKanal) {
+		DistribusjonKanalCode distribusjonKanalCode = DistribusjonKanalCode.valueOf(distKanal);
+		switch (distribusjonKanalCode) {
+			case SDP -> {
+				return UtsendingsKanalCode.SDP.name();
+			}
+			case E_HANDEL -> {
+				return UtsendingsKanalCode.INGEN_DISTRIBUSJON.name();
+			}
+			case DITTNAV -> {
+				return UtsendingsKanalCode.NAV_NO.name();
+			}
+			case TRYGDERETTEN -> {
+				return UtsendingsKanalCode.TRYGDERETTEN.name();
+			}
+			case PRINT -> {
+				return UtsendingsKanalCode.S.name();
+			}
+			default -> {
+				return null;
+			}
+		}
 	}
 
 	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspedertForsendelse ekspederteForsendelse) {

@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.sdist004;
 
 import no.nav.dokdistavstemming.AbstractIT;
-import no.nav.dokdistavstemming.Sdist004BulkOppdaterJournalpostDistInfoService;
+import no.nav.dokdistavstemming.BulkOppdaterJournalpostDistInfoService;
 import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@Autowired
-	private Sdist004BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterService;
+	private BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterService;
 
 	@Autowired
 	private Rdist001administrerforsendelse administrerforsendelse;
@@ -40,7 +40,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@BeforeEach
 	public void setUp() {
-		sdist004BulkOppdaterService = new Sdist004BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
+		sdist004BulkOppdaterService = new BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
 	}
 
 	@Test
