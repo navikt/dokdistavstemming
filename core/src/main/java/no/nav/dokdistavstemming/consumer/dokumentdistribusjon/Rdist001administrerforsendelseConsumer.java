@@ -95,7 +95,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.retrieve()
 				.toBodilessEntity()
 				.doOnError(this::handleError).block();
-		log.info("avstemekspederteforsendelser oppdetert totalt {} forsendelser - avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
+		log.info("avstemekspederteforsendelser oppdatert totalt {} forsendelser - avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
 	}
 
 	@Override
