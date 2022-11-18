@@ -6,11 +6,14 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
+import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,6 +24,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
+	private static final int MAX_SIZE = 1000;
 
 	public BulkOppdaterJournalpostDistInfoService(BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer,
 												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
@@ -33,23 +37,43 @@ public class BulkOppdaterJournalpostDistInfoService {
 	public void oppdaterAvstemOgJournalpostDistInfo() {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
-		if (hentEkspederteForsendelserResponse != null || !isForsendelseNullOrEmpy(hentEkspederteForsendelserResponse)) {
+		if (hentEkspederteForsendelserResponse == null) {
+			log.info("Fant ikke ekspederteforsendelse i dokdist-db.");
+			return;
+		}
+
+		if (!isForsendelseNullOrEmpy(hentEkspederteForsendelserResponse)) {
 			log.info("sdist004 hentet totalt {} ekspederteforsendelse fra dokdist-rdist001.", hentEkspederteForsendelserResponse.getForsendelser().size());
 			BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = bulkOppdaterDistribusjonsinfoMapper.map(hentEkspederteForsendelserResponse);
 
-			BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(bulkOppdaterDistribusjonsinfoRequest);
-			logMelding(bulkOppdaterDistribusjonsinfoResponse);
-			AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
+			nPartitionJournalpost(bulkOppdaterDistribusjonsinfoRequest).forEach(journalpostWithDistribusjonsinfos -> {
 
-			if (avstemEkspederteForsendelserRequest != null) {
-				log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", bulkOppdaterDistribusjonsinfoResponse.getJournalposter().getOppdatert().size());
-				rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
-			}
+				BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = bulkOppdaterDistribusjonsinfoRequest == null ? null :
+						oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(bulkOppdaterDistribusjonsinfoRequest);
+				logMelding(bulkOppdaterDistribusjonsinfoResponse);
+
+				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = bulkOppdaterDistribusjonsinfoResponse == null ? null :
+						avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
+
+				if (avstemEkspederteForsendelserRequest != null) {
+					log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", bulkOppdaterDistribusjonsinfoResponse.getJournalposter().getOppdatert().size());
+					rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
+				}
+
+			});
 		}
 	}
 
 	private boolean isForsendelseNullOrEmpy(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
 		return hentEkspederteForsendelser.getForsendelser() == null;
+	}
+
+	private Collection<List<JournalpostWithDistribusjonsinfo>> nPartitionJournalpost(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
+		AtomicInteger counter = new AtomicInteger();
+		return bulkOppdaterDistribusjonsinfoRequest == null ? null :
+				bulkOppdaterDistribusjonsinfoRequest.getJournalposter().stream()
+						.collect(Collectors.groupingBy(i -> counter.getAndIncrement() / MAX_SIZE))
+						.values();
 	}
 
 	private void logMelding(BulkOppdaterDistribusjonsinfoResponse response) {

@@ -22,6 +22,10 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class BulkOppdaterDistribusjonsinfoMapper {
 
 	public BulkOppdaterDistribusjonsinfoRequest map(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
+		if(hentEkspederteForsendelser.getForsendelser().isEmpty()) {
+			return null;
+		}
+
 		List<JournalpostWithDistribusjonsinfo> journalpostWithDistribusjonsinfos = hentEkspederteForsendelser.getForsendelser().stream()
 				.filter(ekspederteForsendelse -> isNotBlank(ekspederteForsendelse.getJournalpostId()))
 				.filter(this::isPostadresseDigitalPostInfoOgVarselNonNull)

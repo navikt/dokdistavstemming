@@ -5,7 +5,7 @@ import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -19,6 +19,7 @@ public class AvstemEkspederteForsendelserMapper {
 		}
 
 		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
+				.filter(Objects::nonNull)
 				.map(ekspederteForsendelse ->
 						bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId()))
 				.toList();
