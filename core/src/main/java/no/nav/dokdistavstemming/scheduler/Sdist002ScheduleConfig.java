@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 
 /**
@@ -19,17 +20,21 @@ public class Sdist002ScheduleConfig {
 
 	private final Sdist002Service sdist002Service;
 	private final LeaderElectionConsumer leaderElection;
+	private final ThreadPoolTaskExecutor poolTaskExecutor;
 
-	public Sdist002ScheduleConfig(Sdist002Service sdist002Service, LeaderElectionConsumer leaderElection) {
+	public Sdist002ScheduleConfig(ThreadPoolTaskExecutor poolTaskExecutor,
+								  Sdist002Service sdist002Service, LeaderElectionConsumer leaderElection) {
 		this.sdist002Service = sdist002Service;
 		this.leaderElection = leaderElection;
+		this.poolTaskExecutor = poolTaskExecutor;
 	}
 
 	@Scheduled(cron = "${sdist002.cron.job}")
 	public void configureTasks() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist002 cron-jobb ...");
-			sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
+			poolTaskExecutor.setThreadNamePrefix("sdist002-scheduled-task-pool-");
+			poolTaskExecutor.execute(sdist002Service::oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal);
 		}
 	}
 
