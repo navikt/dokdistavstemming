@@ -45,7 +45,7 @@ spec:
       memory: 3072Mi
     requests:
       cpu: 250m
-      memory: 2304i
+      memory: 2304Mi
   vault:
     enabled: true
     paths:
