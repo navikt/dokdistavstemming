@@ -39,7 +39,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
 
-	private static final int MAX_FORSENDELSE = 2000;
+	private static final int MAX_FORSENDELSER = 2000;
 	private final WebClient webClient;
 
 	@Autowired
@@ -105,7 +105,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
-				.maksForsendelser(MAX_FORSENDELSE)
+				.maksForsendelser(MAX_FORSENDELSER)
 				.build();
 		return webClient.method(GET)
 				.uri("/hentekspederteforsendelser")
