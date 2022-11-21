@@ -2,26 +2,26 @@
 
 if test -f /var/run/secrets/nais.io/srvdokdistavstemming/username;
 then
-    echo "Setting SERVICEUSER_USERNAME"
-    export SERVICEUSER_USERNAME=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/username)
+    echo "Setting dokdistavstemming_serviceuser_username"
+    export dokdistavstemming_serviceuser_username=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/username)
 fi
 if test -f /var/run/secrets/nais.io/srvdokdistavstemming/password;
 then
-    echo "Setting SERVICEUSER_PASSWORD"
-    export SERVICEUSER_PASSWORD=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
+    echo "Setting dokdistavstemming_serviceuser_password"
+    export dokdistavstemming_serviceuser_password=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
 fi
 
 
 if test -f /var/run/secrets/nais.io/srvjiradokdistavstemming/username;
 then
-    echo "Setting JIRA_USERNAME"
-    export JIRA_USERNAME=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/username)
+    echo "Setting dokdistavstemming_jira_username"
+    export dokdistavstemming_jira_username=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/username)
 fi
 
 if test -f /var/run/secrets/nais.io/srvjiradokdistavstemming/password;
 then
-    echo "Setting JIRA_PASSWORD"
-    export JIRA_PASSWORD=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/password)
+    echo "Setting dokdistavstemming_jira_password"
+    export dokdistavstemming_jira_password=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/password)
 fi
 
 

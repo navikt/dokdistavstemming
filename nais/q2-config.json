@@ -1,0 +1,14 @@
+{
+  "ADMINISTRERFORSENDELSE_V1_URL": "https://app-q2.adeo.no/dokdist/rest/v1/administrerforsendelse",
+  "DOKDISTAVSTEMMING_JIRA_URL": "https://jira-q1.adeo.no",
+  "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest/journalpostapi/v1",
+  "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
+  "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
+  "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
+  "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
+  "MIN_REPLICAS": 1,
+  "MAX_REPLICAS": 1,
+  "INGRESSES": [
+    "https://dokdistavstemming.dev.intern.nav.no"
+  ]
+}

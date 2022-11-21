@@ -1,0 +1,15 @@
+{
+  "journalposter": {
+    "oppdatert": null,
+    "feilet": [
+      {
+        "journalpostId": 453814607,
+        "errormessage": "Kan ikke ekspedere journalpost med status E"
+      },
+      {
+        "journalpostId": 453814610,
+        "errormessage": "Kan ikke ekspedere journalpost med status E"
+      }
+    ]
+  }
+}
