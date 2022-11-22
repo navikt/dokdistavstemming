@@ -2,16 +2,16 @@
   "journalposter": {
     "oppdatert": [
       {
-        "journalpostId": "453814607"
+        "journalpostId": "453814606"
       },
       {
-        "journalpostId": "453814610"
+        "journalpostId": "453814607"
       },
       {
         "journalpostId": "453814608"
       },
       {
-        "journalpostId": "453814606"
+        "journalpostId": "453814610"
       },
       {
         "journalpostId": "453814611"
@@ -40,11 +40,11 @@
     ],
     "feilet": [
       {
-        "journalpostId": 453814923,
+        "journalpostId": 453818923,
         "errormessage": "Kan ikke ekspedere journalpost med status E"
       },
       {
-        "journalpostId": 453814924,
+        "journalpostId": 453818924,
         "errormessage": "Kan ikke ekspedere journalpost med status E"
       }
     ]
