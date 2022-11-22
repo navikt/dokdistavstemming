@@ -9,6 +9,14 @@
       {
         "journalpostId": 453814610,
         "errormessage": "Kan ikke ekspedere journalpost med status E"
+      },
+      {
+        "journalpostId" : 453814608,
+        "errormessage" : "Kan ikke ekspedere journalpost med status E"
+      },
+      {
+        "journalpostId" : 453818924,
+        "errormessage" :"Kan ikke ekspedere journalpost med tom/feilregistrert saksrelasjon"
       }
     ]
   }

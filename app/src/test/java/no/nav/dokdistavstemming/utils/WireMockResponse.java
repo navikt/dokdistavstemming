@@ -101,11 +101,11 @@ public class WireMockResponse {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
-	public static void getEkspederteForsendelser() throws Exception {
+	public static void getEkspederteForsendelser(String filePath) throws Exception {
 		stubFor(get(urlMatching(EKSPEDERTEFORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(classpathToString("__files/rdist001/ekspedertforsendelse.json"))));
+						.withBody(classpathToString(filePath))));
 	}
 
 	public static void oppdaterAvstemArkivForsendelseInfo() {
