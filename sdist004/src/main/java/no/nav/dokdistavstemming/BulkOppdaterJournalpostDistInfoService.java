@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
+import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
@@ -56,7 +57,8 @@ public class BulkOppdaterJournalpostDistInfoService {
 						avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
 
 				if (avstemEkspederteForsendelserRequest != null) {
-					log.info("sdist004 oppdaterte totalt {} journalposter distribusjon informasjon på dokarkiv", bulkOppdaterDistribusjonsinfoResponse.getJournalposter().getOppdatert().size());
+					log.info("sdist004 oppdaterte totalt={} journalposter distribusjonsinformasjon på dokarkiv og feilet totalt={}",
+							countSuccess(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()), countFeil(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()));
 					rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
 				}
 
@@ -79,9 +81,17 @@ public class BulkOppdaterJournalpostDistInfoService {
 	private void logMelding(BulkOppdaterDistribusjonsinfoResponse response) {
 		if (response.getJournalposter() != null) {
 			if (response.getJournalposter().getFeilet() != null) {
-				List<JournalpostResponse> feil = response.getJournalposter().getFeilet().stream().collect(Collectors.toList());
-				log.warn("sdist004 feilet til å oppdatere totalt {} journalposter på dokarkiv. {}", response.getJournalposter().getFeilet().size(), feil);
+				List<JournalpostResponse> feil = response.getJournalposter().getFeilet();
+				log.warn("sdist004 feilet til å oppdatere totalt={} journalposter på dokarkiv. {}", countFeil(response.getJournalposter()), feil);
 			}
 		}
+	}
+
+	private int countFeil(JournalpostResultResponse jpResult) {
+		return jpResult.getFeilet() == null ? 0 : jpResult.getFeilet().size();
+	}
+
+	private int countSuccess(JournalpostResultResponse jpResult) {
+		return jpResult.getOppdatert() == null ? 0 : jpResult.getFeilet().size();
 	}
 }

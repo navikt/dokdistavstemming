@@ -45,7 +45,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@Test
 	public void shouldHenteBulkForsendelseOgOppdatereJouralpost() throws Exception {
-		getEkspederteForsendelser();
+		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse.json");
 		oppdaterAvstemArkivForsendelseInfo();
 		oppdaterJournalpost("__files/journalpost/journalpost_distinfo_ok_response.json");
 		postAzureToken();
@@ -59,7 +59,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@Test
 	public void shouldHenteBulkForsendelseOgFeilTilOppdatereJournalpost() throws Exception {
-		getEkspederteForsendelser();
+		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse-jp-feil-response.json");
 		oppdaterAvstemArkivForsendelseInfo();
 		oppdaterJournalpost("__files/journalpost/journalpost_distinfo_feil_response.json");
 		postAzureToken();
@@ -68,12 +68,12 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(1, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
 	}
 
 	@Test
 	public void shouldJournalpostApiThrowBadRequestException() throws Exception {
-		getEkspederteForsendelser();
+		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse.json");
 		oppdaterJournalpostFeil(BAD_REQUEST);
 		postAzureToken();
 
@@ -86,7 +86,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 	@Test
 	public void shouldJournalpostApiThrowTechnicalException() throws Exception {
-		getEkspederteForsendelser();
+		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse.json");
 		oppdaterJournalpostFeil(HttpStatus.INTERNAL_SERVER_ERROR);
 		postAzureToken();
 
