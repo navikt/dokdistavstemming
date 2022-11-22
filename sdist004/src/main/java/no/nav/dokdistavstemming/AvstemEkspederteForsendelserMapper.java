@@ -7,6 +7,9 @@ import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.valueOf;
 import static java.util.Objects.nonNull;
@@ -24,38 +27,44 @@ public class AvstemEkspederteForsendelserMapper {
 
 		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
 				.filter(Objects::nonNull)
-				.map(ekspederteForsendelse -> {
-					if (journalpostResultResponse.getFeilet() != null) {
-						return mapForsendelseIdFraFeilJournalpostStatusE(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId());
-					}
-					return bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId());
-				})
+				.map(ekspederteForsendelse ->
+						bulkOppdaterDistribusjonsinfo(journalpostResultResponse, ekspederteForsendelse.getJournalpostId(), ekspederteForsendelse.getForsendelseId())
+				)
 				.filter(Objects::nonNull)
-				.toList();
+				.collect(Collectors.toList());
 
 		return AvstemEkspederteForsendelserRequest.builder()
 				.forsendelser(forsendelser)
 				.build();
 	}
 
-	public AvstemEkspederteForsendelserRequest.Forsendelse bulkOppdaterDistribusjonsinfo(JournalpostResultResponse journalpostResultResponse,
-																						 String journalpostId, Long forsendelseId) {
-		return journalpostResultResponse.getOppdatert() == null ? null : journalpostResultResponse.getOppdatert().stream()
-				.filter(jp -> isBlank(jp.getErrormessage()) && valueOf(jp.getJournalpostId()).equals(journalpostId))
+	private AvstemEkspederteForsendelserRequest.Forsendelse bulkOppdaterDistribusjonsinfo(JournalpostResultResponse journalpostResultResponse,
+																						  String journalpostId, Long forsendelseId) {
+		return journalpostResultResponse == null ? null : mergeOppdetertJpAndStatusEkspedert(journalpostResultResponse).stream()
+				.filter(jp -> valueOf(jp.getJournalpostId()).equals(journalpostId))
 				.map(journalpostResponse -> AvstemEkspederteForsendelserRequest.Forsendelse.builder()
 						.forsendelseId(forsendelseId)
 						.build())
 				.findAny().orElse(null);
 	}
 
-	public AvstemEkspederteForsendelserRequest.Forsendelse mapForsendelseIdFraFeilJournalpostStatusE(JournalpostResultResponse journalpostResultResponse,
-																									 String journalpostId, Long forsendelseId) {
-		return journalpostResultResponse.getFeilet() == null ? null : journalpostResultResponse.getFeilet().stream()
-				.filter(jp -> isJournalpostStatusEkspedert(jp) && valueOf(jp.getJournalpostId()).equals(journalpostId))
-				.map(journalpostResponse -> AvstemEkspederteForsendelserRequest.Forsendelse.builder()
-						.forsendelseId(forsendelseId)
-						.build())
-				.findAny().orElse(null);
+	private List<JournalpostResponse> mergeOppdetertJpAndStatusEkspedert(JournalpostResultResponse journalpostResultResponse) {
+		if (journalpostResultResponse.getFeilet() == null && journalpostResultResponse.getOppdatert() != null) {
+			return journalpostResultResponse.getOppdatert().stream()
+					.filter(jp -> isBlank(jp.getErrormessage()))
+					.toList();
+		} else {
+			if (journalpostResultResponse.getOppdatert() == null) {
+				return journalpostResultResponse.getFeilet().stream()
+						.filter(this::isJournalpostStatusEkspedert).toList();
+			}
+			return Stream.of(journalpostResultResponse.getOppdatert().stream()
+					.filter(jp -> isBlank(jp.getErrormessage()))
+					.toList().stream(), journalpostResultResponse.getFeilet().stream()
+					.filter(this::isJournalpostStatusEkspedert).toList().stream())
+					.flatMap(Function.identity())
+					.collect(Collectors.toList());
+		}
 	}
 
 	private boolean isJournalpostStatusEkspedert(JournalpostResponse journalpostResponse) {
