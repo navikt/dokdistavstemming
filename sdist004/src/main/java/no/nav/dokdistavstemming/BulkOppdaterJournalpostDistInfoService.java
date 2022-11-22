@@ -88,10 +88,16 @@ public class BulkOppdaterJournalpostDistInfoService {
 	}
 
 	private int countFeil(JournalpostResultResponse jpResult) {
-		return jpResult.getFeilet() == null ? 0 : jpResult.getFeilet().size();
+		if (jpResult != null) {
+			return jpResult.getFeilet() == null ? 0 : jpResult.getFeilet().size();
+		}
+		return 0;
 	}
 
 	private int countSuccess(JournalpostResultResponse jpResult) {
-		return jpResult.getOppdatert() == null ? 0 : jpResult.getFeilet().size();
+		if (jpResult != null) {
+			return jpResult.getOppdatert() == null ? 0 : jpResult.getOppdatert().size();
+		}
+		return 0;
 	}
 }
