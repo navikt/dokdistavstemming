@@ -40,11 +40,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
 
 	private final WebClient webClient;
+	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
 	@Autowired
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
 												  DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClient) {
+		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
 		this.webClient = webClient.mutate()
 				.baseUrl(baseUrl)
 				.filter(new WebClientBasicAuthentication(dokdistavstemmingProperties))
@@ -102,8 +104,9 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
+		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
-				.maksForsendelser(0)
+				.maksForsendelser(dokdistavstemmingProperties.getSdist004().getMaxForsendelserRequest())   //0 verdien betyr de at det requester max forsendelser.
 				.build();
 		return webClient.method(GET)
 				.uri("/hentekspederteforsendelser")

@@ -18,6 +18,7 @@ public class DokdistavstemmingProperties {
     private final Sdist002Properties sdist002 = new Sdist002Properties();
     private final JiraUser jira = new JiraUser();
     private final Serviceuser serviceuser = new Serviceuser();
+    private final Sdist004Properties sdist004 = new Sdist004Properties();
 
     @Data
     @Validated
@@ -44,6 +45,13 @@ public class DokdistavstemmingProperties {
         private int delayTimeSDP;
         @Min(1)
         private int delayTimeEhandel;
+    }
+
+    @Data
+    @Validated
+    public static class Sdist004Properties {
+        @Min(0)
+        private int maxForsendelserRequest;
     }
 
     @Data

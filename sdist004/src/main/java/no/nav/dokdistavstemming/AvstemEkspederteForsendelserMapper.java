@@ -19,10 +19,11 @@ public class AvstemEkspederteForsendelserMapper {
 			return null;
 		}
 
-		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = ekspederteForsendelserResponse.getForsendelser().stream()
+		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = journalpostResultResponse.getOppdatert().stream()
 				.filter(Objects::nonNull)
-				.filter(ekspedertForsendelse -> journalpostResultResponse.getOppdatert().stream().anyMatch(jp ->
-						isBlank(jp.getErrormessage()) && ekspedertForsendelse.getJournalpostId().equals(valueOf(jp.getJournalpostId()))))
+				.flatMap(jp -> ekspederteForsendelserResponse.getForsendelser().stream().filter(ekspedertForsendelse ->
+						isBlank(jp.getErrormessage()) &&
+						valueOf(jp.getJournalpostId()).equals(ekspedertForsendelse.getJournalpostId())))
 				.map(ekspederteForsendelse -> AvstemEkspederteForsendelserRequest.Forsendelse.builder()
 						.forsendelseId(ekspederteForsendelse.getForsendelseId())
 						.build()
