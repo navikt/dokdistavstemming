@@ -57,6 +57,21 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 		verify(1, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
 	}
 
+
+	@Test
+	public void shouldNotUpdateAvstemDatoIDokdistWhenJouralpostResponseIsNullOrEmpty() throws Exception {
+		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse.json");
+		oppdaterAvstemArkivForsendelseInfo();
+		oppdaterJournalpost("__files/journalpost/journalpost_distinfo_empty_response.json");
+		postAzureToken();
+
+		sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo();
+
+		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+	}
+
 	@Test
 	public void shouldHenteBulkForsendelseOgFeilTilOppdatereJournalpost() throws Exception {
 		getEkspederteForsendelser("__files/rdist001/ekspedertforsendelse-jp-feil-response.json");
@@ -68,7 +83,7 @@ public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
 
 		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(1, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
 	}
 
 	@Test

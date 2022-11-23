@@ -102,7 +102,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
-		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
 				.maksForsendelser(0)
 				.build();

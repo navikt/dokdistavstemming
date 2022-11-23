@@ -33,7 +33,6 @@ public class Sdist002ScheduleConfig {
 	public void configureTasks() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist002 cron-jobb ...");
-			poolTaskExecutor.setThreadNamePrefix("sdist002-scheduled-task-pool-");
 			poolTaskExecutor.execute(sdist002Service::oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal);
 		}
 	}
