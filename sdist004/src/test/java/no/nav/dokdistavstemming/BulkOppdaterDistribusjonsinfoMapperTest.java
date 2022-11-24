@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BulkOppdaterDistribusjonsinfoMapperTest {
 
-	private BulkOppdaterDistribusjonsinfoMapper mapper = new BulkOppdaterDistribusjonsinfoMapper();
+	private final BulkOppdaterDistribusjonsinfoMapper mapper = new BulkOppdaterDistribusjonsinfoMapper();
 
 	@Test
 	public void shouldMapOKBulkOppdaterDistribusjonsinfo() throws IOException {
@@ -29,7 +29,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		JournalpostWithDistribusjonsinfo jpDistInfoSdp = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(0);
 		JournalpostWithDistribusjonsinfo jpDistInfoPrint = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(2);
 
-		assertEquals(13, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
+		assertEquals(14, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
 
 		assertEquals(sdpEkspederteForsendelse.getForsendelseId(), jpDistInfoSdp.getForsendelseId());
 		assertEquals(Long.valueOf(sdpEkspederteForsendelse.getJournalpostId()), jpDistInfoSdp.getJournalpostId());
@@ -53,7 +53,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoPrint.getDigitalpostkasse());
 
 		EkspedertForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(13);
-		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(12);
+		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(13);
 
 		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
 		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
