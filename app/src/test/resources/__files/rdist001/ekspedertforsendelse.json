@@ -77,6 +77,15 @@
       "varsel": null
     },
     {
+      "forsendelseId": "257492",
+      "journalpostId": "453814612",
+      "distribusjonsKanal": "TRYGDERETTEN",
+      "ekspedertDato": "2022-10-07T13:40:41.000",
+      "postadresse": null,
+      "digitalpostkasse": null,
+      "varsel": null
+    },
+    {
       "forsendelseId": "257442",
       "journalpostId": "453814672",
       "distribusjonsKanal": "SDP",

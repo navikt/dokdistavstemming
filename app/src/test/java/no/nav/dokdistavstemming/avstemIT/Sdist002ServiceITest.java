@@ -115,7 +115,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 		jiraHappyGetIssue();
 		sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
-		verify(5, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
+		verify(6, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
 				.withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
 	}
 

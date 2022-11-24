@@ -5,5 +5,6 @@ public enum DistribusjonKanalCode {
 	E_HANDEL,
 	DITTNAV,
 	TRYGDERETTEN,
-	PRINT
+	PRINT,
+	DPVT
 }
