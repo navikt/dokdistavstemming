@@ -93,6 +93,12 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 			case PRINT -> {
 				return UtsendingsKanalCode.S.name();
 			}
+			case TRYGDERETTEN -> {
+				return UtsendingsKanalCode.TRYGDERETTEN.name();
+			}
+			case DPVT -> {
+				return UtsendingsKanalCode.DPVT.name();
+			}
 			default -> {
 				return null;
 			}
