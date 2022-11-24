@@ -11,6 +11,7 @@ import no.nav.dokdistavstemming.domain.PostadresseTo;
 import no.nav.dokdistavstemming.domain.UtsendingsKanalCode;
 
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
@@ -22,7 +23,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class BulkOppdaterDistribusjonsinfoMapper {
 
 	public BulkOppdaterDistribusjonsinfoRequest map(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
-		if(hentEkspederteForsendelser.getForsendelser().isEmpty()) {
+		if (hentEkspederteForsendelser.getForsendelser() == null || hentEkspederteForsendelser.getForsendelser().isEmpty()) {
 			return null;
 		}
 
@@ -30,6 +31,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.filter(ekspederteForsendelse -> isNotBlank(ekspederteForsendelse.getJournalpostId()))
 				.filter(this::isPostadresseDigitalPostInfoOgVarselNonNull)
 				.map(this::journalpostWithDistribusjonsinfo)
+				.filter(Objects::nonNull)
 				.toList();
 		return BulkOppdaterDistribusjonsinfoRequest.builder()
 				.journalposter(journalpostWithDistribusjonsinfos)
@@ -85,14 +87,8 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 			case SDP -> {
 				return UtsendingsKanalCode.SDP.name();
 			}
-			case E_HANDEL -> {
-				return UtsendingsKanalCode.INGEN_DISTRIBUSJON.name();
-			}
 			case DITTNAV -> {
 				return UtsendingsKanalCode.NAV_NO.name();
-			}
-			case TRYGDERETTEN -> {
-				return UtsendingsKanalCode.TRYGDERETTEN.name();
 			}
 			case PRINT -> {
 				return UtsendingsKanalCode.S.name();
