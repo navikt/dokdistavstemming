@@ -7,15 +7,22 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
-import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.TRYGDERETTEN;
 
 @Slf4j
 @Component
@@ -44,13 +51,14 @@ public class BulkOppdaterJournalpostDistInfoService {
 		}
 
 		if (!isForsendelseNullOrEmpy(hentEkspederteForsendelserResponse)) {
-			log.info("sdist004 hentet totalt {} ekspederteforsendelse fra dokdist-rdist001.", hentEkspederteForsendelserResponse.getForsendelser().size());
+
+			countByDistribusjonKanal(hentEkspederteForsendelserResponse);
 			BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = bulkOppdaterDistribusjonsinfoMapper.map(hentEkspederteForsendelserResponse);
 
-			nPartitionJournalpost(bulkOppdaterDistribusjonsinfoRequest).forEach(journalpostWithDistribusjonsinfos -> {
+			nPartitionJournalpost(bulkOppdaterDistribusjonsinfoRequest).forEach(jpRequest -> {
 
 				BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = bulkOppdaterDistribusjonsinfoRequest == null ? null :
-						oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(bulkOppdaterDistribusjonsinfoRequest);
+						oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
 				logMelding(bulkOppdaterDistribusjonsinfoResponse);
 
 				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = bulkOppdaterDistribusjonsinfoResponse == null ? null :
@@ -70,12 +78,14 @@ public class BulkOppdaterJournalpostDistInfoService {
 		return hentEkspederteForsendelser.getForsendelser() == null;
 	}
 
-	private Collection<List<JournalpostWithDistribusjonsinfo>> nPartitionJournalpost(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
+	private List<BulkOppdaterDistribusjonsinfoRequest> nPartitionJournalpost(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
 		AtomicInteger counter = new AtomicInteger();
 		return bulkOppdaterDistribusjonsinfoRequest == null ? null :
 				bulkOppdaterDistribusjonsinfoRequest.getJournalposter().stream()
 						.collect(Collectors.groupingBy(i -> counter.getAndIncrement() / MAX_SIZE))
-						.values();
+						.values().stream()
+						.map(jp -> BulkOppdaterDistribusjonsinfoRequest.builder().journalposter(jp).build())
+						.toList();
 	}
 
 	private void logMelding(BulkOppdaterDistribusjonsinfoResponse response) {
@@ -99,5 +109,13 @@ public class BulkOppdaterJournalpostDistInfoService {
 			return jpResult.getOppdatert() == null ? 0 : jpResult.getOppdatert().size();
 		}
 		return 0;
+	}
+
+	private void countByDistribusjonKanal(HentEkspederteForsendelserResponse forsendelserResponse) {
+		Map<DistribusjonKanalCode, Long> collectByKanal = forsendelserResponse.getForsendelser().stream()
+				.map(forsendelse -> DistribusjonKanalCode.valueOf(forsendelse.getDistribusjonsKanal()))
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+		log.info("sdist004 hentet totalt:[E_HANDEL:{}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}]={} ekspederteforsendelse fra dokdist-rdist001.", collectByKanal.get(E_HANDEL), collectByKanal.get(DITTNAV), collectByKanal.get(PRINT),
+				collectByKanal.get(SDP), collectByKanal.get(TRYGDERETTEN), forsendelserResponse.getForsendelser().size());
 	}
 }

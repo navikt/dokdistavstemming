@@ -7,6 +7,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.UUID;
+
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
+import static org.slf4j.MDC.put;
+
 @Slf4j
 @Configuration
 @EnableScheduling
@@ -27,7 +32,7 @@ public class Sdist004Scheduler {
 	public void configureTasks() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist004 cron-jobb ...");
-			poolTaskExecutor.setThreadNamePrefix("sdist004-scheduled-task-pool-");
+			put(MDC_CALL_ID, UUID.randomUUID().toString());
 			poolTaskExecutor.execute(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo);
 		}
 	}

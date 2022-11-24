@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP_PRINT;
 
 
 /**
@@ -58,7 +57,7 @@ public class Sdist002Service {
 	}
 
 	public Set<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottattService(String distribusjonKanal) {
-		int period = (PRINT.name().equals(distribusjonKanal) || SDP_PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getSdist002().getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ?
+		int period = (PRINT.name().equals(distribusjonKanal)) ? dokdistavstemmingProp.getSdist002().getDelayTimePrint() : (E_HANDEL.name().equals(distribusjonKanal)) ?
 				dokdistavstemmingProp.getSdist002().getDelayTimeEhandel() : dokdistavstemmingProp.getSdist002().getDelayTimeSDP();
 		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(distribusjonKanal, period);
 
