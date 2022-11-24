@@ -13,7 +13,6 @@ import no.nav.dokdistavstemming.domain.UtsendingsKanalCode;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Objects.nonNull;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
@@ -29,7 +28,6 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 
 		List<JournalpostWithDistribusjonsinfo> journalpostWithDistribusjonsinfos = hentEkspederteForsendelser.getForsendelser().stream()
 				.filter(ekspederteForsendelse -> isNotBlank(ekspederteForsendelse.getJournalpostId()))
-				.filter(this::isPostadresseDigitalPostInfoOgVarselNonNull)
 				.map(this::journalpostWithDistribusjonsinfo)
 				.filter(Objects::nonNull)
 				.toList();
@@ -103,10 +101,5 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				return null;
 			}
 		}
-	}
-
-	private boolean isPostadresseDigitalPostInfoOgVarselNonNull(EkspedertForsendelse ekspederteForsendelse) {
-		return nonNull(ekspederteForsendelse.getPostadresse()) || nonNull(ekspederteForsendelse.getDigitalpostkasse())
-				|| nonNull(ekspederteForsendelse.getVarsel());
 	}
 }
