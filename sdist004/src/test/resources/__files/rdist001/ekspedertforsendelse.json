@@ -158,6 +158,21 @@
       "varsel": null
     },
     {
+      "forsendelseId": "257422",
+      "journalpostId": "453814708",
+      "distribusjonsKanal": "PRINT",
+      "ekspedertDato": "2022-10-07T09:50:59.000",
+      "postadresse": {
+        "adresselinje1": "adresselinje1",
+        "adresselinje2": "adresselinje2",
+        "postnummer": "postnummer",
+        "poststed": "poststed",
+        "landkode": "???"
+      },
+      "digitalpostkasse": null,
+      "varsel": null
+    },
+    {
       "forsendelseId": "260793",
       "journalpostId": "453818924",
       "distribusjonsKanal": "DITTNAV",

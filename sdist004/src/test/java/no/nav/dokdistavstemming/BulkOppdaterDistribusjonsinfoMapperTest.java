@@ -29,7 +29,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		JournalpostWithDistribusjonsinfo jpDistInfoSdp = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(0);
 		JournalpostWithDistribusjonsinfo jpDistInfoPrint = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(2);
 
-		assertEquals(14, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
+		assertEquals(15, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
 
 		assertEquals(sdpEkspederteForsendelse.getForsendelseId(), jpDistInfoSdp.getForsendelseId());
 		assertEquals(Long.valueOf(sdpEkspederteForsendelse.getJournalpostId()), jpDistInfoSdp.getJournalpostId());
@@ -52,8 +52,8 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoPrint.getVarsel());
 		assertNull(jpDistInfoPrint.getDigitalpostkasse());
 
-		EkspedertForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(13);
-		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(13);
+		EkspedertForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(14);
+		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(14);
 
 		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
 		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
@@ -62,6 +62,17 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertTrue(jpDistInfoDittNav.getSettStatusEkspedert());
 		assertNull(jpDistInfoDittNav.getPostadresse());
 		assertNull(jpDistInfoDittNav.getDigitalpostkasse());
+
+		EkspedertForsendelse printLandkode = hentEkspederteForsendelserFromJson.getForsendelser().get(13);
+		JournalpostWithDistribusjonsinfo printJpLandkode = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(13);
+
+		assertEquals(printLandkode.getPostadresse().getAdresselinje1(), printJpLandkode.getPostadresse().getAdresselinje1());
+		assertEquals(printLandkode.getPostadresse().getAdresselinje2(), printJpLandkode.getPostadresse().getAdresselinje2());
+		assertEquals(printLandkode.getPostadresse().getAdresselinje3(), printJpLandkode.getPostadresse().getAdresselinje3());
+		assertEquals(printLandkode.getPostadresse().getPostnummer(), printJpLandkode.getPostadresse().getPostnummer());
+		assertEquals(printLandkode.getPostadresse().getPoststed(), printJpLandkode.getPostadresse().getPoststed());
+		assertEquals("??", printJpLandkode.getPostadresse().getLandkode());
+
 	}
 
 	@Test

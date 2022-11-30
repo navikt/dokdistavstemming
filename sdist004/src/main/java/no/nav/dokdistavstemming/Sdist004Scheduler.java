@@ -32,7 +32,6 @@ public class Sdist004Scheduler {
 	public void configureTasks() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist004 cron-jobb ...");
-			put(MDC_CALL_ID, UUID.randomUUID().toString());
 			poolTaskExecutor.execute(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo);
 		}
 	}
