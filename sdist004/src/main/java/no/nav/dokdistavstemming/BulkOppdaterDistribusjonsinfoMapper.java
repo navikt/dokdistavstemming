@@ -21,6 +21,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class BulkOppdaterDistribusjonsinfoMapper {
 
+	private static final String UNKNOWN_ALPHA3_LANDKODE = "???";
+	private static final String UNKNOWN_ALPHA2_LANDKODE = "??";
+
 	public BulkOppdaterDistribusjonsinfoRequest map(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
 		if (hentEkspederteForsendelser.getForsendelser() == null || hentEkspederteForsendelser.getForsendelser().isEmpty()) {
 			return null;
@@ -57,7 +60,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 						.adresselinje3(postadresse.getAdresselinje3())
 						.postnummer(postadresse.getPostnummer())
 						.poststed(postadresse.getPoststed())
-						.landkode(postadresse.getLandkode())
+						.landkode(UNKNOWN_ALPHA3_LANDKODE.equals(postadresse.getLandkode()) ? UNKNOWN_ALPHA2_LANDKODE : postadresse.getLandkode() )
 						.build() : null;
 	}
 

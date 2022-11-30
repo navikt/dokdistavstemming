@@ -7,6 +7,8 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
+import java.time.Duration;
+
 @Configuration
 public class WebClientConfig {
 
@@ -23,7 +25,8 @@ public class WebClientConfig {
 	}
 
 	private HttpClient httpClient() {
-		return HttpClient.create().proxyWithSystemProperties();
+		return HttpClient.create().responseTimeout(Duration.ofSeconds(60))
+				.proxyWithSystemProperties();
 	}
 }
 
