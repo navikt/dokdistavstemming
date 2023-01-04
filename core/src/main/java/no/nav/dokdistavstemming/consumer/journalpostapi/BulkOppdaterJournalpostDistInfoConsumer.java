@@ -29,7 +29,6 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 
 	private final WebClient webClient;
 
-	@Autowired
 	public BulkOppdaterJournalpostDistInfoConsumer(WebClient webClient,
 												   DokdistavstemmingProperties dokdistavstemmingProp,
 												   AzureToken azureToken) {

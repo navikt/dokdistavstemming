@@ -42,7 +42,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	private final WebClient webClient;
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
-	@Autowired
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
 												  DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClient) {
