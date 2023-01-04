@@ -8,10 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
 @Data
 @Builder
 @AllArgsConstructor

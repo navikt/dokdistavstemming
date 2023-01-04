@@ -35,11 +35,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
-
 public class OpprettJiraSakServiceIT extends AbstractIT {
 
     private static final String JIRA_MESSAGE = "https://jira-q1.adeo.no/browse/MMA-134";

@@ -8,17 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.utils.TestDataUtils.AVSTEMT_REFERANSE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokDistAvstemmingRequestList;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.createJiraSakResponseTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
 
 class OppdaterForsendelserAvstemtInfoMapperTest {
 

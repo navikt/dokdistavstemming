@@ -7,9 +7,6 @@ import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
 public class OppdaterForsendelserAvstemtInfoMapper {
 
 	public OppdaterForsendelserAvstemtInfo map(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList, JiraSakResponseTo jiraSakResponseTo) {

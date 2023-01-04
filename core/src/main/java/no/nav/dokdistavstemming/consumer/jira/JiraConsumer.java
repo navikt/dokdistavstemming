@@ -37,10 +37,6 @@ import java.time.Duration;
 
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
 @Component
 @Slf4j
 public class JiraConsumer {
