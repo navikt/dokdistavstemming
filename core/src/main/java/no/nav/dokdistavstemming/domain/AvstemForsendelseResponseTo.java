@@ -5,10 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
 @Data
 @Builder
 @ToString

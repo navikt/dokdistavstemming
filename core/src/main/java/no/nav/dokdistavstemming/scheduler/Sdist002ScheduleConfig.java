@@ -9,10 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
 @Configuration
 @EnableScheduling
 @Slf4j

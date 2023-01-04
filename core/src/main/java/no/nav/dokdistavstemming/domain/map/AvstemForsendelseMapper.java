@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
 public class AvstemForsendelseMapper {
 
 	private static final String DOKUMENTINFO_FEIL ="Det Mangler dokumentInfo og avstemforsendelse kan ikke mapp dokumentInfo ";

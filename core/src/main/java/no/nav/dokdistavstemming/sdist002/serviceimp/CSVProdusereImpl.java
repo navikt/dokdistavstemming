@@ -22,9 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
 @Component
 @Slf4j
 public class CSVProdusereImpl implements CSVProdusere {

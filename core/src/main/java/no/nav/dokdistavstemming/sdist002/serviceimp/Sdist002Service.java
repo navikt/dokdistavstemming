@@ -28,10 +28,6 @@ import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 
 
-/**
- * @author Tsigab Angosom Gebremedhin, NAV.
- */
-
 @Component
 @Slf4j
 public class Sdist002Service {
