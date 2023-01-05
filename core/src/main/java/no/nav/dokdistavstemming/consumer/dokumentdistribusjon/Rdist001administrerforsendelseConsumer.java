@@ -45,14 +45,13 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrlDokumentdistribusjon,
-												  @Value("${administrerforsendelse.v1.url}") String baseUrlDokdistadmin,
 												  DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClientBasicAuth,
 												  WebClient webClientAzure,
 												  AzureToken azureToken) {
 		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
 		this.webClientAzure = webClientAzure.mutate()
-				.baseUrl(baseUrlDokdistadmin)
+				.baseUrl(dokdistavstemmingProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProperties.getEndpoints().getDokdistadmin()))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
