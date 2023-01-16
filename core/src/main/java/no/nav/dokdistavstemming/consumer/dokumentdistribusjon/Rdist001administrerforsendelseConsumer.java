@@ -98,7 +98,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
-		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-database", avstemEkspederteForsendelserRequest.getForsendelser().size());
+		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 
 		webClientAzure.put()
 				.uri("/avstemekspederteforsendelser")
@@ -108,7 +108,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.doOnError(this::handleError)
 				.block();
 
-		log.info("avstemekspederteforsendelser har oppdatert {} forsendelser med avstemArkivDato i dokdist-database", avstemEkspederteForsendelserRequest.getForsendelser().size());
+		log.info("avstemekspederteforsendelser har oppdatert {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 	}
 
 	@Override
