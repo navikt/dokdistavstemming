@@ -20,6 +20,7 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AvstemForsendelseMapperTest {
 
@@ -33,8 +34,15 @@ public class AvstemForsendelseMapperTest {
 
 	@Test
 	public void shouldConvertStringToDateTime(){
-		OffsetDateTime distribusjonsdato = ConverterUtils.convertStringToDateTime(DISTRIBUSJON_DATO);
-		assertThat(distribusjonsdato.getYear(), is(2022));
+		String time = "2023-01-16T15:20:13.000";
+		OffsetDateTime distribusjonsdato = ConverterUtils.convertStringToDateTime(time);
+
+		assertEquals(2023, distribusjonsdato.getYear());
+		assertEquals(1, distribusjonsdato.getMonthValue());
+		assertEquals(16, distribusjonsdato.getDayOfMonth());
+		assertEquals(15, distribusjonsdato.getHour());
+		assertEquals(20, distribusjonsdato.getMinute());
+		assertEquals(13, distribusjonsdato.getSecond());
 	}
 
 	public void assertResponse(AvstemForsendelseResponseTo dokDistAvStemmingResponseTo) {
