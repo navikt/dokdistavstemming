@@ -40,22 +40,22 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
 
-	private final WebClient webClientBasicAuth;
-	private final WebClient webClientAzure;
+	private final WebClient webClientDokumentdistribusjon;
+	private final WebClient webClientDokdistadmin;
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
 	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrlDokumentdistribusjon,
 												  DokdistavstemmingProperties dokdistavstemmingProperties,
-												  WebClient webClientBasicAuth,
-												  WebClient webClientAzure,
+												  WebClient webClientDokumentdistribusjon,
+												  WebClient webClientDokdistadmin,
 												  AzureToken azureToken) {
 		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
-		this.webClientAzure = webClientAzure.mutate()
+		this.webClientDokdistadmin = webClientDokdistadmin.mutate()
 				.baseUrl(dokdistavstemmingProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProperties.getEndpoints().getDokdistadmin()))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
-		this.webClientBasicAuth = webClientBasicAuth.mutate()
+		this.webClientDokumentdistribusjon = webClientDokumentdistribusjon.mutate()
 				.baseUrl(baseUrlDokumentdistribusjon)
 				.filter(new WebClientBasicAuthentication(dokdistavstemmingProperties))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -70,7 +70,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
 				distribusjonKanal, antallTimer);
-		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClientBasicAuth.get()
+		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClientDokumentdistribusjon.get()
 				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<AvstemForsendelseRequestTo>>() {
@@ -85,7 +85,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}", oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
-		webClientBasicAuth.put()
+		webClientDokumentdistribusjon.put()
 				.uri("/avstemforsendelser")
 				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
 				.retrieve()
@@ -100,7 +100,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
 		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 
-		webClientAzure.put()
+		webClientDokdistadmin.put()
 				.uri("/avstemekspederteforsendelser")
 				.body(Mono.just(avstemEkspederteForsendelserRequest), AvstemEkspederteForsendelserRequest.class)
 				.retrieve()
@@ -117,11 +117,12 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 
+		// maxForsendelser lik 0 betyr at max forsendelser blir requestet (konfigurert i dokdistadmin)
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
-				.maksForsendelser(dokdistavstemmingProperties.getSdist004().getMaxForsendelserRequest())   //maxForsendelser lik 0 betyr at max forsendelser blir requestet
+				.maksForsendelser(dokdistavstemmingProperties.getSdist004().getMaxForsendelserRequest())
 				.build();
 
-		return webClientAzure.method(GET)
+		return webClientDokdistadmin.method(GET)
 				.uri("/hentekspederteforsendelser")
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.retrieve()
