@@ -1,6 +1,8 @@
 package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.azure.AzureToken;
+import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.WebClientBasicAuthentication;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
@@ -12,7 +14,6 @@ import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Backoff;
@@ -39,15 +40,23 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
 
-	private final WebClient webClient;
+	private final WebClient webClientBasicAuth;
+	private final WebClient webClientAzure;
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
-	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrl,
+	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrlDokumentdistribusjon,
 												  DokdistavstemmingProperties dokdistavstemmingProperties,
-												  WebClient webClient) {
+												  WebClient webClientBasicAuth,
+												  WebClient webClientAzure,
+												  AzureToken azureToken) {
 		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
-		this.webClient = webClient.mutate()
-				.baseUrl(baseUrl)
+		this.webClientAzure = webClientAzure.mutate()
+				.baseUrl(dokdistavstemmingProperties.getEndpoints().getDokdistadmin().getUrl())
+				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProperties.getEndpoints().getDokdistadmin()))
+				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.build();
+		this.webClientBasicAuth = webClientBasicAuth.mutate()
+				.baseUrl(baseUrlDokumentdistribusjon)
 				.filter(new WebClientBasicAuthentication(dokdistavstemmingProperties))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
@@ -61,7 +70,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
 				distribusjonKanal, antallTimer);
-		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClient.get()
+		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClientBasicAuth.get()
 				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<AvstemForsendelseRequestTo>>() {
@@ -76,7 +85,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}", oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
-		webClient.put()
+		webClientBasicAuth.put()
 				.uri("/avstemforsendelser")
 				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
 				.retrieve()
@@ -89,14 +98,17 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
-		log.info("oppdaterAvstemEkspderteForsendelser har mottatt kall om å oppdatere i total {} avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
-		webClient.put()
+		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
+
+		webClientAzure.put()
 				.uri("/avstemekspederteforsendelser")
 				.body(Mono.just(avstemEkspederteForsendelserRequest), AvstemEkspederteForsendelserRequest.class)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError).block();
-		log.info("avstemekspederteforsendelser oppdatert totalt {} forsendelser - avstemArkivDato i dokdist database", avstemEkspederteForsendelserRequest.getForsendelser().size());
+				.doOnError(this::handleError)
+				.block();
+
+		log.info("avstemekspederteforsendelser har oppdatert {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 	}
 
 	@Override
@@ -104,15 +116,16 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
+
 		HentEkspederteForsendelserRequest hentEkspederteForsendelserRequest = HentEkspederteForsendelserRequest.builder()
-				.maksForsendelser(dokdistavstemmingProperties.getSdist004().getMaxForsendelserRequest())   //0 verdien betyr de at det requester max forsendelser.
+				.maksForsendelser(dokdistavstemmingProperties.getSdist004().getMaxForsendelserRequest())   //maxForsendelser lik 0 betyr at max forsendelser blir requestet
 				.build();
-		return webClient.method(GET)
+
+		return webClientAzure.method(GET)
 				.uri("/hentekspederteforsendelser")
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<HentEkspederteForsendelserResponse>() {
-				})
+				.bodyToMono(new ParameterizedTypeReference<HentEkspederteForsendelserResponse>() {})
 				.doOnError(this::handleError)
 				.block();
 	}

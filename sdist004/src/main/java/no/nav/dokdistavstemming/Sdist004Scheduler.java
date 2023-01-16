@@ -31,7 +31,7 @@ public class Sdist004Scheduler {
 	@Scheduled(cron = "${sdist004.cron.job}")
 	public void configureTasks() {
 		if (leaderElection.isLeader()) {
-			log.info("Starter sdist004 cron-jobb ...");
+			log.info("Starter sdist004 cron-jobb");
 			poolTaskExecutor.execute(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo);
 		}
 	}

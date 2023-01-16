@@ -35,7 +35,7 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistavstemmingProp.getEndpoints().getDokarkiv().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp))
+				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp.getEndpoints().getDokarkiv()))
 				.build();
 	}
 

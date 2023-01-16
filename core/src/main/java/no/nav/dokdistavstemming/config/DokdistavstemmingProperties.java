@@ -25,6 +25,8 @@ public class DokdistavstemmingProperties {
     public static class Endpoints {
         @NotNull
         private AzureEndpoint dokarkiv;
+        @NotNull
+        private AzureEndpoint dokdistadmin;
     }
 
     @Data
