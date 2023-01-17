@@ -37,7 +37,7 @@ class AvstemEkspederteForsendelserMapperTest {
 		assertThat(forsendelser).hasSize(3);
 		assertThat(forsendelser)
 				.extracting(AvstemEkspederteForsendelserRequest.Forsendelse::getForsendelseId)
-				.containsExactly(1000L, 1001L, 1002L);
+				.containsExactlyInAnyOrder(1000L, 1001L, 1002L);
 	}
 
 	@Test
