@@ -45,6 +45,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfo;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeil;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeilWithInternalServerError;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -67,6 +68,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 	@BeforeEach
 	public void setUp() {
 		super.setUp();
+		postAzureToken();
 		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
 	}
 
@@ -74,7 +76,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 	public void shouldHentListOkStatus() throws Exception {
 		dokDistHappyHentUekspedereFrosendelse();
 		List<AvstemForsendelseResponseTo> dokDistAvstemmingForsendels = sdist002Service.getForsendelserByDistribusjonKanal(SDP.name());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		assertThat(dokDistAvstemmingForsendels.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
 	}
 
@@ -82,7 +84,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 	public void shouldHentListOkStatusKanalPrint() throws Exception {
 		happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
 		List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
 		assertThat(result.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_PRINT));
 		assertThat(result.get(0).getDistribusjonStatus(), is(DISTRIBUSJON_STATUS_J));
 		assertThat(result.get(0).getDistribusjonKanal(), is(DISTRIBUSJON_KANAL_P_J.name()));
@@ -97,7 +99,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
 		assertThat(csvFiler.isFile(), is(true));
 		assertThat(csvFiler.length() != 0, is(true));
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/PRINT/120")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
 	}
 
 	@Test
@@ -126,7 +128,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 		jiraHappyGetIssue();
 		assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
@@ -143,7 +145,7 @@ public class Sdist002ServiceITest extends AbstractIT {
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 		assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
-		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/henteuekspederforsendelse/SDP/10")));
+		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
