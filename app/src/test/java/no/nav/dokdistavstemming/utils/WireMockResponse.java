@@ -30,14 +30,14 @@ public class WireMockResponse {
 	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/bulkOppdaterDistribusjonsinfo";
 
 	public static void dokDistHappyHentUekspedereFrosendelse() throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
+		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString("__files/rdist001/hentForsendelse-SDP-SixTime.json"))));
 	}
 
 	public static void happilyHentForsendelseKvitteringIkkeMottattKanalPrint(String filePath) throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/henteuekspederforsendelse/(.*?)/(.*?)"))
+		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/(.*?)/(.*?)"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(filePath))));

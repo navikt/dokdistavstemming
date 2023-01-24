@@ -29,6 +29,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProje
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -42,6 +43,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
     @BeforeEach
     public void setUp() {
         super.setUp();
+        postAzureToken();
         jiraService = new JiraService(jiraConsumer);
     }
 
@@ -68,7 +70,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
     @Test
     void shouldHappOppretteJiraSakForEhandel() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/ehandel.json");
+        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/hentuekspederteforsendelser-ehandel.json");
         jiraHappyHentProjectDetails();
         jiraHappyOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();

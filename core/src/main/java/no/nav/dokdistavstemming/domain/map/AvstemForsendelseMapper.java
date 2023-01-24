@@ -3,6 +3,8 @@ package no.nav.dokdistavstemming.domain.map;
 
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 
 import java.util.List;
@@ -43,6 +45,35 @@ public class AvstemForsendelseMapper {
 						.avstemtDato(dokumentInfo.getAvstemtDato())
 						.avstemtReferanse(dokumentInfo.getAvstemtReferanse())
 						.build()).collect(Collectors.toList());
+	}
+
+	public static AvstemForsendelseRequestTo fromHentUekspederteForsendelserResponse(UekspedertForsendelse uekspedertForsendelse) {
+
+		return AvstemForsendelseRequestTo.builder()
+				.distribusjonId(uekspedertForsendelse.getDistribusjonId())
+				.distribusjonKanal(uekspedertForsendelse.getDistribusjonKanal())
+				.distribusjonStatus(uekspedertForsendelse.getDistribusjonStatus())
+				.opprettetDato(uekspedertForsendelse.getOpprettetDato())
+				.distribusjonDato(uekspedertForsendelse.getDistribusjonDato())
+				.dokumenter(uekspedertForsendelse.getDokumenter().stream()
+						.map(AvstemForsendelseMapper::fromDokumentInfoTo)
+						.toList())
+				.build();
+	}
+
+	private static AvstemForsendelseRequestTo.DokumentInfoTo fromDokumentInfoTo(HentUekspederteForsendelserResponse.DokumentInfoTo dokumentInfoTo) {
+		return AvstemForsendelseRequestTo.DokumentInfoTo.builder()
+				.forsendelseId(dokumentInfoTo.getForsendelseId())
+				.dokumentId(dokumentInfoTo.getDokumentId())
+				.dokumentStatus(dokumentInfoTo.getDokumentStatus())
+				.konversasjonId(dokumentInfoTo.getKonversasjonId())
+				.bestillendeFagsystem(dokumentInfoTo.getBestillendeFagsystem())
+				.fagomradeCode(dokumentInfoTo.getFagomradeCode())
+				.journalpostId(dokumentInfoTo.getJournalpostId())
+				.brevProduksjonApplikasjon(dokumentInfoTo.getBrevProduksjonApplikasjon())
+				.avstemtReferanse(dokumentInfoTo.getAvstemtReferanse())
+				.avstemtDato(dokumentInfoTo.getAvstemtDato())
+				.build();
 	}
 
 }

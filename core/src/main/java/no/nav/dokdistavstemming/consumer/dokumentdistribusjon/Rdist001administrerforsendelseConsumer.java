@@ -9,7 +9,9 @@ import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
+import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
@@ -23,7 +25,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,16 +69,22 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
 		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 
-		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdist) med distribusjonKanal={}, antallTimer={}",
-				distribusjonKanal, antallTimer);
-		List<AvstemForsendelseRequestTo> avstemForsendelseRequestTos = webClientDokumentdistribusjon.get()
-				.uri("/henteuekspederforsendelse/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
-				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<List<AvstemForsendelseRequestTo>>() {
-				})
-				.doOnError(this::handleError).block();
+		// TODO: Refaktorer AvstemForsendelseRequestTo. Litt forvirrende navn
 
-		return avstemForsendelseRequestTos == null ? Collections.emptyList() : avstemForsendelseRequestTos;
+		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdistadmin) med distribusjonKanal={}, antallTimer={}",
+				distribusjonKanal, antallTimer);
+
+		HentUekspederteForsendelserResponse response = webClientDokdistadmin.get()
+				.uri("/hentuekspederteforsendelser/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
+				.retrieve()
+				.bodyToMono(HentUekspederteForsendelserResponse.class)
+				.doOnError(this::handleError)
+				.block();
+
+		// TODO: Endre bruk av HentUekspederteForsendelserResponse og AvstemForsendelseRequestTo videre her
+		return response.getUekspedertForsendelseList().stream()
+				.map(AvstemForsendelseMapper::fromHentUekspederteForsendelserResponse)
+				.toList();
 	}
 
 	@Override
