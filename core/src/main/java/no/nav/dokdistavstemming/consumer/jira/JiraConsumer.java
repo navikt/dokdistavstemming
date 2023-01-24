@@ -71,11 +71,11 @@ public class JiraConsumer {
 					new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kall mot jira feilet med url=%s, feilmelding: %s", apiBaseUri, e.getMessage()));
+			log.warn("Kall mot jira feilet med url={}, feilmelding: {}", apiBaseUri, e.getMessage());
 			throw new AvstemForsendelseFunctionalException(
 					String.format("Kall mot jira feilet med url=%s, status:%s ,feilmelding: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
-			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
+			log.error("Bestilling kan ikke utføres. Feilmelding={}", e.getMessage());
 			throw new AvstemForsendelseTechnicalException(
 					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
 		}
@@ -89,6 +89,7 @@ public class JiraConsumer {
 		} else if (file.length() == 0 && !file.exists()) {
 			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
 		}
+
 		try {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap();
 			map.add("file", new FileSystemResource(file));
@@ -97,8 +98,8 @@ public class JiraConsumer {
 			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, String.class).getBody();
 
 		} catch (JiraClientException e) {
-			log.error(String.format("En feil oppstod. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
-					file.getName(), e.getMessage()));
+			log.error(String.format("En feil oppstod. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s",
+					key, file.getName(), e.getMessage()));
 			throw new JiraClientException(e.getStatus(), e.getErrorMessage());
 		}
 	}
@@ -108,7 +109,7 @@ public class JiraConsumer {
 	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
 
 		if (projectKey == null) {
-			throw new AvstemForsendelseFunctionalException(String.format("Fant ikke projekt key med projectKey=%s", projectKey));
+			throw new AvstemForsendelseFunctionalException("Fant ikke prosjekt med projectKey=null");
 		}
 
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);

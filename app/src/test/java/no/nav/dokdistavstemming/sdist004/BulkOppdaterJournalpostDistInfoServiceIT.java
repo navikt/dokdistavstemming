@@ -27,7 +27,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-public class BulkOppdaterJournalpostDistInfoServiceITest extends AbstractIT {
+public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 
 	@Autowired
 	private BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterService;

@@ -1,7 +1,7 @@
-package no.nav.dokdistavstemming.avstemIT;
+package no.nav.dokdistavstemming.sdist002;
 
 import no.nav.dokdistavstemming.AbstractIT;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
@@ -22,11 +22,11 @@ import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_MMA_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentForsendelseKvitteringIkkeMottattKanalPrint;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentUekspederteForsendelser;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemFrosendelse;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemForsendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
@@ -49,13 +49,13 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
     @Test
     void shouldHappilyOppretteJiraSak() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
+        happilyHentUekspederteForsendelser("__files/rdist001/henteforsendelse-print-overfemdager.json");
         jiraHappyHentProjectDetails();
-        jiraHappyOpprettSakForAvstemFrosendelse();
+        jiraHappyOpprettSakForAvstemForsendelse();
         jiraHappyPostVedleggDokument();
         jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
+        List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
         File fil = csvProdusere.oppretteCsvFil(result);
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size());
 
@@ -70,13 +70,13 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
     @Test
     void shouldHappOppretteJiraSakForEhandel() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/hentuekspederteforsendelser-ehandel.json");
+        happilyHentUekspederteForsendelser("__files/rdist001/hentuekspederteforsendelser-ehandel.json");
         jiraHappyHentProjectDetails();
-        jiraHappyOpprettSakForAvstemFrosendelse();
+        jiraHappyOpprettSakForAvstemForsendelse();
         jiraHappyPostVedleggDokument();
         jiraHappyUpdateSak("MMA-134");
         jiraHappyGetIssue();
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL.name());
+        List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL);
         File fil = csvProdusere.oppretteCsvFil(result);
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(E_HANDEL.name(), fil, result.size());
 
@@ -91,8 +91,8 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
 
     @Test
     void opprettJiraSakThrowsBadRequestErrorMelding() throws Exception {
-        happilyHentForsendelseKvitteringIkkeMottattKanalPrint("__files/rdist001/henteforsendelse-print-overfemdager.json");
-        List<AvstemForsendelseResponseTo> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT.name());
+        happilyHentUekspederteForsendelser("__files/rdist001/henteforsendelse-print-overfemdager.json");
+        List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
         jiraHappyHentProjectDetails();
         jiraFeilToOpprettSakForAvstemFrosendelse();
         jiraHappyPostVedleggDokument();

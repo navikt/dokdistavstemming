@@ -1,9 +1,8 @@
 package no.nav.dokdistavstemming.sdist002.serviceimp;
 
-import no.nav.dokdistavstemming.CoreConfig;
 import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
-import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
+import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
+import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import no.nav.dokdistavstemming.utils.TestDataUtils;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,9 +26,9 @@ class CSVProdusereImplTest {
 
 	@Test
 	public void shouldProdusereCSVFil() {
-		AvstemForsendelseMapper mapper = new AvstemForsendelseMapper();
-		List<AvstemForsendelseResponseTo> dokDistAvStemmingResponseTo = TestDataUtils.createDokDistAvstemmingRequestList().stream()
-				.map(mapper::mapAvstemteForsendelser)
+		UekspedertForsendelseMapper mapper = new UekspedertForsendelseMapper();
+		List<UekspedertForsendelseDokument> dokDistAvStemmingResponseTo = TestDataUtils.createHentUekspederteForsendelserResponse().getUekspederteForsendelser().stream()
+				.map(mapper::mapUekspederteForsendelser)
 				.flatMap(Collection::stream)
 				.toList();
 

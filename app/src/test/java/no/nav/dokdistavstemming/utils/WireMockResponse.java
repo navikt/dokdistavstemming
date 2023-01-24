@@ -29,21 +29,14 @@ public class WireMockResponse {
 	public static final String AVSTEMFORSENDELSE_URL = "/administrerforsendelse/avstemekspederteforsendelser";
 	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/bulkOppdaterDistribusjonsinfo";
 
-	public static void dokDistHappyHentUekspedereFrosendelse() throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/(.*?)/(.*?)"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(classpathToString("__files/rdist001/hentForsendelse-SDP-SixTime.json"))));
-	}
-
-	public static void happilyHentForsendelseKvitteringIkkeMottattKanalPrint(String filePath) throws Exception {
-		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/(.*?)/(.*?)"))
+	public static void happilyHentUekspederteForsendelser(String filePath) throws Exception {
+		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(filePath))));
 	}
 
-	public static void jiraHappyOpprettSakForAvstemFrosendelse() throws Exception {
+	public static void jiraHappyOpprettSakForAvstemForsendelse() throws Exception {
 		stubFor(post(urlMatching(JIRA_OPPRETTE_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -90,7 +83,7 @@ public class WireMockResponse {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
-	public static void oppdaterAvstemFrosendelseInfoFeil() {
+	public static void oppdaterAvstemForsendelsesinfoFeil() {
 		stubFor(put(urlMatching(ADMINISTRERFORSENDELSE_URL))
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
 	}

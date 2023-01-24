@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
-public class AvstemForsendelseResponseTo {
+public class UekspedertForsendelseDokument {
 
 	private String distribusjonId;
 	private String distribusjonKanal;
