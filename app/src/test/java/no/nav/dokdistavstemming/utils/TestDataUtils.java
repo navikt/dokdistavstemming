@@ -16,6 +16,7 @@ public class TestDataUtils {
 
 	public static final String KONVERSASJON_ID = "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb26131";
 	public static final String DISTRIBUSJON_ID = "7882d37e-34f7-11e9-b677-d663bd953d61";
+	public static final String DOKUMENT_ID = "1234d37e-34f7-11e9-b677-d663bd953d61";
 	public static final String BESTILLENDE_FAGSYSTEM = "ARENA";
 	public static final String FAGOMRADE_CODE = "DAG";
 	public static final String PRODUKSJON_DATO = convertDateTimeToString(OffsetDateTime.now().now().minusDays(6).minusMinutes(23));
@@ -23,6 +24,7 @@ public class TestDataUtils {
 	public static final String MOTTAKER_ID = "26016826020";
 	public static final String ARKIV_KODE = "389426100";
 	public static final String DOKUMENT_STATUS = "OPPRETTET";
+	public static final String BREVPRODUKSJONAPPLIKASJON = "OEBS_HANDEL";
 	public static final String DISTRIBUSJON_STATUS = "OPPRETTET";
 	public static final DistribusjonKanalCode DISTRIBUSJON_KANAL = DistribusjonKanalCode.PRINT;
 
@@ -119,6 +121,9 @@ public class TestDataUtils {
 						.konversasjonId(KONVERSASJON_ID)
 						.journalpostId(ARKIV_KODE)
 						.fagomradeCode(FAGOMRADE_CODE)
+						.forsendelseId(FORSENDELSE_ID_1)
+						.dokumentId(DOKUMENT_ID)
+						.brevProduksjonApplikasjon(BREVPRODUKSJONAPPLIKASJON)
 						.build()))
 				.build();
 	}

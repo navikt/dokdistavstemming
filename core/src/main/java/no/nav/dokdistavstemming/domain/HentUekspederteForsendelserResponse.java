@@ -33,8 +33,6 @@ public class HentUekspederteForsendelserResponse {
 		private final String fagomradeCode;
 		private final String journalpostId;
 		private final String brevProduksjonApplikasjon;
-		private final String avstemtReferanse;
-		private final String avstemtDato;
 	}
 
 }

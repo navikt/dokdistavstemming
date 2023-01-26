@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.sdist002.serviceimp;
 
-
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
@@ -20,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-
 
 @Component
 @Slf4j
@@ -80,7 +78,6 @@ public class Sdist002Service {
 					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
 					logInfo(avstemForsendelse);
 				})
-				.filter(uekspedertForsendelseDokument -> uekspedertForsendelseDokument.getAvstemtReferanse() == null)
 				.toList();
 	}
 

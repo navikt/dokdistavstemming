@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.domain.map;
 
-
 import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.DokumentInfo;
 import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
@@ -40,8 +39,6 @@ public class UekspedertForsendelseMapper {
 						.bestillendeFagsystem(dok.getBestillendeFagsystem())
 						.fagomradeCode(dok.getFagomradeCode())
 						.brevProduksjonApplikasjon(dok.getBrevProduksjonApplikasjon())
-						.avstemtDato(dok.getAvstemtDato())
-						.avstemtReferanse(dok.getAvstemtReferanse())
 						.build())
 				.toList();
 	}

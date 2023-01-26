@@ -9,12 +9,15 @@ import java.time.OffsetDateTime;
 import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.ARKIV_KODE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.BESTILLENDE_FAGSYSTEM;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.BREVPRODUKSJONAPPLIKASJON;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_DATO;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.DOKUMENT_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DOKUMENT_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FAGOMRADE_CODE;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.createUekspedertForsendelse;
@@ -41,6 +44,10 @@ public class UekspedertForsendelseMapperTest {
 		assertThat(dokument.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
 		assertThat(dokument.getOpprettetDato(), is(PRODUKSJON_DATO));
 		assertThat(dokument.getDistribusjonDato(), is(DISTRIBUSJON_DATO));
+
+		assertThat(dokument.getForsendelseId(), is(FORSENDELSE_ID_1));
+		assertThat(dokument.getDokumentId(), is(DOKUMENT_ID));
+		assertThat(dokument.getBrevProduksjonApplikasjon(), is(BREVPRODUKSJONAPPLIKASJON));
 	}
 
 	@Test
