@@ -108,23 +108,27 @@ public class TestDataUtils {
 				).build();
 	}
 
-	public static UekspedertForsendelse createUekspedertForsendelse() {
+	public static UekspedertForsendelse createUekspedertForsendelseWithDokumenter(List<DokumentInfo> dokumenter) {
 		return UekspedertForsendelse.builder()
 				.distribusjonId(DISTRIBUSJON_ID)
 				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
 				.opprettetDato(PRODUKSJON_DATO)
 				.distribusjonDato(DISTRIBUSJON_DATO)
-				.dokumenter(singletonList(DokumentInfo.builder()
-						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
-						.dokumentStatus(DOKUMENT_STATUS)
-						.konversasjonId(KONVERSASJON_ID)
-						.journalpostId(ARKIV_KODE)
-						.fagomradeCode(FAGOMRADE_CODE)
-						.forsendelseId(FORSENDELSE_ID_1)
-						.dokumentId(DOKUMENT_ID)
-						.brevProduksjonApplikasjon(BREVPRODUKSJONAPPLIKASJON)
-						.build()))
+				.dokumenter(dokumenter)
+				.build();
+	}
+
+	public static DokumentInfo createDokumentInfoWithForsendelseId(String forsendelseId) {
+		return DokumentInfo.builder()
+				.forsendelseId(forsendelseId)
+				.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
+				.dokumentStatus(DOKUMENT_STATUS)
+				.konversasjonId(KONVERSASJON_ID)
+				.journalpostId(ARKIV_KODE)
+				.fagomradeCode(FAGOMRADE_CODE)
+				.dokumentId(DOKUMENT_ID)
+				.brevProduksjonApplikasjon(BREVPRODUKSJONAPPLIKASJON)
 				.build();
 	}
 

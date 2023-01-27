@@ -66,7 +66,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonskanal, int antallTimer) {
 		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 
-		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001 (dokdistadmin) med distribusjonskanal={}, antallTimer={}",
+		log.info("hentForsendelserKvitteringIkkeMottatt henter forsendelser fra rdist001 (dokdistadmin) med distribusjonskanal={}, antallTimer={}",
 				distribusjonskanal, antallTimer);
 
 		return webClientDokdistadmin.get()

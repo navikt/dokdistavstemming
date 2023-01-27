@@ -82,7 +82,7 @@ public class Sdist002Service {
 	}
 
 	private static void logInfo(UekspedertForsendelseDokument avstemForsendelse) {
-		log.info("Sdist002 fant uekspedert forsendelse med forsendelseId={}, dokumentId={}, dokumentStatus={}, opprettetDato={}, distribusjonKanal={}, journalpostId={}",
+		log.debug("Sdist002 fant uekspedert forsendelse med forsendelseId={}, dokumentId={}, dokumentStatus={}, opprettetDato={}, distribusjonKanal={}, journalpostId={}",
 				avstemForsendelse.getForsendelseId(),
 				avstemForsendelse.getDokumentId(),
 				avstemForsendelse.getDokumentStatus(),
@@ -92,6 +92,7 @@ public class Sdist002Service {
 	}
 
 	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode distribusjonKanal) {
+		// Defaulter til samme verdi for andre distribusjonskanaler enn PRINT og E_HANDEL
 		int antallTimer = switch (distribusjonKanal) {
 			case PRINT -> dokdistavstemmingProp.getSdist002().getDelayTimePrint();
 			case E_HANDEL -> dokdistavstemmingProp.getSdist002().getDelayTimeEhandel();

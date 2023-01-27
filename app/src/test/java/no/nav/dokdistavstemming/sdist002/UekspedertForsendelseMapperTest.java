@@ -5,6 +5,7 @@ import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.ARKIV_KODE;
@@ -18,11 +19,12 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DOKUMENT_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DOKUMENT_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FAGOMRADE_CODE;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_2;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.PRODUKSJON_DATO;
-import static no.nav.dokdistavstemming.utils.TestDataUtils.createUekspedertForsendelse;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokumentInfoWithForsendelseId;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createUekspedertForsendelseWithDokumenter;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UekspedertForsendelseMapperTest {
@@ -31,23 +33,31 @@ public class UekspedertForsendelseMapperTest {
 
 	@Test
 	public void shouldMapUekspedertForsendelse() {
-		UekspedertForsendelseDokument dokument = mapper.mapUekspederteForsendelser(createUekspedertForsendelse()).get(0);
+		var forsendelse = createUekspedertForsendelseWithDokumenter(List.of(
+				createDokumentInfoWithForsendelseId(FORSENDELSE_ID_1), createDokumentInfoWithForsendelseId(FORSENDELSE_ID_2))
+		);
+		List<UekspedertForsendelseDokument> dokumenter = mapper.mapUekspederteForsendelser(forsendelse);
+		assertEquals(2, dokumenter.size());
+		assertThat(dokumenter)
+				.extracting(UekspedertForsendelseDokument::getForsendelseId)
+				.containsExactlyInAnyOrder(FORSENDELSE_ID_1, FORSENDELSE_ID_2);
 
-		assertThat(dokument.getDistribusjonId(), is(DISTRIBUSJON_ID));
-		assertThat(dokument.getBestillendeFagsystem(), is(BESTILLENDE_FAGSYSTEM));
-		assertThat(dokument.getDokumentStatus(), is(DOKUMENT_STATUS));
-		assertThat(dokument.getKonversasjonId(), is(KONVERSASJON_ID));
-		assertThat(dokument.getJournalpostId(), is(ARKIV_KODE));
-		assertThat(dokument.getFagomradeCode(), is(FAGOMRADE_CODE));
+		dokumenter.forEach(this::assertDokument);
+	}
 
-		assertThat(dokument.getDistribusjonKanal(), is(DISTRIBUSJON_KANAL.name()));
-		assertThat(dokument.getDistribusjonStatus(), is(DISTRIBUSJON_STATUS));
-		assertThat(dokument.getOpprettetDato(), is(PRODUKSJON_DATO));
-		assertThat(dokument.getDistribusjonDato(), is(DISTRIBUSJON_DATO));
-
-		assertThat(dokument.getForsendelseId(), is(FORSENDELSE_ID_1));
-		assertThat(dokument.getDokumentId(), is(DOKUMENT_ID));
-		assertThat(dokument.getBrevProduksjonApplikasjon(), is(BREVPRODUKSJONAPPLIKASJON));
+	private void assertDokument(UekspedertForsendelseDokument dokument) {
+		assertEquals(DISTRIBUSJON_ID, dokument.getDistribusjonId());
+		assertEquals(BESTILLENDE_FAGSYSTEM, dokument.getBestillendeFagsystem());
+		assertEquals(DOKUMENT_STATUS, dokument.getDokumentStatus());
+		assertEquals(KONVERSASJON_ID, dokument.getKonversasjonId());
+		assertEquals(ARKIV_KODE, dokument.getJournalpostId());
+		assertEquals(FAGOMRADE_CODE, dokument.getFagomradeCode());
+		assertEquals(DISTRIBUSJON_KANAL.name(), dokument.getDistribusjonKanal());
+		assertEquals(DISTRIBUSJON_STATUS, dokument.getDistribusjonStatus());
+		assertEquals(PRODUKSJON_DATO, dokument.getOpprettetDato());
+		assertEquals(DISTRIBUSJON_DATO, dokument.getDistribusjonDato());
+		assertEquals(DOKUMENT_ID, dokument.getDokumentId());
+		assertEquals(BREVPRODUKSJONAPPLIKASJON, dokument.getBrevProduksjonApplikasjon());
 	}
 
 	@Test

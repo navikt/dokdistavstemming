@@ -30,8 +30,10 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_3;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_3;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.FORSENDELSE_ID_1;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createDokumentInfoWithForsendelseId;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.createHentUekspederteForsendelserResponseSDP;
-import static no.nav.dokdistavstemming.utils.TestDataUtils.createUekspedertForsendelse;
+import static no.nav.dokdistavstemming.utils.TestDataUtils.createUekspedertForsendelseWithDokumenter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,8 +89,10 @@ public class Sdist002ServiceTest {
 
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint() {
-		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt()))
-				.thenReturn(HentUekspederteForsendelserResponse.builder().uekspederteForsendelser(singletonList(createUekspedertForsendelse())).build());
+		var dokument = singletonList(createDokumentInfoWithForsendelseId(FORSENDELSE_ID_1));
+		var uekspedertForsendelse = singletonList(createUekspedertForsendelseWithDokumenter(dokument));
+		var response = HentUekspederteForsendelserResponse.builder().uekspederteForsendelser(uekspedertForsendelse).build();
+		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt())).thenReturn(response);
 		when(meterRegistry.counter(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockCounter);
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
