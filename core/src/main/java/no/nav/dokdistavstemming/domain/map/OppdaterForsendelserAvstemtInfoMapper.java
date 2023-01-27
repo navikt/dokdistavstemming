@@ -1,29 +1,28 @@
 package no.nav.dokdistavstemming.domain.map;
 
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
+import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OppdaterForsendelserAvstemtInfoMapper {
 
-	public OppdaterForsendelserAvstemtInfo map(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList, JiraSakResponseTo jiraSakResponseTo) {
+	public OppdaterForsendelserAvstemtInfo map(List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList, JiraSakResponseTo jiraSakResponseTo) {
 
 		return OppdaterForsendelserAvstemtInfo.builder()
 				.avstemtReferanse(jiraSakResponseTo.getJiraSakKey())
-				.forsendelser(mapForsendelseIder(avstemForsendelseResponseToList))
+				.forsendelser(mapForsendelseIder(uekspedertForsendelseDokumentList))
 				.build();
 	}
 
-	List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<AvstemForsendelseResponseTo> avstemForsendelseResponseToList) {
+	List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList) {
 
-		return avstemForsendelseResponseToList.stream()
-				.map(avstemForsendelseResponseTo -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
-						.forsendelseId(avstemForsendelseResponseTo.getForsendelseId())
+		return uekspedertForsendelseDokumentList.stream()
+				.map(uekspedertForsendelseDokument -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
+						.forsendelseId(uekspedertForsendelseDokument.getForsendelseId())
 						.build())
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 }

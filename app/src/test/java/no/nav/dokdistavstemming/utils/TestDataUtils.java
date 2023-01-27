@@ -1,11 +1,12 @@
 package no.nav.dokdistavstemming.utils;
 
-import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.DokumentInfo;
+import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -15,6 +16,7 @@ public class TestDataUtils {
 
 	public static final String KONVERSASJON_ID = "7ef3e7c7-cd4c-40bd-a5bf-99c5dbb26131";
 	public static final String DISTRIBUSJON_ID = "7882d37e-34f7-11e9-b677-d663bd953d61";
+	public static final String DOKUMENT_ID = "1234d37e-34f7-11e9-b677-d663bd953d61";
 	public static final String BESTILLENDE_FAGSYSTEM = "ARENA";
 	public static final String FAGOMRADE_CODE = "DAG";
 	public static final String PRODUKSJON_DATO = convertDateTimeToString(OffsetDateTime.now().now().minusDays(6).minusMinutes(23));
@@ -22,6 +24,7 @@ public class TestDataUtils {
 	public static final String MOTTAKER_ID = "26016826020";
 	public static final String ARKIV_KODE = "389426100";
 	public static final String DOKUMENT_STATUS = "OPPRETTET";
+	public static final String BREVPRODUKSJONAPPLIKASJON = "OEBS_HANDEL";
 	public static final String DISTRIBUSJON_STATUS = "OPPRETTET";
 	public static final DistribusjonKanalCode DISTRIBUSJON_KANAL = DistribusjonKanalCode.PRINT;
 
@@ -56,87 +59,98 @@ public class TestDataUtils {
 	public static final String FORSENDELSE_ID_2 = "2";
 	public static String AVSTEMT_REFERANSE = "MMA-1234";
 
-	public static List<AvstemForsendelseRequestTo> createDokDistAvstemmingRequestList() {
-		return Arrays.asList(AvstemForsendelseRequestTo.builder()
-						.distribusjonId(DISTRIBUSJON_ID)
-						.distribusjonKanal(DISTRIBUSJON_KANAL.name())
-						.distribusjonStatus(DISTRIBUSJON_STATUS)
-						.opprettetDato(PRODUKSJON_DATO)
-						.distribusjonDato(DISTRIBUSJON_DATO)
-						.dokumenter(singletonList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
-								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
-								.dokumentStatus(DOKUMENT_STATUS)
-								.konversasjonId(KONVERSASJON_ID)
-								.journalpostId(ARKIV_KODE)
-								.fagomradeCode(FAGOMRADE_CODE)
-								.build()))
-						.build(),
-				AvstemForsendelseRequestTo.builder().distribusjonId(DISTRIBUSJON_ID_2)
-						.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
-						.distribusjonStatus(DISTRIBUSJON_STATUS_2)
-						.opprettetDato(PRODUKSJON_DATO_2)
-						.distribusjonDato(DISTRIBUSJON_DATO_2)
-						.dokumenter(singletonList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
-								.forsendelseId(FORSENDELSE_ID_2)
-								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
-								.dokumentStatus(DOKUMENT_STATUS_2)
-								.fagomradeCode(FAGOMRADE_CODE_2)
-								.konversasjonId(KONVERSASJON_ID_2)
-								.journalpostId(ARKIV_KODE_2)
-								.build()))
-						.build(),
-				AvstemForsendelseRequestTo.builder()
-						.distribusjonId(DISTRIBUSJON_ID_3)
-						.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
-						.distribusjonStatus(DISTRIBUSJON_STATUS_3)
-						.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
-						.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
-						.dokumenter(singletonList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
-								.forsendelseId(FORSENDELSE_ID_1)
-								.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
-								.dokumentStatus(DOKUMENT_STATUS_3)
-								.journalpostId(MOTTAKER_ID_3)
-								.fagomradeCode(FAGOMRADE_CODE_3)
-								.konversasjonId(KONVERSASJON_ID_3)
-								.journalpostId(ARKIV_KODE_3)
-								.build()))
-						.build());
+	public static HentUekspederteForsendelserResponse createHentUekspederteForsendelserResponse() {
+		return HentUekspederteForsendelserResponse.builder()
+				.uekspederteForsendelser(List.of(
+						UekspedertForsendelse.builder()
+								.distribusjonId(DISTRIBUSJON_ID)
+								.distribusjonKanal(DISTRIBUSJON_KANAL.name())
+								.distribusjonStatus(DISTRIBUSJON_STATUS)
+								.opprettetDato(PRODUKSJON_DATO)
+								.distribusjonDato(DISTRIBUSJON_DATO)
+								.dokumenter(singletonList(DokumentInfo.builder()
+										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
+										.dokumentStatus(DOKUMENT_STATUS)
+										.konversasjonId(KONVERSASJON_ID)
+										.journalpostId(ARKIV_KODE)
+										.fagomradeCode(FAGOMRADE_CODE)
+										.build()))
+								.build(),
+						UekspedertForsendelse.builder().distribusjonId(DISTRIBUSJON_ID_2)
+								.distribusjonKanal(DISTRIBUSJON_KANAL_2.name())
+								.distribusjonStatus(DISTRIBUSJON_STATUS_2)
+								.opprettetDato(PRODUKSJON_DATO_2)
+								.distribusjonDato(DISTRIBUSJON_DATO_2)
+								.dokumenter(singletonList(DokumentInfo.builder()
+										.forsendelseId(FORSENDELSE_ID_2)
+										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_2)
+										.dokumentStatus(DOKUMENT_STATUS_2)
+										.fagomradeCode(FAGOMRADE_CODE_2)
+										.konversasjonId(KONVERSASJON_ID_2)
+										.journalpostId(ARKIV_KODE_2)
+										.build()))
+								.build(),
+						UekspedertForsendelse.builder()
+								.distribusjonId(DISTRIBUSJON_ID_3)
+								.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
+								.distribusjonStatus(DISTRIBUSJON_STATUS_3)
+								.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
+								.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
+								.dokumenter(singletonList(DokumentInfo.builder()
+										.forsendelseId(FORSENDELSE_ID_1)
+										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
+										.dokumentStatus(DOKUMENT_STATUS_3)
+										.fagomradeCode(FAGOMRADE_CODE_3)
+										.konversasjonId(KONVERSASJON_ID_3)
+										.journalpostId(ARKIV_KODE_3)
+										.build()))
+								.build())
+				).build();
 	}
 
-	public static AvstemForsendelseRequestTo createDokDistAvstemmingRequestTo() {
-		return AvstemForsendelseRequestTo.builder()
+	public static UekspedertForsendelse createUekspedertForsendelseWithDokumenter(List<DokumentInfo> dokumenter) {
+		return UekspedertForsendelse.builder()
 				.distribusjonId(DISTRIBUSJON_ID)
 				.distribusjonKanal(DISTRIBUSJON_KANAL.name())
 				.distribusjonStatus(DISTRIBUSJON_STATUS)
 				.opprettetDato(PRODUKSJON_DATO)
 				.distribusjonDato(DISTRIBUSJON_DATO)
-				.dokumenter(singletonList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
-						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
-						.dokumentStatus(DOKUMENT_STATUS)
-						.journalpostId(MOTTAKER_ID)
-						.konversasjonId(KONVERSASJON_ID)
-						.journalpostId(ARKIV_KODE)
-						.fagomradeCode(FAGOMRADE_CODE)
-						.build()))
+				.dokumenter(dokumenter)
 				.build();
 	}
 
-	public static List<AvstemForsendelseRequestTo> createDokDistAvstemmingSDPRequestTo() {
-		return singletonList(AvstemForsendelseRequestTo.builder()
-				.distribusjonId(DISTRIBUSJON_ID_3)
-				.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
-				.distribusjonStatus(DISTRIBUSJON_STATUS_3)
-				.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
-				.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
-				.dokumenter(singletonList(AvstemForsendelseRequestTo.DokumentInfoTo.builder()
-						.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
-						.dokumentStatus(DOKUMENT_STATUS_3)
-						.journalpostId(MOTTAKER_ID_3)
-						.fagomradeCode(FAGOMRADE_CODE_3)
-						.konversasjonId(KONVERSASJON_ID_3)
-						.journalpostId(ARKIV_KODE_3)
-						.build()))
-				.build());
+	public static DokumentInfo createDokumentInfoWithForsendelseId(String forsendelseId) {
+		return DokumentInfo.builder()
+				.forsendelseId(forsendelseId)
+				.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
+				.dokumentStatus(DOKUMENT_STATUS)
+				.konversasjonId(KONVERSASJON_ID)
+				.journalpostId(ARKIV_KODE)
+				.fagomradeCode(FAGOMRADE_CODE)
+				.dokumentId(DOKUMENT_ID)
+				.brevProduksjonApplikasjon(BREVPRODUKSJONAPPLIKASJON)
+				.build();
+	}
+
+	public static HentUekspederteForsendelserResponse createHentUekspederteForsendelserResponseSDP() {
+		return HentUekspederteForsendelserResponse.builder()
+				.uekspederteForsendelser(singletonList(
+						UekspedertForsendelse.builder()
+								.distribusjonId(DISTRIBUSJON_ID_3)
+								.distribusjonKanal(DISTRIBUSJON_KANAL_3.name())
+								.distribusjonStatus(DISTRIBUSJON_STATUS_3)
+								.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
+								.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
+								.dokumenter(singletonList(DokumentInfo.builder()
+										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
+										.dokumentStatus(DOKUMENT_STATUS_3)
+										.journalpostId(MOTTAKER_ID_3)
+										.fagomradeCode(FAGOMRADE_CODE_3)
+										.konversasjonId(KONVERSASJON_ID_3)
+										.journalpostId(ARKIV_KODE_3)
+										.build()))
+								.build()
+				)).build();
 	}
 
 	public static JiraSakResponseTo createJiraSakResponseTo() {

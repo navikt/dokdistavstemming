@@ -6,12 +6,10 @@ import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.WebClientBasicAuthentication;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseRequestTo;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
-import no.nav.dokdistavstemming.domain.map.AvstemForsendelseMapper;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
@@ -25,7 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.UUID;
 
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
@@ -66,25 +63,18 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"})
-	public List<AvstemForsendelseRequestTo> hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer) {
+	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonskanal, int antallTimer) {
 		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
 
-		// TODO: Refaktorer AvstemForsendelseRequestTo. Litt forvirrende navn
+		log.info("hentForsendelserKvitteringIkkeMottatt henter forsendelser fra rdist001 (dokdistadmin) med distribusjonskanal={}, antallTimer={}",
+				distribusjonskanal, antallTimer);
 
-		log.info("hentForsendelserKvitteringIkkeMottatt har mottatt kall om å hente forsendelser fra rdist001(dokdistadmin) med distribusjonKanal={}, antallTimer={}",
-				distribusjonKanal, antallTimer);
-
-		HentUekspederteForsendelserResponse response = webClientDokdistadmin.get()
-				.uri("/hentuekspederteforsendelser/{distribusjonKanal}/{antallTimer}", distribusjonKanal, antallTimer)
+		return webClientDokdistadmin.get()
+				.uri("/hentuekspederteforsendelser/{distribusjonkanal}/{antallTimer}", distribusjonskanal, antallTimer)
 				.retrieve()
 				.bodyToMono(HentUekspederteForsendelserResponse.class)
 				.doOnError(this::handleError)
 				.block();
-
-		// TODO: Endre bruk av HentUekspederteForsendelserResponse og AvstemForsendelseRequestTo videre her
-		return response.getUekspedertForsendelseList().stream()
-				.map(AvstemForsendelseMapper::fromHentUekspederteForsendelserResponse)
-				.toList();
 	}
 
 	@Override

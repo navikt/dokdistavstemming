@@ -9,13 +9,13 @@ import java.util.List;
 @Builder
 public class HentUekspederteForsendelserResponse {
 
-	private List<UekspedertForsendelse> uekspedertForsendelseList;
+	private List<UekspedertForsendelse> uekspederteForsendelser;
 
 	@Data
 	@Builder
 	public static class UekspedertForsendelse {
 		private String distribusjonId;
-		private List<DokumentInfoTo> dokumenter;
+		private List<DokumentInfo> dokumenter;
 		private String distribusjonKanal;
 		private String distribusjonStatus;
 		private String opprettetDato;
@@ -24,7 +24,7 @@ public class HentUekspederteForsendelserResponse {
 
 	@Data
 	@Builder
-	public static class DokumentInfoTo {
+	public static class DokumentInfo {
 		private final String forsendelseId;
 		private final String dokumentId;
 		private final String dokumentStatus;
@@ -33,8 +33,6 @@ public class HentUekspederteForsendelserResponse {
 		private final String fagomradeCode;
 		private final String journalpostId;
 		private final String brevProduksjonApplikasjon;
-		private final String avstemtReferanse;
-		private final String avstemtDato;
 	}
 
 }

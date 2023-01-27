@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.domain;
 
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -8,7 +7,7 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
-public class AvstemForsendelseResponseTo {
+public class UekspedertForsendelseDokument {
 
 	private String distribusjonId;
 	private String distribusjonKanal;
@@ -22,7 +21,5 @@ public class AvstemForsendelseResponseTo {
 	private String bestillendeFagsystem;
 	private String fagomradeCode;
 	private String journalpostId;
-	private final String avstemtReferanse;
-	private final String avstemtDato;
 	private final String brevProduksjonApplikasjon;
 }

@@ -8,7 +8,6 @@ import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
-import no.nav.dokdistavstemming.constants.MDCConstants;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.OppretteJiraSakRequestUtil;
 import org.slf4j.MDC;
@@ -19,7 +18,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static java.lang.String.format;
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_REQUEST_ID;
 
 @Component
 @Slf4j
@@ -27,7 +28,7 @@ public class JiraService {
 
     private static final String BROWSE = "/browse";
     private static final String TRANSITION_ID = "121";
-    private JiraConsumer jiraConsumer;
+    private final JiraConsumer jiraConsumer;
 
     public JiraService(JiraConsumer jiraConsumer) {
         this.jiraConsumer = jiraConsumer;
@@ -36,9 +37,10 @@ public class JiraService {
     @Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppretteMMAJiraSak"}, percentiles = {0.5, 0.95})
     public JiraSakResponseTo oppretteMMAJiraSak(String distribusjonKanal, File fil, int size) {
 
-        MDC.put(MDCConstants.MDC_REQUEST_ID, "oppretteMMAJiraSak");
+        MDC.put(MDC_REQUEST_ID, "oppretteMMAJiraSak");
+
         if (!isFilExistOgNotNull(fil)) {
-            log.info("Fant ingen avvik fra dokumentdistribusjon(rdist002) og sdist002 kan ikke opprette jira sak");
+            log.info("Fant ingen avvik fra dokumentdistribusjon (rdist002) og sdist002 kan ikke opprette Jira-sak");
             return JiraSakResponseTo.builder()
                     .message("Ingen filer og kan ikke opprette jira-sak")
                     .httpStatusCode(HttpStatus.NO_CONTENT.value())
@@ -49,24 +51,24 @@ public class JiraService {
         validateInput(issueInput);
 
         try {
-            log.info("{} mottat kall til å opprette jira sak", MDC.get(MDCConstants.MDC_REQUEST_ID));
+            log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
+
             Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
             jiraConsumer.leggVedlegg(issue.getKey(), fil);
-            log.info(String.format("%s har opprettet MMA jira-sak med SaksId=%s SaksKey=%s self=%s",
-                    MDC.get(MDCConstants.MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf()));
+            log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf());
             updateJiraStatus(issue);
             JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
                     .jiraSakKey(issue.getKey())
-                    .message(String.format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
+                    .message(format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
                     .build();
 
-            log.info(String.format("Sdist002 opprettet jira sak med url=%s", jiraSakResponseTo.getMessage()));
+            log.info("Sdist002 har opprettet Jira-sak med url={}", jiraSakResponseTo.getMessage());
             return jiraSakResponseTo;
 
         } catch (AvstemForsendelseFunctionalException e) {
-            log.warn(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
-                    e.getMessage()));
-            throw new AvstemForsendelseFunctionalException(String.format("%s feilet til å opprette jirasak, En eller flere nødvendige felter i metadata er null eller ugyldig feilmelding=%s", MDC.get(MDCConstants.MDC_REQUEST_ID),
+            log.warn("{} kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}",
+                    MDC.get(MDC_REQUEST_ID), e.getMessage());
+            throw new AvstemForsendelseFunctionalException(format("%s kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s", MDC.get(MDC_REQUEST_ID),
                     e.getMessage()));
         }
     }
@@ -74,15 +76,14 @@ public class JiraService {
     private void updateJiraStatus(Issue issue) {
         Issue updateIssue = jiraConsumer.updateStatus(issue.getKey(), JiraTransition.builder()
                 .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
-        log.info("Oppdatert sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
-
+        log.info("Har oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
     }
 
     private void validateInput(IssueInput issueInput) {
         if (!isGyldigInput(issueInput)) {
-            log.error(String.format("En eller flere nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
-                    issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
-            throw new AvstemForsendelseFunctionalException(String.format("Bestilling kan ikke utføres, nødvendige felter i mangler eller er null. projectKey=%s, saksTypeNavn=%s",
+            log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
+                    issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName());
+            throw new AvstemForsendelseFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
                     issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
         }
     }
@@ -102,9 +103,9 @@ public class JiraService {
             hostFraUrl = url.getProtocol() + "://" + url.getHost();
         } catch (MalformedURLException e) {
             try {
-                throw new MalformedURLException(String.format("Fant ikke host url med feilmelding=%s", e.getMessage()));
+                throw new MalformedURLException(format("Fant ikke host url med feilmelding=%s", e.getMessage()));
             } catch (MalformedURLException ex) {
-                log.error(String.format("Fant ikke host url med feilmelding=%s", ex.getMessage()));
+                log.error("Fant ikke host url med feilmelding={}", ex.getMessage());
             }
         }
         return hostFraUrl;

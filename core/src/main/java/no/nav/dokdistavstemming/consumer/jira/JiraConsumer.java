@@ -71,13 +71,13 @@ public class JiraConsumer {
 					new HttpEntity<>(issueInputRequest, headers), Issue.class);
 			return responseEntity.getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn(String.format("Kall mot jira feilet med url=%s, feilmelding: %s", apiBaseUri, e.getMessage()));
+			log.warn("Kall mot jira feilet funksjonelt med url={}, feilmelding={}", apiBaseUri, e.getMessage());
 			throw new AvstemForsendelseFunctionalException(
-					String.format("Kall mot jira feilet med url=%s, status:%s ,feilmelding: %s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
+					String.format("Kall mot jira feilet funksjonelt med url=%s, status=%s, feilmelding=%s", apiBaseUri, e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
-			log.error(String.format("En feil oppsto. Bestilling kan ikke utføres feilmelding=%s", e.getMessage()));
+			log.error("Oppretting av Jira-sak feilet teknisk. Feilmelding={}", e.getMessage());
 			throw new AvstemForsendelseTechnicalException(
-					String.format("Kall mot jira-sak  feilet teknisk. statusKode=%s feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
+					String.format("Oppretting av Jira-sak feilet teknisk. StatusKode=%s, feilmelding=%s ", e.getStatusCode(), e.getMessage()), e);
 		}
 	}
 
@@ -85,10 +85,11 @@ public class JiraConsumer {
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "leggVedlegg"}, percentiles = {0.5, 0.95})
 	public String leggVedlegg(String key, @NonNull File file) {
 		if (key == null) {
-			throw new IllegalArgumentException("MMA Key er null og kan ikke legge fil til jira saken");
+			throw new IllegalArgumentException("Kan ikke legge til vedlegg på Jira-saken. Prosjekt-key er null.");
 		} else if (file.length() == 0 && !file.exists()) {
-			throw new IllegalArgumentException("ressurser er null og kan ikke opprette jira sak");
+			throw new IllegalArgumentException("Kan ikke legge til vedlegg på Jira-saken. CSV-fil er null.");
 		}
+
 		try {
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap();
 			map.add("file", new FileSystemResource(file));
@@ -97,8 +98,7 @@ public class JiraConsumer {
 			return this.restTemplate.exchange(apiBaseUri + String.format("/%s%s", key, ATTACHMENTS), HttpMethod.POST, requestEntity, String.class).getBody();
 
 		} catch (JiraClientException e) {
-			log.error(String.format("En feil oppstod. Bestilling kan ikke utføres, MMA-Key=%s,filNavn=%s, feilmelding=%s", key,
-					file.getName(), e.getMessage()));
+			log.error("En feil oppstod, og bestilling kan ikke utføres. Sakskey={}, filnavn={}, feilmelding={}", key, file.getName(), e.getMessage());
 			throw new JiraClientException(e.getStatus(), e.getErrorMessage());
 		}
 	}
@@ -108,7 +108,7 @@ public class JiraConsumer {
 	public Project hentProjekt(@Valid @RequestParam(value = "key") String projectKey) {
 
 		if (projectKey == null) {
-			throw new AvstemForsendelseFunctionalException(String.format("Fant ikke projekt key med projectKey=%s", projectKey));
+			throw new AvstemForsendelseFunctionalException("Fant ikke prosjekt med projectKey=null");
 		}
 
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);

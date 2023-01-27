@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.domain.AvstemForsendelseResponseTo;
+import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import org.springframework.stereotype.Component;
 
@@ -29,12 +29,12 @@ public class CSVProdusereImpl implements CSVProdusere {
 	private static final String CSV_FILTER_FIL = "dokdistcvs";
 	private static final String BASE_TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
 
-	public File oppretteCsvFil(List<AvstemForsendelseResponseTo> avstemForsendelseResponseTo) {
+	public File oppretteCsvFil(List<UekspedertForsendelseDokument> uekspedertForsendelseDokument) {
 		File produced = null;
 
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
-		CsvSchema csvSchema = csvMapper.schemaFor(AvstemForsendelseResponseTo.class)
+		CsvSchema csvSchema = csvMapper.schemaFor(UekspedertForsendelseDokument.class)
 				.withHeader()
 				.withColumnSeparator(';').sortedBy("forsendelseId");
 
@@ -45,7 +45,8 @@ public class CSVProdusereImpl implements CSVProdusere {
 		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
 		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
 		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-		String distribusjonKanal = avstemForsendelseResponseTo.get(0).getDistribusjonKanal();
+		String distribusjonKanal = uekspedertForsendelseDokument.get(0).getDistribusjonKanal();
+
 		try {
 			produced = new File(BASE_TMP_DIRECTORY + "/dokdistavstemming-" + distribusjonKanal + "-" + localDate + ".csv");
 			FileOutputStream fos = new FileOutputStream(produced);
@@ -53,7 +54,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 			csvMapper.setFilterProvider(filterProvider);
 			csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
 			ObjectWriter objectWriter = csvMapper.writer(csvSchema);
-			objectWriter.writeValue(fos, avstemForsendelseResponseTo);
+			objectWriter.writeValue(fos, uekspedertForsendelseDokument);
 
 		} catch (IOException e) {
 			try {
