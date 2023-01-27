@@ -101,7 +101,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         AvstemForsendelseFunctionalException avstemForsendelseFunctionalException = assertThrows(AvstemForsendelseFunctionalException.class, () ->
                 jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size()));
 
-        assertThat(avstemForsendelseFunctionalException.getMessage(), containsString("status:400 BAD_REQUEST ,feilmelding: 400 Bad Request"));
+        assertThat(avstemForsendelseFunctionalException.getMessage(), containsString("status=400 BAD_REQUEST, feilmelding=400 Bad Request"));
         assertTrue(fil.exists());
         assertTrue(fil.length() != 0);
         verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));

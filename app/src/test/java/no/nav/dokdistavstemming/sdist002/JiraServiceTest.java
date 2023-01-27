@@ -82,7 +82,7 @@ class JiraServiceTest {
     }
 
     @Test
-    public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() throws Exception {
+    public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() {
         File avvikFil = new File("");
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 0);
         assertThat(jiraSakResponseTo.getMessage(), is("Ingen filer og kan ikke opprette jira-sak"));
