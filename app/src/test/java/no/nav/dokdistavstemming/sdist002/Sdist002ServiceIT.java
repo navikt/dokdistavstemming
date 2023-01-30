@@ -22,6 +22,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISRIBUSJON_DATO_J;
@@ -44,9 +45,11 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFors
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfo;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeilWithInternalServerError;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.returnNoContentForHentUekspederteForsendelser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Sdist002ServiceIT extends AbstractIT {
 
@@ -71,13 +74,22 @@ public class Sdist002ServiceIT extends AbstractIT {
 	}
 
 	@Test
-	public void shouldHentListOkStatus() throws Exception {
+	public void shouldReturnUekspederteForsendelser() throws Exception {
 		happilyHentUekspederteForsendelser("__files/rdist001/hentForsendelse-SDP-SixTime.json");
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		assertThat(uekspedertForsendelseDokumentList.get(0).getDistribusjonId(), is(DISTRIBUSJON_ID_SDP));
+	}
+
+	@Test
+	void shouldReturnEmptyListOnNoContentFromHentUekspederteForsendelser() {
+		returnNoContentForHentUekspederteForsendelser();
+
+		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL);
+
+		assertTrue(result.isEmpty());
 	}
 
 	@Test

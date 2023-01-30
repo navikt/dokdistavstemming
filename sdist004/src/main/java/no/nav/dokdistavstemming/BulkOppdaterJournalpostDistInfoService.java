@@ -46,8 +46,8 @@ public class BulkOppdaterJournalpostDistInfoService {
 	public void oppdaterAvstemOgJournalpostDistInfo() {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
-		if (hentEkspederteForsendelserResponse == null) {
-			log.info("Fant ikke ekspederteforsendelse i dokdist-db.");
+		if (hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
+			log.info("Fant ingen ekspederte forsendelser i dokdist-db.");
 			return;
 		}
 
