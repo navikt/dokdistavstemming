@@ -15,7 +15,6 @@ import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -25,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+import static java.util.Collections.emptyList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CONSUMER_ID;
@@ -37,6 +37,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @Component
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
+
+	private final HentUekspederteForsendelserResponse EMPTY_UEKSPEDERTEFORSENDELSER = HentUekspederteForsendelserResponse.builder()
+			.uekspederteForsendelser(emptyList())
+			.build();
+
+	private final HentEkspederteForsendelserResponse EMPTY_EKSPEDERTEFORSENDELSER = HentEkspederteForsendelserResponse.builder()
+			.forsendelser(emptyList())
+			.build();
 
 	private final WebClient webClientDokumentdistribusjon;
 	private final WebClient webClientDokdistadmin;
@@ -73,8 +81,10 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.uri("/hentuekspederteforsendelser/{distribusjonkanal}/{antallTimer}", distribusjonskanal, antallTimer)
 				.retrieve()
 				.bodyToMono(HentUekspederteForsendelserResponse.class)
+				.defaultIfEmpty(EMPTY_UEKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
 				.doOnError(this::handleError)
 				.block();
+
 	}
 
 	@Override
@@ -123,9 +133,11 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.uri("/hentekspederteforsendelser")
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<HentEkspederteForsendelserResponse>() {})
+				.bodyToMono(HentEkspederteForsendelserResponse.class)
+				.defaultIfEmpty(EMPTY_EKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
 				.doOnError(this::handleError)
 				.block();
+
 	}
 
 	private void handleError(Throwable error) {

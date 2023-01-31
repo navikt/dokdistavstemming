@@ -16,6 +16,7 @@ import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -34,6 +35,11 @@ public class WireMockResponse {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(filePath))));
+	}
+
+	public static void returnNoContentForHentUekspederteForsendelser() {
+		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
+				.willReturn(aResponse().withStatus(NO_CONTENT.value())));
 	}
 
 	public static void jiraHappyOpprettSakForAvstemForsendelse() throws Exception {
