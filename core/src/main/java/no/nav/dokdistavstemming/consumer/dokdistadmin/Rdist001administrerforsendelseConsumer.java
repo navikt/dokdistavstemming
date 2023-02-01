@@ -1,10 +1,9 @@
-package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
+package no.nav.dokdistavstemming.consumer.dokdistadmin;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.config.WebClientBasicAuthentication;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
@@ -14,7 +13,6 @@ import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -46,24 +44,16 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 			.forsendelser(emptyList())
 			.build();
 
-	private final WebClient webClientDokumentdistribusjon;
 	private final WebClient webClientDokdistadmin;
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
 
-	public Rdist001administrerforsendelseConsumer(@Value("${administrerforsendelse.v1.url}") String baseUrlDokumentdistribusjon,
-												  DokdistavstemmingProperties dokdistavstemmingProperties,
-												  WebClient webClientDokumentdistribusjon,
+	public Rdist001administrerforsendelseConsumer(DokdistavstemmingProperties dokdistavstemmingProperties,
 												  WebClient webClientDokdistadmin,
 												  AzureToken azureToken) {
 		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
 		this.webClientDokdistadmin = webClientDokdistadmin.mutate()
 				.baseUrl(dokdistavstemmingProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProperties.getEndpoints().getDokdistadmin()))
-				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.build();
-		this.webClientDokumentdistribusjon = webClientDokumentdistribusjon.mutate()
-				.baseUrl(baseUrlDokumentdistribusjon)
-				.filter(new WebClientBasicAuthentication(dokdistavstemmingProperties))
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
 	}
@@ -91,14 +81,18 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
-		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere forsendelser fra rdist001 med avstemtReferanse={}", oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
-		webClientDokumentdistribusjon.put()
+		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser fra rdist001 med avstemtReferanse={}",
+				oppdaterForsendelserAvstemtInfo.getForsendelser().size(), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
+
+		webClientDokdistadmin.put()
 				.uri("/avstemforsendelser")
 				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError).block();
-		log.info("Forsendelser med forsendelseIder={} oppdatert", oppdaterForsendelserAvstemtInfo.getForsendelser().size());
+				.doOnError(this::handleError)
+				.block();
+
+		log.info("avstemforsendelser har oppdatert {} forsendelser med avstemtReferanse og avstemtDato", oppdaterForsendelserAvstemtInfo.getForsendelser().size());
 	}
 
 	@Override

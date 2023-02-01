@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AvstemForsendelseConfig {
+
 	@Bean
 	public CSVProdusere csvProdusere() {
 		return new CSVProdusereImpl();

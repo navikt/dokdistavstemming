@@ -23,7 +23,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_MMA_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentUekspederteForsendelser;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemForsendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemForsendelse;
@@ -94,7 +94,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         happilyHentUekspederteForsendelser("__files/rdist001/henteforsendelse-print-overfemdager.json");
         List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
         jiraHappyHentProjectDetails();
-        jiraFeilToOpprettSakForAvstemFrosendelse();
+        jiraFeilToOpprettSakForAvstemForsendelse();
         jiraHappyPostVedleggDokument();
         File fil = csvProdusere.oppretteCsvFil(result);
 

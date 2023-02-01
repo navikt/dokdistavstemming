@@ -1,5 +1,6 @@
 package no.nav.dokdistavstemming.domain.map;
 
+import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
@@ -16,12 +17,10 @@ public class OppdaterForsendelserAvstemtInfoMapper {
 				.build();
 	}
 
-	List<OppdaterForsendelserAvstemtInfo.Forsendelse> mapForsendelseIder(List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList) {
+	List<Forsendelse> mapForsendelseIder(List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList) {
 
 		return uekspedertForsendelseDokumentList.stream()
-				.map(uekspedertForsendelseDokument -> OppdaterForsendelserAvstemtInfo.Forsendelse.builder()
-						.forsendelseId(uekspedertForsendelseDokument.getForsendelseId())
-						.build())
+				.map(uekspedertForsendelseDokument -> new Forsendelse(Long.valueOf(uekspedertForsendelseDokument.getForsendelseId())))
 				.toList();
 	}
 

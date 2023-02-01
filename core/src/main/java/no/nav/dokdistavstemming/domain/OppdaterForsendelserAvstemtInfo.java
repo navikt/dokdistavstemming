@@ -15,12 +15,4 @@ public class OppdaterForsendelserAvstemtInfo {
 
     private String avstemtReferanse;
     private List<Forsendelse> forsendelser;
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Forsendelse {
-        private String forsendelseId;
-    }
 }
