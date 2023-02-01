@@ -66,7 +66,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 						avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
 
 				if (avstemEkspederteForsendelserRequest != null) {
-					log.info("sdist004 oppdaterte totalt={} journalposter distribusjonsinformasjon på dokarkiv og feilet totalt={}",
+					log.info("sdist004 oppdaterte {} journalposter med distribusjonsinformasjon på dokarkiv, og feilet totalt på {} journalposter",
 							countSuccess(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()), countFeil(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()));
 					rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
 				}
@@ -93,7 +93,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		if (response.getJournalposter() != null) {
 			if (response.getJournalposter().getFeilet() != null) {
 				List<JournalpostResponse> feil = response.getJournalposter().getFeilet();
-				log.warn("sdist004 feilet til å oppdatere totalt={} journalposter på dokarkiv. {}", countFeil(response.getJournalposter()), feil);
+				log.warn("sdist004 feilet med å oppdatere {} journalposter på dokarkiv med feilmeldinger={}", countFeil(response.getJournalposter()), feil);
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		Map<DistribusjonKanalCode, Long> collectByKanal = forsendelserResponse.getForsendelser().stream()
 				.map(forsendelse -> DistribusjonKanalCode.valueOf(forsendelse.getDistribusjonsKanal()))
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-		log.info("sdist004 hentet totalt:[DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}]={} ekspederteforsendelse fra dokdist-rdist001.",
-				collectByKanal.get(DPVT), collectByKanal.get(E_HANDEL), collectByKanal.get(DITTNAV), collectByKanal.get(PRINT), collectByKanal.get(SDP), collectByKanal.get(TRYGDERETTEN), forsendelserResponse.getForsendelser().size());
+		log.info("sdist004 hentet {} ekspederte forsendelser fra dokdistadmin fordelt på følgende kanaler: DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}",
+				forsendelserResponse.getForsendelser().size(), collectByKanal.get(DPVT), collectByKanal.get(E_HANDEL), collectByKanal.get(DITTNAV), collectByKanal.get(PRINT), collectByKanal.get(SDP), collectByKanal.get(TRYGDERETTEN));
 	}
 }

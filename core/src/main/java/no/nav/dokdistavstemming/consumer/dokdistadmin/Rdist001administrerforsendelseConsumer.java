@@ -74,7 +74,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.defaultIfEmpty(EMPTY_UEKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
 				.doOnError(this::handleError)
 				.block();
-
 	}
 
 	@Override
@@ -131,7 +130,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.defaultIfEmpty(EMPTY_EKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
 				.doOnError(this::handleError)
 				.block();
-
 	}
 
 	private void handleError(Throwable error) {
