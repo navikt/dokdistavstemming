@@ -53,31 +53,31 @@ class JiraServiceTest {
 
     @Test
     public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
-        when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
-        when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
-        when(jiraConsumer.updateStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
+        when(jiraConsumer.opprettJiraSak(any(IssueInput.class))).thenReturn(createIssue());
+        when(jiraConsumer.hentProsjekt(any(String.class))).thenReturn(createProject());
+        when(jiraConsumer.oppdaterStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
         File avvikFil = new File(new ClassPathResource("__files/csv/csvfil_print.csv").getFile().toString());
-        when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
+        when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
 
-        verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
-        verify(jiraConsumer, times(1)).hentProjekt(anyString());
+        verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
+        verify(jiraConsumer, times(1)).hentProsjekt(anyString());
         assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
     }
 
     @Test
     public void shouldUpdateStatusToKlarForArbeid() throws Exception {
-        when(jiraConsumer.oppretteJiraSak(any(IssueInput.class))).thenReturn(createIssue());
-        when(jiraConsumer.hentProjekt(any(String.class))).thenReturn(createProject());
-        when(jiraConsumer.updateStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
+        when(jiraConsumer.opprettJiraSak(any(IssueInput.class))).thenReturn(createIssue());
+        when(jiraConsumer.hentProsjekt(any(String.class))).thenReturn(createProject());
+        when(jiraConsumer.oppdaterStatus(anyString(), any(JiraTransition.class))).thenReturn(updateIssue());
         File avvikFil = new File(new ClassPathResource("__files/csv/dokdist1.csv").getFile().toString());
-        when(jiraConsumer.leggVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
+        when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
         JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
 
-        verify(jiraConsumer, times(1)).oppretteJiraSak(any(IssueInput.class));
-        verify(jiraConsumer, times(1)).hentProjekt(anyString());
+        verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
+        verify(jiraConsumer, times(1)).hentProsjekt(anyString());
         assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
     }
 

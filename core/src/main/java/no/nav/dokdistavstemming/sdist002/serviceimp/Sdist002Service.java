@@ -71,6 +71,7 @@ public class Sdist002Service {
 		log.info("Sdist002 fant {} forsendelser med distribusjonskanal={} som ikke har mottatt kvittering", uekspederteForsendelser.size(), distribusjonskanal);
 
 		return uekspederteForsendelser.stream()
+				.filter(forsendelse -> forsendelse != null && forsendelse.getDokumenter() != null)
 				.map(uekspedertForsendelseMapper::mapUekspederteForsendelser)
 				.flatMap(Collection::stream)
 				.sorted(Comparator.comparing(UekspedertForsendelseDokument::getOpprettetDato))

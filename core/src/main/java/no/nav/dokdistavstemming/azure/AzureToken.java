@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.azure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.AzureTokenFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AzureTokenTechnicalException;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,7 +42,7 @@ public class AzureToken {
 	}
 
 
-	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Cacheable(AZURE_TOKEN_CACHE)
 	public String accessToken(String scope) {
 		return fetchAccessToken(scope);
