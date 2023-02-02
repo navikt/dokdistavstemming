@@ -17,7 +17,6 @@ public class DokdistavstemmingProperties {
     private final Endpoints endpoints = new Endpoints();
     private final Sdist002Properties sdist002 = new Sdist002Properties();
     private final JiraUser jira = new JiraUser();
-    private final Serviceuser serviceuser = new Serviceuser();
     private final Sdist004Properties sdist004 = new Sdist004Properties();
 
     @Data
@@ -61,15 +60,6 @@ public class DokdistavstemmingProperties {
     public static class JiraUser {
         @NotEmpty
         private String url;
-        @NotEmpty
-        private String username;
-        @NotEmpty
-        private String password;
-    }
-
-    @Data
-    @Validated
-    public static class Serviceuser {
         @NotEmpty
         private String username;
         @NotEmpty

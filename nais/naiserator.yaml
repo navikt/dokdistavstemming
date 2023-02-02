@@ -51,8 +51,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SRVDOKDISTAVSTEMMING }}
-        mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
       - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
   azure:
