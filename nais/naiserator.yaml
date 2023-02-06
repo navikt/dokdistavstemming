@@ -7,8 +7,6 @@ metadata:
     team: teamdokumenthandtering
 spec:
   env:
-    - name: ADMINISTRERFORSENDELSE_V1_URL
-      value: {{ ADMINISTRERFORSENDELSE_V1_URL }}
     - name: DOKDISTAVSTEMMING_JIRA_URL
       value: {{ DOKDISTAVSTEMMING_JIRA_URL }}
     - name: DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL
@@ -53,8 +51,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SRVDOKDISTAVSTEMMING }}
-        mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
       - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
   azure:

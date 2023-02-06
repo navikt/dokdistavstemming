@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
+import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.OppretteJiraSakRequestUtil;
 import org.slf4j.MDC;
@@ -47,14 +47,14 @@ public class JiraService {
                     .build();
         }
 
-        IssueInput issueInput = OppretteJiraSakRequestUtil.createJiraSaksRequest(jiraConsumer.hentProjekt("MMA"), distribusjonKanal, size);
+        IssueInput issueInput = OppretteJiraSakRequestUtil.createJiraSaksRequest(jiraConsumer.hentProsjekt("MMA"), distribusjonKanal, size);
         validateInput(issueInput);
 
         try {
             log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
 
-            Issue issue = jiraConsumer.oppretteJiraSak(issueInput);
-            jiraConsumer.leggVedlegg(issue.getKey(), fil);
+            Issue issue = jiraConsumer.opprettJiraSak(issueInput);
+            jiraConsumer.leggTilVedlegg(issue.getKey(), fil);
             log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf());
             updateJiraStatus(issue);
             JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
@@ -65,16 +65,16 @@ public class JiraService {
             log.info("Sdist002 har opprettet Jira-sak med url={}", jiraSakResponseTo.getMessage());
             return jiraSakResponseTo;
 
-        } catch (AvstemForsendelseFunctionalException e) {
+        } catch (JiraFunctionalException e) {
             log.warn("{} kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}",
                     MDC.get(MDC_REQUEST_ID), e.getMessage());
-            throw new AvstemForsendelseFunctionalException(format("%s kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s", MDC.get(MDC_REQUEST_ID),
+            throw new JiraFunctionalException(format("%s kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s", MDC.get(MDC_REQUEST_ID),
                     e.getMessage()));
         }
     }
 
     private void updateJiraStatus(Issue issue) {
-        Issue updateIssue = jiraConsumer.updateStatus(issue.getKey(), JiraTransition.builder()
+        Issue updateIssue = jiraConsumer.oppdaterStatus(issue.getKey(), JiraTransition.builder()
                 .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
         log.info("Har oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
     }
@@ -83,7 +83,7 @@ public class JiraService {
         if (!isGyldigInput(issueInput)) {
             log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
                     issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName());
-            throw new AvstemForsendelseFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
+            throw new JiraFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
                     issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
         }
     }

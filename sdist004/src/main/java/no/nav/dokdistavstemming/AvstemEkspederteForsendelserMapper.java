@@ -3,6 +3,7 @@ package no.nav.dokdistavstemming;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
+import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class AvstemEkspederteForsendelserMapper {
 						.map(EkspedertForsendelse::getForsendelseId))
 				.collect(toUnmodifiableSet());
 
-		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelseList = forsendelsesIderSomSkalOppdateres.stream()
-				.map(AvstemEkspederteForsendelserRequest.Forsendelse::new)
+		List<Forsendelse> forsendelseList = forsendelsesIderSomSkalOppdateres.stream()
+				.map(Forsendelse::new)
 				.toList();
 
 		return AvstemEkspederteForsendelserRequest.builder()

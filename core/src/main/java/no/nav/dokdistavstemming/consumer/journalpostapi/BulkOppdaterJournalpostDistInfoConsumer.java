@@ -4,11 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -39,26 +38,28 @@ public class BulkOppdaterJournalpostDistInfoConsumer {
 				.build();
 	}
 
-	@Retryable(include = AvstemForsendelseTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
-		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall til å oppdatere journalposter distribusjonsinfo.");
+		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
+
 		return webClient.post()
 				.uri("/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
-				.doOnError(this::handleError).block();
+				.doOnError(this::handleError)
+				.block();
 	}
 
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new JournalpostApiFunctionalException(
-					format("Kall mot JournalpostAPI feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
+					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
 					error);
 		} else {
 			throw new JournalpostApiTechnicalException(
-					format("Kall mot JournalpostAPI feilet med feilmelding=%s", error.getMessage()),
+					format("Kall mot Journalpost-API feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}

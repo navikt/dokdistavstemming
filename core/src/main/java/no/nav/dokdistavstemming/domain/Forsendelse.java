@@ -1,17 +1,13 @@
 package no.nav.dokdistavstemming.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AvstemEkspederteForsendelserRequest {
+public class Forsendelse {
 
-	private List<Forsendelse> forsendelser;
+	private Long forsendelseId;
 }

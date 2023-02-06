@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.consumer.dokumentdistribusjon;
+package no.nav.dokdistavstemming.consumer.dokdistadmin;
 
 
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;

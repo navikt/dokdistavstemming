@@ -4,6 +4,7 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
 import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
+import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import org.junit.jupiter.api.Test;
 
@@ -33,10 +34,10 @@ class AvstemEkspederteForsendelserMapperTest {
 		AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, journalpostResultResponse);
 
 		assertThat(avstemEkspederteForsendelserRequest).isNotNull();
-		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = avstemEkspederteForsendelserRequest.getForsendelser();
+		List<Forsendelse> forsendelser = avstemEkspederteForsendelserRequest.getForsendelser();
 		assertThat(forsendelser).hasSize(3);
 		assertThat(forsendelser)
-				.extracting(AvstemEkspederteForsendelserRequest.Forsendelse::getForsendelseId)
+				.extracting(Forsendelse::getForsendelseId)
 				.containsExactlyInAnyOrder(1000L, 1001L, 1002L);
 	}
 
@@ -56,10 +57,10 @@ class AvstemEkspederteForsendelserMapperTest {
 		AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, journalpostResultResponse);
 
 		assertThat(avstemEkspederteForsendelserRequest).isNotNull();
-		List<AvstemEkspederteForsendelserRequest.Forsendelse> forsendelser = avstemEkspederteForsendelserRequest.getForsendelser();
+		List<Forsendelse> forsendelser = avstemEkspederteForsendelserRequest.getForsendelser();
 		assertThat(forsendelser).hasSize(1);
 		assertThat(forsendelser)
-				.extracting(AvstemEkspederteForsendelserRequest.Forsendelse::getForsendelseId)
+				.extracting(Forsendelse::getForsendelseId)
 				.containsExactly(1000L);
 	}
 

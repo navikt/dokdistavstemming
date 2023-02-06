@@ -3,10 +3,12 @@ package no.nav.dokdistavstemming.sdist002;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistadminTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
+import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +33,7 @@ import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_KANAL_P_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_STATUS_J;
 import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.ADMINISTRERFORSENDELSE_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.AVSTEM_FORSENDELSER_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_MMA_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
@@ -42,8 +44,8 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSa
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyPostVedleggDokument;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemForsendelsesinfoFeil;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfo;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemFrosendelseInfoFeilWithInternalServerError;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemForsendelseInfo;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemForsendelseInfoFeilWithInternalServerError;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.postAzureToken;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.returnNoContentForHentUekspederteForsendelser;
 import static org.hamcrest.CoreMatchers.is;
@@ -123,13 +125,13 @@ public class Sdist002ServiceIT extends AbstractIT {
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
 		jiraHappyPostVedleggDokument();
-		oppdaterAvstemFrosendelseInfo();
+		oppdaterAvstemForsendelseInfo();
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 
 		sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
-		verify(6, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL))
+		verify(6, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL))
 				.withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
 	}
 
@@ -143,13 +145,13 @@ public class Sdist002ServiceIT extends AbstractIT {
 		jiraHappyGetIssue();
 		oppdaterAvstemForsendelsesinfoFeil();
 
-		assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
+		assertThrows(DokdistavstemmingFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
-		verify(1, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
+		verify(1, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));
 	}
 
 	@Test
@@ -158,16 +160,16 @@ public class Sdist002ServiceIT extends AbstractIT {
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
 		jiraHappyPostVedleggDokument();
-		oppdaterAvstemFrosendelseInfoFeilWithInternalServerError();
+		oppdaterAvstemForsendelseInfoFeilWithInternalServerError();
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 
-		assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
+		assertThrows(DokdistadminTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
-		verify(3, putRequestedFor(urlEqualTo(ADMINISTRERFORSENDELSE_URL)));
+		verify(3, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));
 	}
 }

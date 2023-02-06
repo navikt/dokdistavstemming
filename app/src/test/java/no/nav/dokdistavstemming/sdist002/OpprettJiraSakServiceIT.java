@@ -3,7 +3,8 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_MMA_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JIRA_VEDLEGG_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.happilyHentUekspederteForsendelser;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemFrosendelse;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraFeilToOpprettSakForAvstemForsendelse;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyHentProjectDetails;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.jiraHappyOpprettSakForAvstemForsendelse;
@@ -94,14 +95,14 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         happilyHentUekspederteForsendelser("__files/rdist001/henteforsendelse-print-overfemdager.json");
         List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
         jiraHappyHentProjectDetails();
-        jiraFeilToOpprettSakForAvstemFrosendelse();
+        jiraFeilToOpprettSakForAvstemForsendelse();
         jiraHappyPostVedleggDokument();
         File fil = csvProdusere.oppretteCsvFil(result);
 
-        AvstemForsendelseFunctionalException avstemForsendelseFunctionalException = assertThrows(AvstemForsendelseFunctionalException.class, () ->
+        var exception = assertThrows(JiraFunctionalException.class, () ->
                 jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size()));
 
-        assertThat(avstemForsendelseFunctionalException.getMessage(), containsString("status=400 BAD_REQUEST, feilmelding=400 Bad Request"));
+        assertThat(exception.getMessage(), containsString("status=400 BAD_REQUEST, feilmelding=400 Bad Request"));
         assertTrue(fil.exists());
         assertTrue(fil.length() != 0);
         verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));

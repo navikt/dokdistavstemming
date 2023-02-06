@@ -2,10 +2,10 @@ package no.nav.dokdistavstemming.sdist004;
 
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.BulkOppdaterJournalpostDistInfoService;
-import no.nav.dokdistavstemming.consumer.dokumentdistribusjon.Rdist001administrerforsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseFunctionalException;
-import no.nav.dokdistavstemming.exceptions.AvstemForsendelseTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.AVSTEMFORSENDELSE_URL;
-import static no.nav.dokdistavstemming.utils.WireMockResponse.EKSPEDERTEFORSENDELSER_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.AVSTEM_EKSPEDERTE_FORSENDELSER_URL;
+import static no.nav.dokdistavstemming.utils.WireMockResponse.HENT_EKSPEDERTE_FORSENDELSER_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.JOURNALPOST_API_URL;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.getEkspederteForsendelser;
 import static no.nav.dokdistavstemming.utils.WireMockResponse.oppdaterAvstemArkivForsendelseInfo;
@@ -52,9 +52,9 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 
 		sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo();
 
-		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(1, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(1, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 
 
@@ -67,9 +67,9 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 
 		sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo();
 
-		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 
 	@Test
@@ -81,9 +81,9 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 
 		sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo();
 
-		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 
 	@Test
@@ -92,11 +92,11 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 		oppdaterJournalpostFeil(BAD_REQUEST);
 		postAzureToken();
 
-		assertThrows(AvstemForsendelseFunctionalException.class, () -> sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo());
+		assertThrows(DokdistavstemmingFunctionalException.class, () -> sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo());
 
-		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 
 	@Test
@@ -105,10 +105,10 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 		oppdaterJournalpostFeil(HttpStatus.INTERNAL_SERVER_ERROR);
 		postAzureToken();
 
-		assertThrows(AvstemForsendelseTechnicalException.class, () -> sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo());
+		assertThrows(DokdistavstemmingTechnicalException.class, () -> sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo());
 
-		verify(1, getRequestedFor(urlEqualTo(EKSPEDERTEFORSENDELSER_URL)));
+		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
 		verify(3, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
-		verify(0, putRequestedFor(urlEqualTo(AVSTEMFORSENDELSE_URL)));
+		verify(0, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 }

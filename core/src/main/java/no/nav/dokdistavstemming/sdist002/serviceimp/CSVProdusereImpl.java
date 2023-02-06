@@ -50,7 +50,9 @@ public class CSVProdusereImpl implements CSVProdusere {
 		try {
 			produced = new File(BASE_TMP_DIRECTORY + "/dokdistavstemming-" + distribusjonKanal + "-" + localDate + ".csv");
 			FileOutputStream fos = new FileOutputStream(produced);
-			log.info(String.format("Det mottatt kall til å convertere list til CSV-fil med filnavn=%s", produced.getName()));
+
+			log.info("Konverterer dokumentliste til CSV-fil med filnavn={}", produced.getName());
+
 			csvMapper.setFilterProvider(filterProvider);
 			csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
 			ObjectWriter objectWriter = csvMapper.writer(csvSchema);
@@ -58,7 +60,7 @@ public class CSVProdusereImpl implements CSVProdusere {
 
 		} catch (IOException e) {
 			try {
-				throw new IOException(String.format("Ugyldig input. Kan ikke opprette csv fil med feilmelding=%s", e.getMessage()));
+				throw new IOException(String.format("Ugyldig input. Kan ikke opprette CSV-fil med feilmelding=%s", e.getMessage()));
 			} catch (IOException ex) {
 				log.warn(String.format("feilmelding=%s", ex.getMessage()));
 			}

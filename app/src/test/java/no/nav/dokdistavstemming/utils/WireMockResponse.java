@@ -22,12 +22,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class WireMockResponse {
 
-	public static final String ADMINISTRERFORSENDELSE_URL = "/administrerforsendelse/avstemforsendelser";
 	public static final String JIRA_OPPRETTE_URL = "/rest/api/2/issue";
 	public static final String JIRA_VEDLEGG_URL = "/rest/api/2/issue/MMA-134/attachments";
 	public static final String JIRA_MMA_URL = "/rest/api/2/project/MMA";
-	public static final String EKSPEDERTEFORSENDELSER_URL = "/administrerforsendelse/hentekspederteforsendelser";
-	public static final String AVSTEMFORSENDELSE_URL = "/administrerforsendelse/avstemekspederteforsendelser";
+	public static final String HENT_EKSPEDERTE_FORSENDELSER_URL = "/administrerforsendelse/hentekspederteforsendelser";
+	public static final String AVSTEM_FORSENDELSER_URL = "/administrerforsendelse/avstemforsendelser";
+	public static final String AVSTEM_EKSPEDERTE_FORSENDELSER_URL = "/administrerforsendelse/avstemekspederteforsendelser";
 	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/bulkOppdaterDistribusjonsinfo";
 
 	public static void happilyHentUekspederteForsendelser(String filePath) throws Exception {
@@ -76,39 +76,39 @@ public class WireMockResponse {
 						.withBody(classpathToString("__files/jira/laggevedlagg-happy-return.json"))));
 	}
 
-	public static void jiraFeilToOpprettSakForAvstemFrosendelse() throws Exception {
+	public static void jiraFeilToOpprettSakForAvstemForsendelse() throws Exception {
 		stubFor(post(urlMatching(JIRA_OPPRETTE_URL))
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString("__files/jira/jiraresponse.json"))));
 	}
 
-	public static void oppdaterAvstemFrosendelseInfo() {
-		stubFor(put(urlMatching(ADMINISTRERFORSENDELSE_URL))
+	public static void oppdaterAvstemForsendelseInfo() {
+		stubFor(put(urlMatching(AVSTEM_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
 	public static void oppdaterAvstemForsendelsesinfoFeil() {
-		stubFor(put(urlMatching(ADMINISTRERFORSENDELSE_URL))
+		stubFor(put(urlMatching(AVSTEM_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
 	}
 
-	public static void oppdaterAvstemFrosendelseInfoFeilWithInternalServerError() {
-		stubFor(put(urlMatching(ADMINISTRERFORSENDELSE_URL))
+	public static void oppdaterAvstemForsendelseInfoFeilWithInternalServerError() {
+		stubFor(put(urlMatching(AVSTEM_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
 	public static void getEkspederteForsendelser(String filePath) throws Exception {
-		stubFor(get(urlMatching(EKSPEDERTEFORSENDELSER_URL))
+		stubFor(get(urlMatching(HENT_EKSPEDERTE_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(filePath))));
 	}
 
 	public static void oppdaterAvstemArkivForsendelseInfo() {
-		stubFor(put(urlMatching(AVSTEMFORSENDELSE_URL))
+		stubFor(put(urlMatching(AVSTEM_EKSPEDERTE_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}

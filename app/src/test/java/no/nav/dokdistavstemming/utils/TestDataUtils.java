@@ -57,6 +57,7 @@ public class TestDataUtils {
 	public static DistribusjonKanalCode DISTRIBUSJON_KANAL_P_J = DistribusjonKanalCode.PRINT;
 	public static final String FORSENDELSE_ID_1 = "1";
 	public static final String FORSENDELSE_ID_2 = "2";
+	public static final String FORSENDELSE_ID_3 = "3";
 	public static String AVSTEMT_REFERANSE = "MMA-1234";
 
 	public static HentUekspederteForsendelserResponse createHentUekspederteForsendelserResponse() {
@@ -69,6 +70,7 @@ public class TestDataUtils {
 								.opprettetDato(PRODUKSJON_DATO)
 								.distribusjonDato(DISTRIBUSJON_DATO)
 								.dokumenter(singletonList(DokumentInfo.builder()
+										.forsendelseId(FORSENDELSE_ID_1)
 										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM)
 										.dokumentStatus(DOKUMENT_STATUS)
 										.konversasjonId(KONVERSASJON_ID)
@@ -97,7 +99,7 @@ public class TestDataUtils {
 								.opprettetDato(convertDateTimeToString(OPPRETTET_DATO_3))
 								.distribusjonDato(convertDateTimeToString(DISTRIBUSJON_DATO_3))
 								.dokumenter(singletonList(DokumentInfo.builder()
-										.forsendelseId(FORSENDELSE_ID_1)
+										.forsendelseId(FORSENDELSE_ID_3)
 										.bestillendeFagsystem(BESTILLENDE_FAGSYSTEM_3)
 										.dokumentStatus(DOKUMENT_STATUS_3)
 										.fagomradeCode(FAGOMRADE_CODE_3)
