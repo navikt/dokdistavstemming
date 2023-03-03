@@ -177,8 +177,21 @@
       "postadresse": null,
       "digitalpostkasse": null,
       "varsel": {
-        "digitalkontaktinformasjon": "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }",
-        "varseltekst": "{\n          \"epost\": \"Du har fått brev fra NAV\",\n          \"sms\": \"Du har fått brev fra NAV\"\n        }"
+        "epostvarsel": [
+          {
+            "adresse": "epostaddress3@nav.no",
+            "tittel": "epost tittel",
+            "tekst": "epost tekst",
+            "tidspunkt": "2023-03-13T15:09:42.411"
+          }
+        ],
+        "smsvarsel": [
+          {
+            "telefonnummer": "81549300",
+            "tekst": "smstekst",
+            "tidspunkt": "2023-03-13T15:09:42.411"
+          }
+        ]
       }
     }
   ]

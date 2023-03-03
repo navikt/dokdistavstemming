@@ -57,8 +57,13 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 
 		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
 		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
-		assertEquals(dittNavEkspederteForsendelse.getVarsel().getVarseltekst(), jpDistInfoDittNav.getVarsel().getVarseltekst());
-		assertEquals(dittNavEkspederteForsendelse.getVarsel().getDigitalkontaktinformasjon(), jpDistInfoDittNav.getVarsel().getDigitalkontaktinformasjon());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getEpostvarsel().get(0).getAdresse(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getAdresse());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getEpostvarsel().get(0).getTittel(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTittel());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getEpostvarsel().get(0).getTekst(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTekst());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getEpostvarsel().get(0).getTidspunkt(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTidspunkt());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getSmsvarsel().get(0).getTelefonnummer(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTelefonnummer());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getSmsvarsel().get(0).getTekst(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTekst());
+		assertEquals(dittNavEkspederteForsendelse.getVarsel().getSmsvarsel().get(0).getTidspunkt(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTidspunkt());
 		assertTrue(jpDistInfoDittNav.getSettStatusEkspedert());
 		assertNull(jpDistInfoDittNav.getPostadresse());
 		assertNull(jpDistInfoDittNav.getDigitalpostkasse());
