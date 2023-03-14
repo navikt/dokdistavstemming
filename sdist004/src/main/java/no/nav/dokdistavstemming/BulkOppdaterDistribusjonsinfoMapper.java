@@ -4,7 +4,7 @@ import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjon
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
 import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.DittNavVarsel;
+import no.nav.dokdistavstemming.domain.Varsel;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
@@ -48,7 +48,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.settStatusEkspedert(true)
 				.digitalpostkasse(mapDigitalpostkasse(ekspederteForsendelse.getDigitalpostkasse(), ekspederteForsendelse.getDistribusjonsKanal()))
 				.postadresse(mapPostadresse(ekspederteForsendelse.getPostadresse(), ekspederteForsendelse.getDistribusjonsKanal()))
-				.varsel(mapDittNavVarsel(ekspederteForsendelse.getVarsel(), ekspederteForsendelse.getDistribusjonsKanal()))
+				.varsel(mapVarsel(ekspederteForsendelse.getVarsel(), ekspederteForsendelse.getDistribusjonsKanal()))
 				.build();
 	}
 
@@ -60,7 +60,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 						.adresselinje3(postadresse.getAdresselinje3())
 						.postnummer(postadresse.getPostnummer())
 						.poststed(postadresse.getPoststed())
-						.landkode(UNKNOWN_ALPHA3_LANDKODE.equals(postadresse.getLandkode()) ? UNKNOWN_ALPHA2_LANDKODE : postadresse.getLandkode() )
+						.landkode(UNKNOWN_ALPHA3_LANDKODE.equals(postadresse.getLandkode()) ? UNKNOWN_ALPHA2_LANDKODE : postadresse.getLandkode())
 						.build() : null;
 	}
 
@@ -73,11 +73,11 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 
 	}
 
-	private DittNavVarsel mapDittNavVarsel(DittNavVarsel dittNavVarsel, String kanal) {
-		return DITTNAV.name().equals(kanal) && dittNavVarsel != null ?
-				DittNavVarsel.builder()
-						.varseltekst(dittNavVarsel.getVarseltekst())
-						.digitalkontaktinformasjon(dittNavVarsel.getDigitalkontaktinformasjon())
+	private Varsel mapVarsel(Varsel varsel, String kanal) {
+		return varsel != null && (DITTNAV.name().equals(kanal) || SDP.name().equals(kanal)) ?
+				Varsel.builder()
+						.epostvarsel(varsel.getEpostvarsel())
+						.smsvarsel(varsel.getSmsvarsel())
 						.build() : null;
 
 	}

@@ -15,5 +15,5 @@ public class EkspedertForsendelse {
 	private final String ekspedertDato;
 	private final PostadresseTo postadresse;
 	private final Digitalpostkasse digitalpostkasse;
-	private final DittNavVarsel varsel;
+	private final Varsel varsel;
 }
