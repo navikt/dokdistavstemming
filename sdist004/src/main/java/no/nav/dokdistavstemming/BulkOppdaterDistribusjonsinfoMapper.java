@@ -84,25 +84,13 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 
 	private String mapUtsendingsKanalCode(String distKanal) {
 		DistribusjonKanalCode distribusjonKanalCode = DistribusjonKanalCode.valueOf(distKanal);
-		switch (distribusjonKanalCode) {
-			case SDP -> {
-				return UtsendingsKanalCode.SDP.name();
-			}
-			case DITTNAV -> {
-				return UtsendingsKanalCode.NAV_NO.name();
-			}
-			case PRINT -> {
-				return UtsendingsKanalCode.S.name();
-			}
-			case TRYGDERETTEN -> {
-				return UtsendingsKanalCode.TRYGDERETTEN.name();
-			}
-			case DPVT -> {
-				return UtsendingsKanalCode.DPVT.name();
-			}
-			default -> {
-				return null;
-			}
-		}
+		return switch (distribusjonKanalCode) {
+			case SDP -> UtsendingsKanalCode.SDP.name();
+			case DITTNAV -> UtsendingsKanalCode.NAV_NO.name();
+			case PRINT -> UtsendingsKanalCode.S.name();
+			case TRYGDERETTEN -> UtsendingsKanalCode.TRYGDERETTEN.name();
+			case DPVT -> UtsendingsKanalCode.DPVT.name();
+			default -> null;
+		};
 	}
 }
