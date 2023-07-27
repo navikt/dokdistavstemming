@@ -25,7 +25,6 @@
         <pep1-jira-client.version>0.5</pep1-jira-client.version>
 
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
-        <resilience4j.version>2.1.0</resilience4j.version>
         <spring-cloud-wiremock.version>3.1.8</spring-cloud-wiremock.version>
 
         <!-- Plugins -->
