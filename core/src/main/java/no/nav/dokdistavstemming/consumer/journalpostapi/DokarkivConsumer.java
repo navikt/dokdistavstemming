@@ -45,7 +45,7 @@ public class DokarkivConsumer {
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public String[] finnUlesteJournalposter(DistribusjonKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
-		log.info(String.format("finnUlesteJournalposter har mottatt kall om å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
+		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				kanalCode.name(), ekspedertFra, ekspedertTil));
 
 		return webClient.post()
@@ -76,7 +76,7 @@ public class DokarkivConsumer {
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterDistribusjonsinfo"})
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
-		log.info("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
+		log.info(String.format("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere distribusjonsinfo på journalpost={}.", journalpostId));
 
 		webClient.post()
 				.uri(uriBuilder -> uriBuilder

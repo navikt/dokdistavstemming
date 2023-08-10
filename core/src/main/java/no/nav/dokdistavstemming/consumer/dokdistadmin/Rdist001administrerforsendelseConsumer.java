@@ -144,7 +144,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelser"})
 	public Optional<ForsendelseTos> hentForsendelser(HentForsendelseRequest hentForsendelseRequest) {
-		log.info("hentForsendelser henter forsendelser");
+		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder={}", String.join(",", hentForsendelseRequest.getJournalpostliste())));
 
 		return Optional.ofNullable(webClient.method(GET)
 				.body(Mono.justOrEmpty(hentForsendelseRequest), HentForsendelseRequest.class)
@@ -158,6 +158,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "opprettForsendelse"})
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
+		log.info(String.format("opprettForsendelse oppretter forsendelse for bestillingsId={}", forsendelseTo.getBestillingsId()));
 
 		return webClient.put()
 				.uri("/")
@@ -172,6 +173,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "feilregistrerForsendelse"})
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
+		log.info(String.format("FeilregistrerForsendelse feilregistrerer forsendelsesId={}", feilregistrerForsendelseRequest.getForsendelseId()));
 
 		webClient.put()
 				.uri("/feilregistrerforsendelse")
@@ -187,7 +189,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelse"})
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
-
+		log.info(String.format("oppdaterForsendelse opptarerer forsendelse med forsendelsesId={}", oppdaterForsendelseRequest.getForsendelseId()));
 		webClient.put()
 				.uri("/oppdaterForsendelse")
 				.body(Mono.justOrEmpty(oppdaterForsendelseRequest), OppdaterForsendelseRequest.class)

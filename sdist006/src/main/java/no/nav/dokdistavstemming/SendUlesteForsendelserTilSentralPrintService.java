@@ -9,6 +9,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
@@ -42,6 +44,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			log.info("Fant ingen uleste journalposter i Joark.");
 			return;
 		}
+		log.info("Sdist006 fant {} uleste journalposter i Joark", ulesteJournalposter.length);
 
 		//2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
@@ -49,28 +52,34 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			log.info("Fant ingen uleste forsendelser for de uleste journalpostene.");
 			return;
 		}
+		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
+		log.info(String.format("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene"), ulesteForsendelser.size());
 
 		//3. Behandle forsendelser
 		//Denne kan nok parallelliseres. Må sette meg litt mer inn i hvordan ThreadPoolTaskExecutor funker
-		ulesteForsendelserOptional.get().forsendelseListe().forEach(forsendelseTo -> {
-			String gammelBestillingsId = forsendelseTo.getBestillingsId();
-			String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
+		ulesteForsendelser.forEach(forsendelseTo -> {
+			try {
+				MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
+				String gammelBestillingsId = forsendelseTo.getBestillingsId();
+				String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
 
-			//3.1 Opprett ny forsendelse
-			long nyForsendelsesId = opprettForsendelse(forsendelseTo, UUID.randomUUID().toString());
+				//3.1 Opprett ny forsendelse
+				long nyForsendelsesId = opprettForsendelse(forsendelseTo, UUID.randomUUID().toString());
 
-			//3.2 Feilregistrer original forsendelse
-			feilRegistrerForsendelse(gammelBestillingsId);
+				//3.2 Feilregistrer original forsendelse
+				feilRegistrerForsendelse(gammelBestillingsId);
 
-			// 3.3 Sett status på ny forsendelse
-			oppdaterForsendelse(nyForsendelsesId);
+				// 3.3 Sett status på ny forsendelse
+				oppdaterForsendelse(nyForsendelsesId);
 
-			//3.4 Oppdater journalpost
-			oppdaterJournalpost(journalpostId);
+				//3.4 Oppdater journalpost
+				oppdaterJournalpost(journalpostId);
 
-			//3.5 Distribuer ny forsendelse
-			//TODO: Sett opp mq
-
+				//3.5 Distribuer ny forsendelse
+				//TODO: Sett opp mq
+			} finally {
+				MDC.clear();
+			}
 		});
 	}
 
