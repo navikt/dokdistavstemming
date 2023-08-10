@@ -36,11 +36,11 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 	private Rdist001administrerforsendelse administrerforsendelse;
 
 	@Autowired
-	private DokarkivConsumer bulkOppdaterJournalpostDistInfo;
+	private DokarkivConsumer dokarkivConsumer;
 
 	@BeforeEach
 	public void setUp() {
-		sdist004BulkOppdaterService = new BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
+		sdist004BulkOppdaterService = new BulkOppdaterJournalpostDistInfoService(dokarkivConsumer, administrerforsendelse);
 	}
 
 	@Test

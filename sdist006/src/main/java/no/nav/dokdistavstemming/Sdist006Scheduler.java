@@ -14,19 +14,20 @@ public class Sdist006Scheduler {
 
 	private final LeaderElectionConsumer leaderElection;
 	private final ThreadPoolTaskExecutor poolTaskExecutor;
-	private final SendIkkeLesteForsendelserTilSentralPrintService sendIkkeLesteForsendelserTilSentralPrintService;
+	private final SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService;
 
-	public Sdist006Scheduler(ThreadPoolTaskExecutor poolTaskExecutor, LeaderElectionConsumer leaderElection, SendIkkeLesteForsendelserTilSentralPrintService sendIkkeLesteForsendelserTilSentralPrintService) {
+	public Sdist006Scheduler(ThreadPoolTaskExecutor poolTaskExecutor, LeaderElectionConsumer leaderElection, SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService) {
 		this.leaderElection = leaderElection;
 		this.poolTaskExecutor = poolTaskExecutor;
-		this.sendIkkeLesteForsendelserTilSentralPrintService = sendIkkeLesteForsendelserTilSentralPrintService;
+		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
 	}
 
 	@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist006 cron-jobb");
-			poolTaskExecutor.execute(sendIkkeLesteForsendelserTilSentralPrintService::doJob);
+			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);
+			log.info("Avslutter sdist006 cron-job");
 		}
 	}
 }

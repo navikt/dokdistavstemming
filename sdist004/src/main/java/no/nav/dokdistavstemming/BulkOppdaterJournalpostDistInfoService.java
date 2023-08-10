@@ -29,15 +29,15 @@ import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.TRYGDE
 @Component
 public class BulkOppdaterJournalpostDistInfoService {
 
-	private final DokarkivConsumer oppdaterJournalpostDistInfoConsumer;
+	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
 	private static final int MAX_SIZE = 1000;
 
-	public BulkOppdaterJournalpostDistInfoService(DokarkivConsumer oppdaterJournalpostDistInfoConsumer,
+	public BulkOppdaterJournalpostDistInfoService(DokarkivConsumer dokarkivConsumer,
 												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
-		this.oppdaterJournalpostDistInfoConsumer = oppdaterJournalpostDistInfoConsumer;
+		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelse = rdist001administrerforsendelse;
 		this.bulkOppdaterDistribusjonsinfoMapper = new BulkOppdaterDistribusjonsinfoMapper();
 		this.avstemEkspederteForsendelserMapper = new AvstemEkspederteForsendelserMapper();
@@ -59,7 +59,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 			nPartitionJournalpost(bulkOppdaterDistribusjonsinfoRequest).forEach(jpRequest -> {
 
 				BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = bulkOppdaterDistribusjonsinfoRequest == null ? null :
-						oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
+						dokarkivConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
 				logMelding(bulkOppdaterDistribusjonsinfoResponse);
 
 				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = bulkOppdaterDistribusjonsinfoResponse == null ? null :

@@ -2,14 +2,13 @@ package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer;
-import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
-import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
-import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
+import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,17 +25,17 @@ import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT
 
 @Slf4j
 @Component
-public class SendIkkeLesteForsendelserTilSentralPrintService {
+public class SendUlesteForsendelserTilSentralPrintService {
 
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 
-	public SendIkkeLesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
 	}
 
-	public void doJob() {
+	public void sendUlesteForsendelserTilSentralPrint() {
 		//1. Finn journalposter
 		String[] ulesteJournalposter = finnUlesteJournalposter();
 		if (ulesteJournalposter == null || ulesteJournalposter.length == 0) {
@@ -52,6 +51,7 @@ public class SendIkkeLesteForsendelserTilSentralPrintService {
 		}
 
 		//3. Behandle forsendelser
+		//Denne kan nok parallelliseres. Må sette meg litt mer inn i hvordan ThreadPoolTaskExecutor funker
 		ulesteForsendelserOptional.get().forsendelseListe().forEach(forsendelseTo -> {
 			String gammelBestillingsId = forsendelseTo.getBestillingsId();
 			String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
@@ -69,21 +69,22 @@ public class SendIkkeLesteForsendelserTilSentralPrintService {
 			oppdaterJournalpost(journalpostId);
 
 			//3.5 Distribuer ny forsendelse
-			//TODO
+			//TODO: Sett opp mq
 
 		});
 	}
 
-	private void oppdaterJournalpost(String journalpostId) {
-		OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest = OppdaterDistribusjonsinfoRequest.builder()
-				.settStatusEkspedert(false)
-				.utsendingsKanal("S")
-				.tilbakestillJournalpost(true)
-				.build();
-		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
+	private String[] finnUlesteJournalposter() {
+		LocalDateTime ekspedertFraStart = LocalDateTime.now().minusHours(40);
+		LocalDateTime determineEkspedertFra = switch (ekspedertFraStart.getDayOfWeek()) {
+			case SATURDAY -> setKlokkeslettTil16(ekspedertFraStart.minusDays(1));
+			case SUNDAY -> setKlokkeslettTil16(ekspedertFraStart.minusDays(2));
+			default -> ekspedertFraStart;
+		};
+		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertFra);
 	}
 
-	private Optional<ForsendelseTos> hentForsendelser(String[] ulesteJournalposter){
+	private Optional<ForsendelseTos> hentForsendelser(String[] ulesteJournalposter) {
 		HentForsendelseRequest hentForsendelseRequest = HentForsendelseRequest.builder()
 				.distribusjonstyper(List.of(VIKTIG, VEDTAK))
 				.dokumentstatus(singletonList(EKSPEDERT))
@@ -93,23 +94,13 @@ public class SendIkkeLesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.hentForsendelser(hentForsendelseRequest);
 	}
 
+	private Long opprettForsendelse(ForsendelseTo forsendelseTo, String nyBestillingsId) {
+		forsendelseTo.setOriginalDistribusjonId(forsendelseTo.getBestillingsId());
+		forsendelseTo.setBestillingsId(nyBestillingsId);
+		forsendelseTo.setDistribusjonsKanal(PRINT);
+		forsendelseTo.getDokumenter().forEach(d -> d.setDokumenttypeId("U000001"));
 
-	private String[] finnUlesteJournalposter() {
-		LocalDateTime ekspedertFra = LocalDateTime.now().minusHours(40);
-		LocalDateTime determineEkspedertFra = switch (ekspedertFra.getDayOfWeek()) {
-			case SATURDAY -> setKlokkeslettTil16(ekspedertFra.minusDays(1));
-			case SUNDAY -> setKlokkeslettTil16(ekspedertFra.minusDays(2));
-			default -> ekspedertFra;
-		};
-		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertFra);
-	}
-
-	private void oppdaterForsendelse(Long forsendelsesId) {
-		OppdaterForsendelseRequest oppdaterForsendelseRequest = OppdaterForsendelseRequest.builder()
-				.forsendelseId(forsendelsesId)
-				.forsendelseStatus("KLAR_FOR_DIST")
-				.build();
-		rdist001administrerforsendelseConsumer.oppdaterForsendelse(oppdaterForsendelseRequest);
+		return rdist001administrerforsendelseConsumer.opprettForsendelse(forsendelseTo).getForsendelseId();
 	}
 
 	private void feilRegistrerForsendelse(String forsendelsesId) {
@@ -122,13 +113,21 @@ public class SendIkkeLesteForsendelserTilSentralPrintService {
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}
 
-	private Long opprettForsendelse(ForsendelseTo forsendelseTo, String nyBestillingsId) {
-		forsendelseTo.setOriginalDistribusjonId(forsendelseTo.getBestillingsId());
-		forsendelseTo.setBestillingsId(nyBestillingsId);
-		forsendelseTo.setDistribusjonsKanal(PRINT);
-		forsendelseTo.getDokumenter().forEach(d -> d.setDokumenttypeId("U000001"));
+	private void oppdaterForsendelse(Long forsendelsesId) {
+		OppdaterForsendelseRequest oppdaterForsendelseRequest = OppdaterForsendelseRequest.builder()
+				.forsendelseId(forsendelsesId)
+				.forsendelseStatus("KLAR_FOR_DIST")
+				.build();
+		rdist001administrerforsendelseConsumer.oppdaterForsendelse(oppdaterForsendelseRequest);
+	}
 
-		return rdist001administrerforsendelseConsumer.opprettForsendelse(forsendelseTo).getForsendelseId();
+	private void oppdaterJournalpost(String journalpostId) {
+		OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest = OppdaterDistribusjonsinfoRequest.builder()
+				.settStatusEkspedert(false)
+				.utsendingsKanal("S")
+				.tilbakestillJournalpost(true)
+				.build();
+		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
 	}
 
 	private LocalDateTime setKlokkeslettTil16(LocalDateTime date) {
