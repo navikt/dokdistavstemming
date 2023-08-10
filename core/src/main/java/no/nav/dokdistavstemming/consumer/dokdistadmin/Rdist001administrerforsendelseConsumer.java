@@ -15,8 +15,8 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsende
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.Forsendelse;
-import no.nav.dokdistavstemming.exceptions.DokdistadminFunctionalException;
-import no.nav.dokdistavstemming.exceptions.DokdistadminTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +67,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"})
 	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonskanal, int antallTimer) {
 		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
@@ -85,7 +85,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser fra rdist001 med avstemtReferanse={}",
@@ -103,7 +103,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
 		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
@@ -120,7 +120,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
@@ -141,24 +141,25 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelser"})
 	public Optional<ForsendelseTos> hentForsendelser(HentForsendelseRequest hentForsendelseRequest) {
-		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder={}", String.join(",", hentForsendelseRequest.getJournalpostliste())));
+		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", hentForsendelseRequest.getJournalpostliste())));
 
-		return Optional.ofNullable(webClient.method(GET)
-				.body(Mono.justOrEmpty(hentForsendelseRequest), HentForsendelseRequest.class)
-				.retrieve()
-				.bodyToMono(ForsendelseTos.class)
-				.doOnError(this::handleError)
-				.block());
+		return Optional.ofNullable(
+				webClient.method(GET)
+						.body(Mono.justOrEmpty(hentForsendelseRequest), HentForsendelseRequest.class)
+						.retrieve()
+						.bodyToMono(ForsendelseTos.class)
+						.doOnError(this::handleError)
+						.block());
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "opprettForsendelse"})
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
-		log.info(String.format("opprettForsendelse oppretter forsendelse for bestillingsId={}", forsendelseTo.getBestillingsId()));
+		log.info(String.format("opprettForsendelse oppretter forsendelse for bestillingsId=%s", forsendelseTo.getBestillingsId()));
 
 		return webClient.put()
 				.uri("/")
@@ -170,10 +171,10 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "feilregistrerForsendelse"})
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
-		log.info(String.format("FeilregistrerForsendelse feilregistrerer forsendelsesId={}", feilregistrerForsendelseRequest.getForsendelseId()));
+		log.info(String.format("FeilregistrerForsendelse feilregistrerer forsendelsesId=%s", feilregistrerForsendelseRequest.getForsendelseId()));
 
 		webClient.put()
 				.uri("/feilregistrerforsendelse")
@@ -186,10 +187,11 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelse"})
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
-		log.info(String.format("oppdaterForsendelse opptarerer forsendelse med forsendelsesId={}", oppdaterForsendelseRequest.getForsendelseId()));
+		log.info(String.format("oppdaterForsendelse opptarerer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
+
 		webClient.put()
 				.uri("/oppdaterForsendelse")
 				.body(Mono.justOrEmpty(oppdaterForsendelseRequest), OppdaterForsendelseRequest.class)
@@ -202,13 +204,13 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new DokdistadminFunctionalException(
+			throw new DokdistavstemmingFunctionalException(
 					String.format("Kall mot rdist001 feilet med status=%s, feilmelding=%s",
 							response.getRawStatusCode(),
 							response.getMessage()),
 					error);
 		} else {
-			throw new DokdistadminTechnicalException(
+			throw new DokdistavstemmingTechnicalException(
 					String.format("Kall mot rdist001 feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}

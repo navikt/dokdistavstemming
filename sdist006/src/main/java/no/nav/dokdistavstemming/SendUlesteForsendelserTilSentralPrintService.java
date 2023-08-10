@@ -41,7 +41,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//1. Finn journalposter
 		String[] ulesteJournalposter = finnUlesteJournalposter();
 		if (ulesteJournalposter == null || ulesteJournalposter.length == 0) {
-			log.info("Fant ingen uleste journalposter i Joark.");
+			log.info("Sdist006 fant ingen uleste journalposter i Joark.");
 			return;
 		}
 		log.info("Sdist006 fant {} uleste journalposter i Joark", ulesteJournalposter.length);
@@ -49,11 +49,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
 		if (ulesteForsendelserOptional.isEmpty() || ulesteForsendelserOptional.get().forsendelseListe().isEmpty()) {
-			log.info("Fant ingen uleste forsendelser for de uleste journalpostene.");
+			log.info("Sdist006 fant ingen uleste forsendelser for de uleste journalpostene.");
 			return;
 		}
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
-		log.info(String.format("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene"), ulesteForsendelser.size());
+		log.info("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
 		//3. Behandle forsendelser
 		//Denne kan nok parallelliseres. Må sette meg litt mer inn i hvordan ThreadPoolTaskExecutor funker
@@ -67,7 +67,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				long nyForsendelsesId = opprettForsendelse(forsendelseTo, UUID.randomUUID().toString());
 
 				//3.2 Feilregistrer original forsendelse
-				feilRegistrerForsendelse(gammelBestillingsId);
+				feilregistrerForsendelse(gammelBestillingsId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
@@ -84,13 +84,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private String[] finnUlesteJournalposter() {
-		LocalDateTime ekspedertFraStart = LocalDateTime.now().minusHours(40);
-		LocalDateTime determineEkspedertFra = switch (ekspedertFraStart.getDayOfWeek()) {
-			case SATURDAY -> setKlokkeslettTil16(ekspedertFraStart.minusDays(1));
-			case SUNDAY -> setKlokkeslettTil16(ekspedertFraStart.minusDays(2));
-			default -> ekspedertFraStart;
-		};
-		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertFra);
+		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertTil());
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(String[] ulesteJournalposter) {
@@ -112,7 +106,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.opprettForsendelse(forsendelseTo).getForsendelseId();
 	}
 
-	private void feilRegistrerForsendelse(String forsendelsesId) {
+	private void feilregistrerForsendelse(String forsendelsesId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(LocalDateTime.now())
@@ -137,6 +131,15 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				.tilbakestillJournalpost(true)
 				.build();
 		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
+	}
+
+	private LocalDateTime determineEkspedertTil(){
+		LocalDateTime ekspedertTil = LocalDateTime.now().minusHours(40);
+		return switch (ekspedertTil.getDayOfWeek()) {
+			case SATURDAY -> setKlokkeslettTil16(ekspedertTil.minusDays(1));
+			case SUNDAY -> setKlokkeslettTil16(ekspedertTil.minusDays(2));
+			default -> ekspedertTil;
+		};
 	}
 
 	private LocalDateTime setKlokkeslettTil16(LocalDateTime date) {

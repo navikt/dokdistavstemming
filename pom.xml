@@ -15,10 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>app</module>
+    	<module>app</module>
 		<module>core</module>
 		<module>sdist004</module>
-        <module>sdist006</module>
+    	<module>sdist006</module>
     </modules>
 
     <properties>

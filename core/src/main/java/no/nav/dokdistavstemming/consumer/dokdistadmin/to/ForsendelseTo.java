@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 public class ForsendelseTo{
 
-	private final ForsendelseTo forsendelse;
 	@Setter
 	String bestillingsId;
 	@Setter

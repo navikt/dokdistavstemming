@@ -4,14 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-
-@Configuration
-@EnableScheduling
 @Slf4j
+@Configuration
 public class Sdist002ScheduleConfig {
 
 	private final Sdist002Service sdist002Service;

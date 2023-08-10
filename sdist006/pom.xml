@@ -28,10 +28,6 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>no.nav.dokdistavstemming</groupId>
-			<artifactId>core</artifactId>
-		</dependency>
 	</dependencies>
 
 </project>

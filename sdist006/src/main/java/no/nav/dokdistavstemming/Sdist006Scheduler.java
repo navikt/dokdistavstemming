@@ -9,7 +9,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Slf4j
 @Configuration
-@EnableScheduling
 public class Sdist006Scheduler {
 
 	private final LeaderElectionConsumer leaderElection;
@@ -22,8 +21,11 @@ public class Sdist006Scheduler {
 		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
 	}
 
-	@Scheduled(cron = "${sdist006.cron.job}")
+	//Venter med å skru på scheduling så den kan safely merges inn i master før den er ferdig
+	//@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
+		//Finnes det en MDC-verdi som kan addes her for å wrappe hele sdist006-kjøringen?
+		//x_batchId elns. Så kan man tracke individuell change med correlationId og hele "batchen" med batchId
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist006 cron-jobb");
 			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);
