@@ -1,6 +1,6 @@
 package no.nav.dokdistavstemming.sdist002;
 
-import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;

@@ -33,6 +33,7 @@ public class Sdist004Scheduler {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist004 cron-jobb");
 			poolTaskExecutor.execute(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo);
+			log.info("Avslutter sdist004 cron-jobb");
 		}
 	}
 }

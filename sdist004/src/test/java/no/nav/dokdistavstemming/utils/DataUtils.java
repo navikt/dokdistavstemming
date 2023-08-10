@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;

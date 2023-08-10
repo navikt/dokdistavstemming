@@ -1,9 +1,9 @@
 package no.nav.dokdistavstemming.utils;
 
-import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.DokumentInfo;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.DokumentInfo;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 
 import java.time.OffsetDateTime;

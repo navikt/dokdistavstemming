@@ -4,15 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
-import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserRequest;
-import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
-import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
+import no.nav.dokdistavstemming.domain.Forsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.exceptions.DokdistadminFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistadminTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -20,6 +27,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
@@ -128,6 +136,64 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.retrieve()
 				.bodyToMono(HentEkspederteForsendelserResponse.class)
 				.defaultIfEmpty(EMPTY_EKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
+				.doOnError(this::handleError)
+				.block();
+	}
+
+	@Override
+	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelser"})
+	public Optional<ForsendelseTos> hentForsendelser(HentForsendelseRequest hentForsendelseRequest) {
+		log.info("hentForsendelser henter forsendelser");
+
+		return Optional.ofNullable(webClient.method(GET)
+				.body(Mono.justOrEmpty(hentForsendelseRequest), HentForsendelseRequest.class)
+				.retrieve()
+				.bodyToMono(ForsendelseTos.class)
+				.doOnError(this::handleError)
+				.block());
+	}
+
+	@Override
+	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "opprettForsendelse"})
+	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
+
+		return webClient.put()
+				.uri("/")
+				.body(Mono.justOrEmpty(forsendelseTo), Forsendelse.class)
+				.retrieve()
+				.bodyToMono(Forsendelse.class)
+				.doOnError(this::handleError)
+				.block();
+	}
+
+	@Override
+	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "feilregistrerForsendelse"})
+	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
+
+		webClient.put()
+				.uri("/feilregistrerforsendelse")
+				.body(Mono.justOrEmpty(feilregistrerForsendelseRequest), FeilregistrerForsendelseRequest.class)
+				.retrieve()
+				//response fra dokdistadmin er bare en tom responseEntity med 200 OK
+				.bodyToMono(ResponseEntity.class)
+				.doOnError(this::handleError)
+				.block();
+	}
+
+	@Override
+	@Retryable(include = DokdistadminTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelse"})
+	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
+
+		webClient.put()
+				.uri("/oppdaterForsendelse")
+				.body(Mono.justOrEmpty(oppdaterForsendelseRequest), OppdaterForsendelseRequest.class)
+				.retrieve()
+				//response fra dokdistadmin er bare en tom responseEntity med 200 OK
+				.bodyToMono(ResponseEntity.class)
 				.doOnError(this::handleError)
 				.block();
 	}
