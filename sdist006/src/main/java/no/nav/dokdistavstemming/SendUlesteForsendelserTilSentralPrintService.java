@@ -25,6 +25,7 @@ import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
 import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
 import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
+import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
 
 @Slf4j
 @Component
@@ -69,7 +70,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(forsendelseTo, UUID.randomUUID().toString());
+				long nyForsendelsesId = opprettForsendelse(forsendelseTo);
 
 				//3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelBestillingsId);
@@ -103,13 +104,9 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.hentForsendelser(hentForsendelseRequest);
 	}
 
-	private Long opprettForsendelse(ForsendelseTo forsendelseTo, String nyBestillingsId) {
-		forsendelseTo.setOriginalDistribusjonId(forsendelseTo.getBestillingsId());
-		forsendelseTo.setBestillingsId(nyBestillingsId);
-		forsendelseTo.setDistribusjonsKanal(PRINT);
-		forsendelseTo.getDokumenter().forEach(d -> d.setDokumenttypeId("U000001"));
-
-		return rdist001administrerforsendelseConsumer.opprettForsendelse(forsendelseTo).getForsendelseId();
+	private Long opprettForsendelse(ForsendelseTo oldForsendelse) {
+		ForsendelseTo opprettForsendelseRequest = mapForsendelseToTilOpprettForsendelse(oldForsendelse, UUID.randomUUID().toString());
+		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
 	}
 
 	private void feilregistrerForsendelse(String bestillingsId) {

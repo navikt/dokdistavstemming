@@ -4,15 +4,13 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static java.util.Calendar.AUGUST;
+import static java.time.Month.AUGUST;
 import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-//@ExtendWith(SpringExtension.class)
 public class DateUtilsTest {
 
 	LocalDateTime friday1PM = ZonedDateTime.of(LocalDateTime.of(2023, AUGUST, 18, 13, 0), ZoneId.systemDefault()).toLocalDateTime();

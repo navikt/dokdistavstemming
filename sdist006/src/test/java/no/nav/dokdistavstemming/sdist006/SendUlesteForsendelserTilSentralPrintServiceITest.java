@@ -98,68 +98,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 		verifyAndCountForsendelse(BESTILLINGSID);
 	}
 
-
-/*
-	@Test
-	public void shouldAvsluttBehandlingenWhenBestillerIdIsNotDittnavAndStatusFeilet() {
-		stubGetFinnForsendelse("__files/rdist001/finnForsendelseresponse-happy.json", OK.value());
-		stubGetHentForsendelse("__files/rdist001/hentForsendelseresponse-happy.json", FORSENDELSE_ID, OK.value());
-		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse-happy.json", OK.value());
-		stubPutFeilregistrerforsendelse(OK.value());
-		stubPutOppdaterForsendelse(KLAR_FOR_DIST.name(), NY_FORSENDELSE_ID, OK.value());
-
-		sendMessageToTopic(DOKNOTIFIKASJON_STATUS_TOPIC, doknotifikasjonStatus(DOKDISTDPI, FEILET.name()));
-
-		await().atMost(10, SECONDS).untilAsserted(() ->
-				verify(0, getRequestedFor(urlEqualTo(format(FINNFORSENDELSE_URL, PROPERTY_BESTILLINGSID, BESTILLINGSID))))
-		);
-	}
-
-	@Test
-	public void shouldLogWhenVarselstatusIsNotEqualToOPPRETTET() {
-		stubGetFinnForsendelse("__files/rdist001/finnForsendelseresponse-happy.json", OK.value());
-		stubGetHentForsendelse("__files/rdist001/hentForsendelseresponse-forsendelsestatus-feilet.json", FORSENDELSE_ID, OK.value());
-
-		sendMessageToTopic(DOKNOTIFIKASJON_STATUS_TOPIC, doknotifikasjonStatus(DOKDISTDITTNAV, FEILET.name()));
-
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(getRequestedFor(urlEqualTo(format(FINNFORSENDELSE_URL, PROPERTY_BESTILLINGSID, BESTILLINGSID))));
-			verify(getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
-		});
-	}
-
-	@Test
-	public void shouldUpdateDistInfo() {
-		stubGetFinnForsendelse("__files/rdist001/finnForsendelseresponse-happy.json", OK.value());
-		stubNotifikasjonInfo("__files/rnot001/doknot-happy.json", OK.value());
-		stubUpdateVarselInfo();
-		stubGetHentForsendelse("__files/rdist001/hentForsendelseresponse-happy.json", FORSENDELSE_ID, OK.value());
-		stubPutOppdaterForsendelse(EKSPEDERT.name(), FORSENDELSE_ID, OK.value());
-
-		sendMessageToTopic(DOKNOTIFIKASJON_STATUS_TOPIC, doknotifikasjonStatus(DOKDISTDITTNAV, OVERSENDT.name(), null));
-
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(1, getRequestedFor(urlEqualTo(format(FINNFORSENDELSE_URL, PROPERTY_BESTILLINGSID, BESTILLINGSID))));
-			verify(1, putRequestedFor((urlEqualTo(OPPDATERVARSELINFO_URL))));
-		});
-	}
-
-	@Test
-	public void shouldLogAndAvsluttBehandlingHvisForsendelseStatusErFEILET() {
-		stubGetFinnForsendelse("__files/rdist001/finnForsendelseresponse-happy.json", OK.value());
-		stubGetHentForsendelse("__files/rdist001/hentForsendelseresponse-forsendelsestatus-feilet.json", FORSENDELSE_ID, OK.value());
-
-		sendMessageToTopic(DOKNOTIFIKASJON_STATUS_TOPIC, doknotifikasjonStatus(DOKDISTDITTNAV, FEILET.name()));
-
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			ConsumerRecord<String, Object> record = records.poll();
-			assertTrue(record != null);
-			assertTrue(record.value().toString().contains(MELDING));
-			verify(getRequestedFor(urlEqualTo(format(FINNFORSENDELSE_URL, PROPERTY_BESTILLINGSID, BESTILLINGSID))));
-			verify(getRequestedFor(urlEqualTo(HENTFORSENDELSE_URL)));
-		});
-	}*/
-
 	private void verifyAndCountForsendelse(String bestillingsId) {
 		verify(getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 		verify(getRequestedFor(urlEqualTo(HENTFORSENDELSER_URL)));

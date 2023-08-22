@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.consumer.dokdistadmin.to;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
@@ -16,7 +17,7 @@ public class ForsendelseTo{
 	@Setter
 	String bestillingsId;
 	@Setter
-	DistribusjonKanalCode distribusjonsKanal;
+	String distribusjonsKanal;
 	@Setter
 	String originalDistribusjonId;
 	String konversasjonId;
@@ -29,7 +30,7 @@ public class ForsendelseTo{
 	ArkivInformasjon arkivInformasjon;
 	Postadresse postadresse;
 	List<Dokument> dokumenter;
-	DistribusjonsTypeKode distribusjonstype;
+	String distribusjonstype;
 
 
 	@Value
@@ -43,7 +44,7 @@ public class ForsendelseTo{
 	@Value
 	@Builder
 	public static class ArkivInformasjon {
-		ArkivSystemCode arkivSystem;
+		String arkivSystem;
 		String arkivId;
 	}
 
@@ -67,11 +68,4 @@ public class ForsendelseTo{
 		@Setter
 		String dokumenttypeId;
 	}
-
-	private enum ArkivSystemCode {
-		JOARK,
-		MIDL_BREVLAGER,
-		INGEN
-	}
-
 }
