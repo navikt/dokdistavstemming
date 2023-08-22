@@ -24,6 +24,7 @@ import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
 import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
+import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
 
 @Slf4j
 @Component
@@ -31,20 +32,22 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
+	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
+		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;
 	}
 
 	public void sendUlesteForsendelserTilSentralPrint() {
 		//1. Finn journalposter
-		String[] ulesteJournalposter = finnUlesteJournalposter();
-		if (ulesteJournalposter == null || ulesteJournalposter.length == 0) {
+		List<String> ulesteJournalposter = finnUlesteJournalposter();
+		if (ulesteJournalposter == null || ulesteJournalposter.size() == 0) {
 			log.info("Sdist006 fant ingen uleste journalposter i Joark.");
 			return;
 		}
-		log.info("Sdist006 fant {} uleste journalposter i Joark", ulesteJournalposter.length);
+		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
 		//2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
@@ -59,8 +62,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//Denne kan nok parallelliseres. Må sette meg litt mer inn i hvordan ThreadPoolTaskExecutor funker
 		ulesteForsendelser.forEach(forsendelseTo -> {
 			try {
-				MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 				String gammelBestillingsId = forsendelseTo.getBestillingsId();
+				log.info("Sdist006 behandler ulest forsendelse med bestillingsId={} som ikke har blitt lest etter 40 timer",
+						gammelBestillingsId);
+				MDC.put(MDC_CALL_ID, gammelBestillingsId);
 				String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
@@ -76,18 +81,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				oppdaterJournalpost(journalpostId);
 
 				//3.5 Distribuer ny forsendelse
-				//TODO: Sett opp mq
+				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 			} finally {
 				MDC.clear();
 			}
 		});
 	}
 
-	private String[] finnUlesteJournalposter() {
-		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertTil());
+	private List<String> finnUlesteJournalposter() {
+		LocalDateTime ulesteJournalposterEkspedertTil = LocalDateTime.now().minusHours(40);
+		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertTil(ulesteJournalposterEkspedertTil));
 	}
 
-	private Optional<ForsendelseTos> hentForsendelser(String[] ulesteJournalposter) {
+	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
 		HentForsendelseRequest hentForsendelseRequest = HentForsendelseRequest.builder()
 				.distribusjonstyper(List.of(VIKTIG, VEDTAK))
 				.dokumentstatus(singletonList(EKSPEDERT))
@@ -106,12 +112,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.opprettForsendelse(forsendelseTo).getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(String forsendelsesId) {
+	private void feilregistrerForsendelse(String bestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(LocalDateTime.now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
-				.resendingDistribusjonId(forsendelsesId)
+				.resendingDistribusjonId(bestillingsId)
 				.build();
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}
@@ -133,17 +139,5 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
 	}
 
-	private LocalDateTime determineEkspedertTil(){
-		LocalDateTime ekspedertTil = LocalDateTime.now().minusHours(40);
-		return switch (ekspedertTil.getDayOfWeek()) {
-			case SATURDAY -> setKlokkeslettTil16(ekspedertTil.minusDays(1));
-			case SUNDAY -> setKlokkeslettTil16(ekspedertTil.minusDays(2));
-			default -> ekspedertTil;
-		};
-	}
-
-	private LocalDateTime setKlokkeslettTil16(LocalDateTime date) {
-		return date.withHour(16).withMinute(0).withSecond(0);
-	}
 }
 

@@ -14,55 +14,56 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties("dokdistavstemming")
 public class DokdistavstemmingProperties {
 
-    private final Endpoints endpoints = new Endpoints();
-    private final Sdist002Properties sdist002 = new Sdist002Properties();
-    private final JiraUser jira = new JiraUser();
-    private final Sdist004Properties sdist004 = new Sdist004Properties();
+	private final Endpoints endpoints = new Endpoints();
+	private final Sdist002Properties sdist002 = new Sdist002Properties();
+	private final JiraUser jira = new JiraUser();
+	private final Sdist004Properties sdist004 = new Sdist004Properties();
+	private final MqGatewayAlias mqGatewayAlias = new MqGatewayAlias();
 
-    @Data
-    @Validated
-    public static class Endpoints {
-        @NotNull
-        private AzureEndpoint dokarkiv;
-        @NotNull
-        private AzureEndpoint dokdistadmin;
-    }
+	@Data
+	@Validated
+	public static class Endpoints {
+		@NotNull
+		private AzureEndpoint dokarkiv;
+		@NotNull
+		private AzureEndpoint dokdistadmin;
+	}
 
-    @Data
-    @Validated
-    public static class AzureEndpoint {
-        @NotEmpty
-        private String url;
-        @NotEmpty
-        private String scope;
-    }
+	@Data
+	@Validated
+	public static class AzureEndpoint {
+		@NotEmpty
+		private String url;
+		@NotEmpty
+		private String scope;
+	}
 
-    @Data
-    @Validated
-    public static class Sdist002Properties {
-        @Min(1)
-        private int delayTimePrint;
-        @Min(1)
-        private int delayTimeSDP;
-        @Min(1)
-        private int delayTimeEhandel;
-    }
+	@Data
+	@Validated
+	public static class Sdist002Properties {
+		@Min(1)
+		private int delayTimePrint;
+		@Min(1)
+		private int delayTimeSDP;
+		@Min(1)
+		private int delayTimeEhandel;
+	}
 
-    @Data
-    @Validated
-    public static class Sdist004Properties {
-        @Min(0)
-        private int maxForsendelserRequest;
-    }
+	@Data
+	@Validated
+	public static class Sdist004Properties {
+		@Min(0)
+		private int maxForsendelserRequest;
+	}
 
-    @Data
-    @Validated
-    public static class JiraUser {
-        @NotEmpty
-        private String url;
-        @NotEmpty
-        private String username;
-        @NotEmpty
-        private String password;
-    }
+	@Data
+	@Validated
+	public static class JiraUser {
+		@NotEmpty
+		private String url;
+		@NotEmpty
+		private String username;
+		@NotEmpty
+		private String password;
+	}
 }

@@ -1,14 +1,14 @@
 package no.nav.dokdistavstemming.consumer.journalpostapi;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
-import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -18,6 +18,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
@@ -44,19 +47,19 @@ public class DokarkivConsumer {
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
-	public String[] finnUlesteJournalposter(DistribusjonKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
+	public List<String> finnUlesteJournalposter(DistribusjonKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
 		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				kanalCode.name(), ekspedertFra, ekspedertTil));
 
-		return webClient.post()
+		return Arrays.stream(Objects.requireNonNull(webClient.post()
 				.uri(uriBuilder -> uriBuilder
-						.path("/finnUlesteJournalposter/{}/{}/{}")
+						.path("/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
 				)
 				.retrieve()
 				.bodyToMono(String[].class)
 				.doOnError(error -> handleError(error, "finnUlesteJournalposter"))
-				.block();
+				.block())).toList();
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
@@ -80,11 +83,11 @@ public class DokarkivConsumer {
 
 		webClient.post()
 				.uri(uriBuilder -> uriBuilder
-						.path("{}/oppdaterDistribusjonsinfo")
+						.path("/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
-				.bodyToMono(ResponseEntity.class)
+				.bodyToMono(String.class)
 				.doOnError(error -> handleError(error, "oppdaterDistribusjonsinfo"))
 				.block();
 	}

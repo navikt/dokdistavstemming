@@ -2,9 +2,9 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 import no.nav.dokdistavstemming.domain.Forsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import org.junit.jupiter.api.Test;
 

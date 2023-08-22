@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.azure;
 
 
+import no.nav.dokdistavstemming.constants.MDCConstants;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import org.slf4j.MDC;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -8,8 +9,6 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
-
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 
 public class WebClientAzureAuthentication implements ExchangeFilterFunction {
 
@@ -26,7 +25,7 @@ public class WebClientAzureAuthentication implements ExchangeFilterFunction {
 		return next.exchange(ClientRequest.from(request)
 				.headers(httpHeaders -> {
 					httpHeaders.setBearerAuth(azureToken.accessToken(endpoint.getScope()));
-					httpHeaders.set(MDC_CALL_ID, MDC.get(MDC_CALL_ID));
+					httpHeaders.set(MDCConstants.MDC_CALL_ID, MDC.get(MDCConstants.MDC_CALL_ID));
 				})
 				.build());
 	}

@@ -3,8 +3,6 @@ package no.nav.dokdistavstemming;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Slf4j

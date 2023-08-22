@@ -14,5 +14,5 @@ public class HentForsendelseRequest {
 	private List<DistribusjonsTypeKode> distribusjonstyper;
 	private List<DokumentStatusCode> dokumentstatus;
 	private DistribusjonKanalCode distribusjonkanal;
-	private String[] journalpostliste;
+	private List<String> journalpostliste;
 }
