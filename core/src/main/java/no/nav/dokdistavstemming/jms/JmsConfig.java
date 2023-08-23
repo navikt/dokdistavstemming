@@ -31,7 +31,7 @@ public class JmsConfig {
 	private static final String ANY_TLS13_OR_HIGHER = "*TLS13ORHIGHER";
 
 	@Bean
-	public Queue qdist009Queue(@Value("${dokdistavstemming_qdist009}") String qdist009QueueName) throws JMSException {
+	public Queue qdist009Queue(@Value("${dokdistsentralprint_qdist009_dist_s_print.queuename}") String qdist009QueueName) throws JMSException {
 		return new MQQueue(qdist009QueueName);
 	}
 
