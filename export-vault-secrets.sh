@@ -11,6 +11,15 @@ then
     echo "Setting dokdistavstemming_jira_password"
     export dokdistavstemming_jira_password=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/password)
 fi
-
+if test -f /secrets/serviceuser/dokdistavstemming/username;
+then
+    echo "Setting serviceuser_username"
+    export  serviceuser_username=$(cat /secrets/serviceuser/dokdistavstemming/username)
+fi
+if test -f /secrets/serviceuser/dokdistavstemming/password;
+then
+    echo "Setting serviceuser_password"
+    export  serviceuser_password=$(cat /secrets/serviceuser/dokdistavstemming/password)
+fi
 
 
