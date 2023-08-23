@@ -1,4 +1,9 @@
 {
+  "MIN_REPLICAS": 1,
+  "MAX_REPLICAS": 1,
+  "INGRESSES": [
+    "https://dokdistavstemming.dev.intern.nav.no"
+  ],
   "DOKDISTAVSTEMMING_JIRA_URL": "https://jira-q1.adeo.no",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest/journalpostapi/v1",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
@@ -6,9 +11,12 @@
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
-  "MIN_REPLICAS": 1,
-  "MAX_REPLICAS": 1,
-  "INGRESSES": [
-    "https://dokdistavstemming.dev.intern.nav.no"
-  ]
+  "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
+  "MQGATEWAY01_CHANNEL_NAME": "Q2_DOKDDISTAVSTEMMING",
+  "MQGATEWAY01_CHANNEL_SECURENAME":"Q2_DOKDISTAVSTEMMING_SECURE",
+  "MQGATEWAY01_CHANNEL_ENABLETLS": "true",
+  "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",
+  "MQGATEWAY01_PORT": "1413",
+  "MQGATEWAY01_NAME": "MQLS01",
+  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.Q2_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT"
 }

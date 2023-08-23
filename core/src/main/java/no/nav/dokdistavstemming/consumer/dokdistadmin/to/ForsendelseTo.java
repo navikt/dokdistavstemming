@@ -1,24 +1,17 @@
 package no.nav.dokdistavstemming.consumer.dokdistadmin.to;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.Value;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode;
 
 import java.util.List;
 
 @Builder
 @Getter
-public class ForsendelseTo{
+public class ForsendelseTo {
 
-	@Setter
 	String bestillingsId;
-	@Setter
 	String distribusjonsKanal;
-	@Setter
 	String originalDistribusjonId;
 	String konversasjonId;
 	String bestillendeFagsystem;
@@ -65,7 +58,7 @@ public class ForsendelseTo{
 		String tilknyttetSom;
 		String dokumentObjektReferanse;
 		String arkivDokumentInfoId;
-		@Setter
 		String dokumenttypeId;
+		Integer rekkefolge;
 	}
 }

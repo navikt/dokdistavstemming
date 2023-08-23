@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
 import no.nav.dokdistavstemming.config.WebClientConfig;
+import no.nav.dokdistavstemming.jms.JmsConfig;
 import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,8 +20,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,
 		DokdistavstemmingServiceuser.class,
-		AzureConfig.class
-//		JmsConfig.class
+		AzureConfig.class,
+		JmsConfig.class
 })
 @Import(value = {
 		WebClientConfig.class,

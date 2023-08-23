@@ -20,7 +20,6 @@ import java.util.UUID;
 import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
-import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
 import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
@@ -60,7 +59,6 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
 		//3. Behandle forsendelser
-		//Denne kan nok parallelliseres. Må sette meg litt mer inn i hvordan ThreadPoolTaskExecutor funker
 		ulesteForsendelser.forEach(forsendelseTo -> {
 			try {
 				String gammelBestillingsId = forsendelseTo.getBestillingsId();
@@ -109,19 +107,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(String bestillingsId) {
+	private void feilregistrerForsendelse(String gammelBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(LocalDateTime.now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
-				.resendingDistribusjonId(bestillingsId)
+				.resendingDistribusjonId(gammelBestillingsId)
 				.build();
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}
 
-	private void oppdaterForsendelse(Long forsendelsesId) {
+	private void oppdaterForsendelse(Long nyForsendelsesId) {
 		OppdaterForsendelseRequest oppdaterForsendelseRequest = OppdaterForsendelseRequest.builder()
-				.forsendelseId(forsendelsesId)
+				.forsendelseId(nyForsendelsesId)
 				.forsendelseStatus("KLAR_FOR_DIST")
 				.build();
 		rdist001administrerforsendelseConsumer.oppdaterForsendelse(oppdaterForsendelseRequest);

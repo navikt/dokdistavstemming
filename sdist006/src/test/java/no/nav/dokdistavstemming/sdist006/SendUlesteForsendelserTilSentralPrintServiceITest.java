@@ -42,10 +42,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @ActiveProfiles("itest")
 class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestConfig {
 
-	private static final String FORSENDELSE_ID = "1720847";
 	private static final String NY_FORSENDELSE_ID = "33333";
-	private static final String BESTILLINGSID = "811c0c5d-e74c-491a-8b8c-d94075c822c3";
-	private static final String PROPERTY_BESTILLINGSID = "bestillingsId";
 	private static final String JOURNALPOST_ID = "123456789";
 	private static final int OK = 200;
 
@@ -87,18 +84,16 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
 
-		AtomicInteger recieved = new AtomicInteger();
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			//Sjekk at riktig forsendelseId blir sendt til qdist009/print
 			String message = receive(qdist009).toString();
-			System.out.println(message);
 			assertThat(message).contains(NY_FORSENDELSE_ID);
 		});
 
-		verifyAndCountForsendelse(BESTILLINGSID);
+		verifyAndCountForsendelse();
 	}
 
-	private void verifyAndCountForsendelse(String bestillingsId) {
+	private void verifyAndCountForsendelse() {
 		verify(getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
 		verify(getRequestedFor(urlEqualTo(HENTFORSENDELSER_URL)));
 		verify(postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));

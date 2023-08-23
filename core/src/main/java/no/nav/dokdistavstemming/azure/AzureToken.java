@@ -3,8 +3,6 @@ package no.nav.dokdistavstemming.azure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.cache.LokalCacheConfig;
-import no.nav.dokdistavstemming.constants.RetryConstants;
 import no.nav.dokdistavstemming.exceptions.AzureTokenFunctionalException;
 import no.nav.dokdistavstemming.exceptions.AzureTokenTechnicalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
@@ -18,6 +16,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import static no.nav.dokdistavstemming.cache.LokalCacheConfig.AZURE_TOKEN_CACHE;
+import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
+import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
@@ -41,8 +42,8 @@ public class AzureToken {
 	}
 
 
-	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = RetryConstants.DELAY_SHORT, multiplier = RetryConstants.MULTIPLIER_SHORT))
-	@Cacheable(LokalCacheConfig.AZURE_TOKEN_CACHE)
+	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Cacheable(AZURE_TOKEN_CACHE)
 	public String accessToken(String scope) {
 		return fetchAccessToken(scope);
 	}

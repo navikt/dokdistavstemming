@@ -7,6 +7,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 
+import static no.nav.dokdistavstemming.DistribuerTilSentralPrintRoute.DIRECT_SENTRALPRINT;
+import static no.nav.dokdistavstemming.DistribuerTilSentralPrintRoute.PROPERTY_FORSENDELSE_ID;
+
 @Slf4j
 @Component
 public class DistribuerTilSentralPrintMQService {
@@ -21,10 +24,10 @@ public class DistribuerTilSentralPrintMQService {
 	public void sendToQdist009(long forsendelsesId) {
 
 		Exchange exchange = new ExchangeBuilder(context)
-				.withBody(forsendelsesId)//Qdist009Forsendelse.builder().forsendelseId(forsendelsesId))
+				.withProperty(PROPERTY_FORSENDELSE_ID, forsendelsesId)
+				.withBody(new DistribuerTilKanal(String.valueOf(forsendelsesId)))
 				.build();
-		log.info("Sender print-bestilling med forsendelsesId={} til qdist009", forsendelsesId);
-		producerTemplate.send(DistribuerTilSentralPrintRoute.DIRECT_SENTRALPRINT, exchange);
+		producerTemplate.send(DIRECT_SENTRALPRINT, exchange);
 	}
 
 }

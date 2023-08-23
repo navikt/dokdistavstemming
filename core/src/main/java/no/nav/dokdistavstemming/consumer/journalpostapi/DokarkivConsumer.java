@@ -58,7 +58,7 @@ public class DokarkivConsumer {
 				)
 				.retrieve()
 				.bodyToMono(String[].class)
-				.doOnError(error -> handleError(error, "finnUlesteJournalposter"))
+				.doOnError(this:: handleError)
 				.block())).toList();
 	}
 
@@ -72,7 +72,7 @@ public class DokarkivConsumer {
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
-				.doOnError(error -> handleError(error, "bulkOppdaterDistribusjonsinfo"))
+				.doOnError(this::handleError)
 				.block();
 	}
 
@@ -88,18 +88,18 @@ public class DokarkivConsumer {
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(String.class)
-				.doOnError(error -> handleError(error, "oppdaterDistribusjonsinfo"))
+				.doOnError(this::handleError)
 				.block();
 	}
 
-	private void handleError(Throwable error, String endepunkt) {
+	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new JournalpostApiFunctionalException(
-					format("Kall mot Journalpost-API endepunktet %s feilet med status=%s, feilmelding=%s", endepunkt, response.getRawStatusCode(), response.getMessage()),
+					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
 					error);
 		} else {
 			throw new JournalpostApiTechnicalException(
-					format("Kall mot Journalpost-API endepunktet %s feilet med feilmelding=%s", endepunkt, error.getMessage()),
+					format("Kall mot Journalpost-API endepunktet %s feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}

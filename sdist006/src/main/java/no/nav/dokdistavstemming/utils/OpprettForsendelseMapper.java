@@ -20,7 +20,6 @@ public class OpprettForsendelseMapper {
 			throw new IllegalArgumentException("HentForsendelseResponseTo kan ikke være null");
 		}
 
-		//assertThatAllRequiredFieldsArePresent(hentForsendelseResponse);
 		AtomicReference<Integer> rekkefolge = new AtomicReference<>(2);
 
 		return ForsendelseTo.builder()
@@ -49,12 +48,12 @@ public class OpprettForsendelseMapper {
 				.build();
 	}
 
-	private static ForsendelseTo.Dokument mapDokument(ForsendelseTo.Dokument dokument, Integer rekkefolge) {
+	private static ForsendelseTo.Dokument mapDokument(ForsendelseTo.Dokument dokument, int rekkefolge) {
 		return ForsendelseTo.Dokument.builder()
 				.tilknyttetSom(dokument.getTilknyttetSom())
 				.dokumentObjektReferanse(dokument.getDokumentObjektReferanse())
 				.arkivDokumentInfoId(dokument.getArkivDokumentInfoId())
-				//.rekkefolge(rekkefolge)
+				.rekkefolge(rekkefolge)
 				.dokumenttypeId(DOKUMENTTYPE_ID)
 				.build();
 	}
@@ -89,45 +88,4 @@ public class OpprettForsendelseMapper {
 	private static boolean isHoveddokument(String tilknyttetSom) {
 		return HOVEDDOKUMENT.equals(tilknyttetSom);
 	}
-/*
-	private void assertThatAllRequiredFieldsArePresent(ForsendelseTo to) {
-		assertNotNull("bestillingsId", to.getBestillingsId());
-		assertNotNull("bestillendeFagsystem", to.getBestillendeFagsystem());
-		assertNotNull("tema", to.getTema());
-		assertNotNull("forsendelsetittel", to.getForsendelseTittel());
-		assertNotNull("dokumentProdApp", to.getDokumentProdApp());
-		assertNotNull("Mottaker", to.getMottaker());
-		assertNotNull("mottaker.mottakerId", to.getMottaker().getMottakerId());
-		assertNotNull("mottaker.mottakerNavn", to.getMottaker().getMottakerNavn());
-		assertNotNull("mottaker.mottakerType", to.getMottaker().getMottakerType());
-
-		if (to.getArkivInformasjon() != null) {
-			assertNotNull("arkivinformasjon.arkivSystem", to.getArkivInformasjon().getArkivSystem());
-			assertNotNull("arkivinformasjon.arkivId", to.getArkivInformasjon().getArkivId());
-		}
-
-		if (to.getPostadresse() != null) {
-			assertNotNull("postadresse.landkode", to.getPostadresse().getLandkode());
-		}
-
-		assertThatAtLeastOneDocumentIsPresent(to.getDokumenter());
-		to.getDokumenter().forEach(dokumentTo ->
-				assertDokument(dokumentTo, to.getArkivInformasjon()));
-	}
-
-	private void assertDokument(Dokument dokument, ArkivInformasjon arkivInformasjon) {
-		assertNotNull("dokumenter.dokument.tilknyttetSom", dokument.getTilknyttetSom());
-		assertNotNull("dokumenter.dokument.dokumentObjektReferanse", dokument.getDokumentObjektReferanse());
-		assertNotNull("dokumenter.dokument.dokumenttypeId", dokument.getDokumenttypeId());
-
-		if (arkivInformasjon != null) {
-			assertNotNull("dokumenter.dokument.arkivdokumentInfoId", dokument.getArkivDokumentInfoId());
-		}
-	}
-
-	private void assertThatAtLeastOneDocumentIsPresent(List<Dokument> dokumentList) {
-		if (dokumentList == null || dokumentList.isEmpty()) {
-			throw new IllegalArgumentException("Ugyldig input: Feltet dokumenter må være en liste som inneholder minst ett dokumnet");
-		}
-	}*/
 }
