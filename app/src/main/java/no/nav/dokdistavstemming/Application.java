@@ -20,8 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,
 		DokdistavstemmingServiceuser.class,
-		AzureConfig.class,
-		JmsConfig.class
+		AzureConfig.class
 })
 @Import(value = {
 		WebClientConfig.class,

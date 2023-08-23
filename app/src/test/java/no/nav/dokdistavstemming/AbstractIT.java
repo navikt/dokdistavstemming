@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.constants.MDCConstants;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
+import no.nav.dokdistavstemming.jms.JmsConfig;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
@@ -30,9 +31,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractIT {
 
-	//Denne er kun i bruk i sdist006 som ikke testes her. Mocker den for å få opp applicationContext
-	@MockBean
-	public Queue qdist009;
 	@Autowired
 	public JiraConsumer jiraConsumer;
 	@Autowired
@@ -41,6 +39,10 @@ public abstract class AbstractIT {
 	public CSVProdusere csvProdusere;
 	@Autowired
 	public Sdist002Service sdist002Service;
+
+	//Denne er kun i bruk i sdist006 som ikke testes her. Mocker den for å få opp applicationContext
+	@MockBean
+	public Queue qdist009;
 
 	public static String CALL_ID = UUID.randomUUID().toString();
 

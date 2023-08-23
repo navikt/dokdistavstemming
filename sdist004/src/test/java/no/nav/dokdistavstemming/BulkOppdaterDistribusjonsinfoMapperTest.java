@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static no.nav.dokdistavstemming.utils.DataUtils.getHentEkspederteForsendelserFromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,7 +23,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 
 	@Test
 	public void shouldMapOKBulkOppdaterDistribusjonsinfo() throws IOException {
-		HentEkspederteForsendelserResponse hentEkspederteForsendelserFromJson = DataUtils.getHentEkspederteForsendelserFromJson("__files/rdist001/ekspedertforsendelse.json");
+		HentEkspederteForsendelserResponse hentEkspederteForsendelserFromJson = getHentEkspederteForsendelserFromJson("__files/rdist001/ekspedertforsendelse.json");
 		EkspedertForsendelse sdpEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(0);
 		EkspedertForsendelse printEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(2);
 
@@ -86,7 +87,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 
 	@Test
 	public void shouldNotMapWhenJournalpostIdIsNull() throws IOException {
-		HentEkspederteForsendelserResponse hentEkspederteForsendelserFromJson = DataUtils.getHentEkspederteForsendelserFromJson("__files/rdist001/ekspedertforsendelse_with_jp_null.json");
+		HentEkspederteForsendelserResponse hentEkspederteForsendelserFromJson = getHentEkspederteForsendelserFromJson("__files/rdist001/ekspedertforsendelse_with_jp_null.json");
 
 		BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = mapper.map(hentEkspederteForsendelserFromJson);
 

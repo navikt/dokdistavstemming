@@ -12,6 +12,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static no.nav.dokdistavstemming.utils.TestUtils.classpathToString;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -33,7 +34,7 @@ public class WireMockResponse {
 		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString(filePath))));
+						.withBody(classpathToString(filePath))));
 	}
 
 	public static void returnNoContentForHentUekspederteForsendelser() {
@@ -45,14 +46,14 @@ public class WireMockResponse {
 		stubFor(post(urlMatching(JIRA_OPPRETTE_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString("__files/jira/jiraresponse.json"))));
+						.withBody(classpathToString("__files/jira/jiraresponse.json"))));
 	}
 
 	public static void jiraHappyGetIssue() throws Exception {
 		stubFor(get(urlMatching(JIRA_OPPRETTE_URL + "/MMA-134"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString("__files/jira/jiraresponse.json"))));
+						.withBody(classpathToString("__files/jira/jiraresponse.json"))));
 	}
 
 	public static void jiraHappyUpdateSak(String key) {
@@ -65,21 +66,21 @@ public class WireMockResponse {
 		stubFor(get(urlMatching(JIRA_MMA_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString("__files/jira/hent_project_data.json"))));
+						.withBody(classpathToString("__files/jira/hent_project_data.json"))));
 	}
 
 	public static void jiraHappyPostVedleggDokument() throws Exception {
 		stubFor(post(urlMatching(JIRA_VEDLEGG_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString("__files/jira/laggevedlagg-happy-return.json"))));
+						.withBody(classpathToString("__files/jira/laggevedlagg-happy-return.json"))));
 	}
 
 	public static void jiraFeilToOpprettSakForAvstemForsendelse() throws Exception {
 		stubFor(post(urlMatching(JIRA_OPPRETTE_URL))
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString("__files/jira/jiraresponse.json"))));
+						.withBody(classpathToString("__files/jira/jiraresponse.json"))));
 	}
 
 	public static void oppdaterAvstemForsendelseInfo() {
@@ -103,7 +104,7 @@ public class WireMockResponse {
 		stubFor(get(urlMatching(HENT_EKSPEDERTE_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString(filePath))));
+						.withBody(classpathToString(filePath))));
 	}
 
 	public static void oppdaterAvstemArkivForsendelseInfo() {
@@ -116,7 +117,7 @@ public class WireMockResponse {
 		stubFor(post(urlMatching(JOURNALPOST_API_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(TestUtils.classpathToString(path))));
+						.withBody(classpathToString(path))));
 	}
 
 	public static void oppdaterJournalpostFeil(HttpStatus status) {

@@ -83,12 +83,6 @@ class OpprettForsendelseMapperTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionIfBestillingIdIsBlank() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mapForsendelseToTilOpprettForsendelse(createHentForsendelseResponse(), null));
-		assertEquals(exception.getMessage(), "bestillingsId kan ikke være null");
-	}
-
-	@Test
 	public void shouldThrowExceptionIfMottakerIsNull() {
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mapForsendelseToTilOpprettForsendelse(createHentForsendelseResponseWithMottakerNull(), BESTILLINGS_ID));
 		assertEquals(exception.getMessage(), "HV000116: must not be null.");

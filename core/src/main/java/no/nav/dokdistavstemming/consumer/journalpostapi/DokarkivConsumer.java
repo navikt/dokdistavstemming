@@ -1,15 +1,14 @@
 package no.nav.dokdistavstemming.consumer.journalpostapi;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
-import org.springframework.http.ResponseEntity;
+import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -58,7 +57,7 @@ public class DokarkivConsumer {
 				)
 				.retrieve()
 				.bodyToMono(String[].class)
-				.doOnError(this:: handleError)
+				.doOnError(this::handleError)
 				.block())).toList();
 	}
 
@@ -99,7 +98,7 @@ public class DokarkivConsumer {
 					error);
 		} else {
 			throw new JournalpostApiTechnicalException(
-					format("Kall mot Journalpost-API endepunktet %s feilet med feilmelding=%s", error.getMessage()),
+					format("Kall mot Journalpost-API feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}

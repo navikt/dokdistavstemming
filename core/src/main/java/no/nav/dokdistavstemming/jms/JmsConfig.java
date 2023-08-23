@@ -24,7 +24,7 @@ import static com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 @Configuration
-@Profile("nais")
+@Profile({"nais", "local"})
 public class JmsConfig {
 
 	private static final int UTF_8_WITH_PUA = 1208;
