@@ -18,19 +18,19 @@ spec:
     - name: DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE
       value: {{ DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE }}
     - name: DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME
-      value: { { DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME } }
+      value: {{ DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME }}
     - name: MQGATEWAY01_CHANNEL_NAME
-      value: { { MQGATEWAY01_CHANNEL_NAME } }
+      value: {{ MQGATEWAY01_CHANNEL_NAME }}
     - name: MQGATEWAY01_CHANNEL_SECURENAME
-      value: { { MQGATEWAY01_CHANNEL_SECURENAME } }
+      value: {{ MQGATEWAY01_CHANNEL_SECURENAME }}
     - name: MQGATEWAY01_CHANNEL_ENABLETLS
       value: "{{ MQGATEWAY01_CHANNEL_ENABLETLS }}"
     - name: MQGATEWAY01_HOSTNAME
-      value: { { MQGATEWAY01_HOSTNAME } }
+      value: {{ MQGATEWAY01_HOSTNAME }}
     - name: MQGATEWAY01_PORT
       value: "{{ MQGATEWAY01_PORT }}"
     - name: MQGATEWAY01_NAME
-      value: { { MQGATEWAY01_NAME } }
+      value: {{ MQGATEWAY01_NAME }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -67,7 +67,7 @@ spec:
     paths:
       - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
-      - kvPath: { { SRVDOKDISTAVSTEMMING } }
+      - kvPath: {{ SRVDOKDISTAVSTEMMING }}
         mountPath: "/secrets/serviceuser/srvdokdistavstemming"
   azure:
     application:
