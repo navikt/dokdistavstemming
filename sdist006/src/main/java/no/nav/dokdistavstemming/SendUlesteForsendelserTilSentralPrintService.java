@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
@@ -58,6 +59,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
 		log.info("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
+		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
+		log.info("Forsendelser Sdist006 ønsker å feilregistrere:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
+		MDC.clear();
+/*
 		//3. Behandle forsendelser
 		ulesteForsendelser.forEach(forsendelseTo -> {
 			try {
@@ -84,7 +89,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			} finally {
 				MDC.clear();
 			}
-		});
+		});*/
 	}
 
 	private List<String> finnUlesteJournalposter() {
