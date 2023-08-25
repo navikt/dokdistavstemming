@@ -69,6 +69,8 @@ spec:
         mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
       - kvPath: {{ SRVDOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
+      - kvPath: {{ DOKDISTAVSTEMMINGCERT }}
+        mountPath: /var/run/secrets/nais.io/certificate/srvdokdistavstemming
   azure:
     application:
       enabled: true
