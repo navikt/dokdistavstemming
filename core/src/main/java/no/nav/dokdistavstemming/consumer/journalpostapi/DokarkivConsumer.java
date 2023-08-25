@@ -64,7 +64,7 @@ public class DokarkivConsumer {
 		System.out.println(UriUtils.decode(formatter.format(ekspedertFra), "UTF8"));
 		System.out.println(UriUtils.encode(formatter.format(ekspedertFra), "UTF8"));
 
-		return Arrays.stream(Objects.requireNonNull(webClient.post()
+		return Arrays.stream(Objects.requireNonNull(webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path(SIKKERHETSNIVAA_API_URL + "/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
