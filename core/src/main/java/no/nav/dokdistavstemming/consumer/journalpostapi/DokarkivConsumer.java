@@ -5,6 +5,7 @@ import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +41,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class DokarkivConsumer {
 
 	private final WebClient webClient;
-	private final DateTimeFormatter formatter;
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1";
 	private final String SIKKERHETSNIVAA_API_URL = "/internal/sikkerhetsnivaa";
 
@@ -51,7 +52,6 @@ public class DokarkivConsumer {
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp.getEndpoints().getDokarkiv()))
 				.build();
-		formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
@@ -59,12 +59,10 @@ public class DokarkivConsumer {
 	public List<String> finnUlesteJournalposter(DistribusjonKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
 		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				kanalCode.name(), ekspedertFra, ekspedertTil));
-		System.out.println(ekspedertFra);
-		System.out.println(formatter.format(ekspedertFra));
-		System.out.println(UriUtils.decode(formatter.format(ekspedertFra), "UTF8"));
-		System.out.println(UriUtils.encode(formatter.format(ekspedertFra), "UTF8"));
 
-		return Arrays.stream(Objects.requireNonNull(webClient.get()
+		log.info("Kaller dokarkiv med ekspedertFra={}, ekspedertTil={}", ekspedertFra, ekspedertTil );
+
+		String[] journalposter = webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path(SIKKERHETSNIVAA_API_URL + "/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
@@ -72,7 +70,15 @@ public class DokarkivConsumer {
 				.retrieve()
 				.bodyToMono(String[].class)
 				.doOnError(this::handleError)
-				.block())).toList();
+				.block();
+
+		if(journalposter != null && journalposter.length > 0){
+			log.info("Journalposter > 0");
+			return Arrays.stream(journalposter).toList();
+		} else {
+			log.info("Journalposter ! > 0");
+			return Collections.emptyList();
+		}
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
@@ -106,12 +112,13 @@ public class DokarkivConsumer {
 	}
 
 	private void handleError(Throwable error) {
+		log.error("??? Hvorfor :(");
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new JournalpostApiFunctionalException(
+			throw new DokdistavstemmingFunctionalException(
 					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
 					error);
 		} else {
-			throw new JournalpostApiTechnicalException(
+			throw new DokdistavstemmingTechnicalException(
 					format("Kall mot Journalpost-API feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
