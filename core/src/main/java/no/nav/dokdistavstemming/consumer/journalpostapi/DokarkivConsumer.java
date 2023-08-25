@@ -14,9 +14,15 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +39,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class DokarkivConsumer {
 
 	private final WebClient webClient;
+	private final DateTimeFormatter formatter;
+	private final String JOURNALPOST_API_URL = "/journalpostapi/v1";
+	private final String SIKKERHETSNIVAA_API_URL = "/internal/sikkerhetsnivaa";
 
 	public DokarkivConsumer(WebClient webClient,
 							DokdistavstemmingProperties dokdistavstemmingProp,
@@ -42,6 +51,7 @@ public class DokarkivConsumer {
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp.getEndpoints().getDokarkiv()))
 				.build();
+		formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
@@ -49,10 +59,14 @@ public class DokarkivConsumer {
 	public List<String> finnUlesteJournalposter(DistribusjonKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
 		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				kanalCode.name(), ekspedertFra, ekspedertTil));
+		System.out.println(ekspedertFra);
+		System.out.println(formatter.format(ekspedertFra));
+		System.out.println(UriUtils.decode(formatter.format(ekspedertFra), "UTF8"));
+		System.out.println(UriUtils.encode(formatter.format(ekspedertFra), "UTF8"));
 
 		return Arrays.stream(Objects.requireNonNull(webClient.post()
 				.uri(uriBuilder -> uriBuilder
-						.path("/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
+						.path(SIKKERHETSNIVAA_API_URL + "/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
 				)
 				.retrieve()
@@ -67,7 +81,7 @@ public class DokarkivConsumer {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
 		return webClient.post()
-				.uri("/bulkOppdaterDistribusjonsinfo")
+				.uri(JOURNALPOST_API_URL + "/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
@@ -82,7 +96,7 @@ public class DokarkivConsumer {
 
 		webClient.post()
 				.uri(uriBuilder -> uriBuilder
-						.path("/{journalpostId}/oppdaterDistribusjonsinfo")
+						.path(JOURNALPOST_API_URL +"/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
