@@ -18,12 +18,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
 import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
+import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
 
@@ -94,7 +93,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	private List<String> finnUlesteJournalposter() {
 		LocalDateTime ulesteJournalposterEkspedertTil = LocalDateTime.now().minusHours(40);
-		return dokarkivConsumer.finnUlesteJournalposter(DITTNAV, LocalDateTime.now().minusDays(7), determineEkspedertTil(ulesteJournalposterEkspedertTil));
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, LocalDateTime.now().minusDays(7), determineEkspedertTil(ulesteJournalposterEkspedertTil));
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
