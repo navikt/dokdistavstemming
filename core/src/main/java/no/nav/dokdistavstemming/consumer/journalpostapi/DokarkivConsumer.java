@@ -74,10 +74,8 @@ public class DokarkivConsumer {
 				.block();
 
 		if(journalposter != null && journalposter.length > 0){
-			log.info("Journalposter > 0");
 			return Arrays.stream(journalposter).toList();
 		} else {
-			log.info("Journalposter ! > 0");
 			return Collections.emptyList();
 		}
 	}

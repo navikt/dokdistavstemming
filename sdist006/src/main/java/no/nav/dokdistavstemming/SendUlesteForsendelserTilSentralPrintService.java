@@ -5,7 +5,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsend
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
@@ -43,7 +44,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	public void sendUlesteForsendelserTilSentralPrint() {
 		//1. Finn journalposter
 		List<String> ulesteJournalposter = finnUlesteJournalposter();
-		if (ulesteJournalposter == null || ulesteJournalposter.size() == 0) {
+		if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
 			log.info("Sdist006 fant ingen uleste journalposter i Joark.");
 			return;
 		}
@@ -52,27 +53,28 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
 		if (ulesteForsendelserOptional.isEmpty() || ulesteForsendelserOptional.get().forsendelseListe().isEmpty()) {
-			log.info("Sdist006 fant ingen uleste forsendelser for de uleste journalpostene.");
+			log.info("Sdist006 fant ingen forsendelser for de uleste journalpostene.");
 			return;
 		}
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
-		log.info("Sdist006 fant {} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
+		log.info("Sdist006 fant antall={} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
 		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
-		MDC.clear();
-/*
+		//MDC.clear();
+
 		//3. Behandle forsendelser
-		ulesteForsendelser.forEach(forsendelseTo -> {
+
+		ulesteForsendelser.forEach(forsendelse -> {
 			try {
-				String gammelBestillingsId = forsendelseTo.getBestillingsId();
+				String gammelBestillingsId = forsendelse.getBestillingsId();
+				MDC.put(MDC_CALL_ID, gammelBestillingsId);
 				log.info("Sdist006 behandler ulest forsendelse med bestillingsId={} som ikke har blitt lest etter 40 timer",
 						gammelBestillingsId);
-				MDC.put(MDC_CALL_ID, gammelBestillingsId);
-				String journalpostId = forsendelseTo.getArkivInformasjon().getArkivId();
+				String journalpostId = forsendelse.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(forsendelseTo);
+				long nyForsendelsesId = opprettForsendelse(forsendelse);
 
 				//3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelBestillingsId);
@@ -88,7 +90,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			} finally {
 				MDC.clear();
 			}
-		});*/
+		});
 	}
 
 	private List<String> finnUlesteJournalposter() {
@@ -97,13 +99,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
-		HentForsendelseRequest hentForsendelseRequest = HentForsendelseRequest.builder()
-				.distribusjonstyper(List.of(VIKTIG, VEDTAK))
-				.dokumentstatus(singletonList(EKSPEDERT))
-				.distribusjonkanal(DITTNAV)
-				.journalpostliste(ulesteJournalposter)
-				.build();
-		return rdist001administrerforsendelseConsumer.hentForsendelser(hentForsendelseRequest);
+
+		return rdist001administrerforsendelseConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
 	private Long opprettForsendelse(ForsendelseTo oldForsendelse) {

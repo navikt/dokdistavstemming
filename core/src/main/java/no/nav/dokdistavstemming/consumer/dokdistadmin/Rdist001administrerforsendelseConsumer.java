@@ -10,11 +10,14 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.Forsendelse;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode;
+import no.nav.dokdistavstemming.domain.enums.DokumentStatusCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import no.nav.dokdistavstemming.metrics.Monitor;
@@ -27,15 +30,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CONSUMER_ID;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
+import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -144,13 +153,19 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelser"})
-	public Optional<ForsendelseTos> hentForsendelser(HentForsendelseRequest hentForsendelseRequest) {
-		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", hentForsendelseRequest.getJournalpostliste())));
+	public Optional<ForsendelseTos> hentForsendelser(List<String> journalpostListe) {
+		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", journalpostListe)));
 
 		return Optional.ofNullable(
 				webClient.method(GET)
-						.uri("/hentForsendelser")
-						.body(Mono.justOrEmpty(hentForsendelseRequest), HentForsendelseRequest.class)
+						.uri(uriBuilder -> uriBuilder
+								.path("/hentForsendelser")
+								.queryParam("distribusjonstyper", List.of(VIKTIG, VEDTAK))
+								.queryParam("dokumentstatus", EKSPEDERT)
+								.queryParam("distribusjonkanal", DITTNAV)
+								.queryParam("journalpostliste", journalpostListe)
+								.build()
+						)
 						.retrieve()
 						.bodyToMono(ForsendelseTos.class)
 						.doOnError(this::handleError)
@@ -191,7 +206,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelse"})
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
-		log.info(String.format("oppdaterForsendelse opptarerer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
+		log.info(String.format("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
 
 		webClient.put()
 				.uri("/oppdaterforsendelse")

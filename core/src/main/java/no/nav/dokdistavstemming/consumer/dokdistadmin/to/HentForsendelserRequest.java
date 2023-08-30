@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class HentForsendelseRequest {
+public class HentForsendelserRequest {
 	private List<DistribusjonsTypeKode> distribusjonstyper;
 	private List<DokumentStatusCode> dokumentstatus;
 	private DistribusjonKanalCode distribusjonkanal;

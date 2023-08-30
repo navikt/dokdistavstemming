@@ -6,12 +6,13 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendels
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelseRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.Forsendelse;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Rdist001administrerforsendelse {
@@ -24,7 +25,7 @@ public interface Rdist001administrerforsendelse {
 
 	HentEkspederteForsendelserResponse hentEkspederteforsendelser();
 
-	Optional<ForsendelseTos> hentForsendelser(HentForsendelseRequest hentForsendelseRequest);
+	Optional<ForsendelseTos> hentForsendelser(List<String> journalpostList);
 
 	Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo);
 
