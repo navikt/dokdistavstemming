@@ -43,6 +43,7 @@ public class DokarkivConsumer {
 
 	private final WebClient webClient;
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1";
+	private final String JOURNALPOST_API_JOURNALPOST_URL = JOURNALPOST_API_URL + "/journalpost";
 	private final String SIKKERHETSNIVAA_API_URL = "/internal/sikkerhetsnivaa";
 
 	public DokarkivConsumer(WebClient webClient,
@@ -86,7 +87,7 @@ public class DokarkivConsumer {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
 		return webClient.post()
-				.uri(JOURNALPOST_API_URL + "/bulkOppdaterDistribusjonsinfo")
+				.uri(JOURNALPOST_API_URL + "/journalpost/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
@@ -101,7 +102,7 @@ public class DokarkivConsumer {
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
-						.path(JOURNALPOST_API_URL +"/{journalpostId}/oppdaterDistribusjonsinfo")
+						.path(JOURNALPOST_API_JOURNALPOST_URL +"/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
