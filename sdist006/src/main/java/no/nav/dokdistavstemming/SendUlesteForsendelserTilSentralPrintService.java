@@ -65,19 +65,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 		//3. Behandle forsendelser
 
-		ulesteForsendelser.forEach(forsendelse -> {
+		ulesteForsendelser.forEach(gammelForsendelse -> {
 			try {
-				String gammelBestillingsId = forsendelse.getBestillingsId();
-				MDC.put(MDC_CALL_ID, gammelBestillingsId);
-				log.info("Sdist006 behandler ulest forsendelse med bestillingsId={} som ikke har blitt lest etter 40 timer",
-						gammelBestillingsId);
-				String journalpostId = forsendelse.getArkivInformasjon().getArkivId();
+				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
+				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
+				log.info("Sdist006 behandler ulest forsendelse med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
+						gammelDistribusjonId);
+				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(forsendelse);
+				long nyForsendelsesId = opprettForsendelse(gammelForsendelse);
 
 				//3.2 Feilregistrer original forsendelse
-				feilregistrerForsendelse(gammelBestillingsId);
+				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), gammelDistribusjonId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
@@ -108,12 +108,13 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(String gammelBestillingsId) {
+	private void feilregistrerForsendelse(long gammelDistribusjonsId, String nyBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(LocalDateTime.now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
-				.resendingDistribusjonId(gammelBestillingsId)
+				.resendingDistribusjonId(nyBestillingsId)
+				.forsendelseId(gammelDistribusjonsId)
 				.build();
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}

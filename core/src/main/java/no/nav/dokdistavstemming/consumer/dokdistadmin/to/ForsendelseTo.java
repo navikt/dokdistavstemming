@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 public class ForsendelseTo {
 
+	long forsendelseId;
 	String bestillingsId;
 	String distribusjonsKanal;
 	String originalDistribusjonId;
