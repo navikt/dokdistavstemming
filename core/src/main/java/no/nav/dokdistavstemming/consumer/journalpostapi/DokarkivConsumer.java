@@ -87,7 +87,7 @@ public class DokarkivConsumer {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
 		return webClient.post()
-				.uri(JOURNALPOST_API_URL + "/journalpost/bulkOppdaterDistribusjonsinfo")
+				.uri(JOURNALPOST_API_URL + "/bulkOppdaterDistribusjonsinfo")
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
