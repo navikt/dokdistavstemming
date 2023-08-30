@@ -99,7 +99,7 @@ public class DokarkivConsumer {
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
 		log.info(String.format("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere distribusjonsinfo på journalpost=%s.", journalpostId));
 
-		webClient.post()
+		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
 						.path(JOURNALPOST_API_URL +"/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
