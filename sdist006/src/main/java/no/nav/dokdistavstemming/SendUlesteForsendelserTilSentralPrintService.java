@@ -54,11 +54,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Sdist006 fant antall={} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
 		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
-		log.info("Forsendelser Sdist006 ønsker å feilregistrere:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
+		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 		//MDC.clear();
 
 		//3. Behandle forsendelser
-
+/*
 		ulesteForsendelser.forEach(gammelForsendelse -> {
 			try {
 				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
@@ -84,7 +84,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			} finally {
 				MDC.clear();
 			}
-		});
+		});*/
 	}
 
 	private List<String> finnUlesteJournalposter() {

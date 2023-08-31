@@ -35,7 +35,7 @@ import static java.lang.System.setProperty;
 @SpringBootApplication
 public class Application {
 	public static void main(String[] args) {
-		setProperty("javax.net.ssl.keyStorePassword", getenv("DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"));
+		//setProperty("javax.net.ssl.keyStorePassword", getenv("DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"));
 		SpringApplication.run(Application.class, args);
 	}
 }
