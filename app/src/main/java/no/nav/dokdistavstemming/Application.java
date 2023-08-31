@@ -1,18 +1,20 @@
 package no.nav.dokdistavstemming;
 
-import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.azure.AzureConfig;
 import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
+import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
 import no.nav.dokdistavstemming.config.WebClientConfig;
-import no.nav.dokdistavstemming.jms.JmsConfig;
 import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import static java.lang.System.getenv;
+import static java.lang.System.setProperty;
 
 
 @EnableScheduling
@@ -33,6 +35,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class Application {
 	public static void main(String[] args) {
+		setProperty("javax.net.ssl.keyStorePassword", getenv("DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"));
 		SpringApplication.run(Application.class, args);
 	}
 }
