@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoResponse;
-import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
+import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
-import no.nav.dokdistavstemming.domain.AvstemEkspederteForsendelserRequest;
-import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,26 +18,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DPVT;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.TRYGDERETTEN;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DPVT;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.E_HANDEL;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.TRYGDERETTEN;
 
 @Slf4j
 @Component
 public class BulkOppdaterJournalpostDistInfoService {
 
-	private final BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer;
+	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
 	private static final int MAX_SIZE = 1000;
 
-	public BulkOppdaterJournalpostDistInfoService(BulkOppdaterJournalpostDistInfoConsumer oppdaterJournalpostDistInfoConsumer,
+	public BulkOppdaterJournalpostDistInfoService(DokarkivConsumer dokarkivConsumer,
 												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
-		this.oppdaterJournalpostDistInfoConsumer = oppdaterJournalpostDistInfoConsumer;
+		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelse = rdist001administrerforsendelse;
 		this.bulkOppdaterDistribusjonsinfoMapper = new BulkOppdaterDistribusjonsinfoMapper();
 		this.avstemEkspederteForsendelserMapper = new AvstemEkspederteForsendelserMapper();
@@ -59,7 +59,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 			nPartitionJournalpost(bulkOppdaterDistribusjonsinfoRequest).forEach(jpRequest -> {
 
 				BulkOppdaterDistribusjonsinfoResponse bulkOppdaterDistribusjonsinfoResponse = bulkOppdaterDistribusjonsinfoRequest == null ? null :
-						oppdaterJournalpostDistInfoConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
+						dokarkivConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
 				logMelding(bulkOppdaterDistribusjonsinfoResponse);
 
 				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = bulkOppdaterDistribusjonsinfoResponse == null ? null :

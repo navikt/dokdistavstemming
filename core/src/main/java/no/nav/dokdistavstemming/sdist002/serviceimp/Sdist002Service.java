@@ -3,14 +3,13 @@ package no.nav.dokdistavstemming.sdist002.serviceimp;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
-import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse;
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +65,7 @@ public class Sdist002Service {
 
 	public List<UekspedertForsendelseDokument> getForsendelserByDistribusjonKanal(DistribusjonKanalCode distribusjonskanal) {
 		HentUekspederteForsendelserResponse response = hentForsendelserKvitteringIkkeMottattService(distribusjonskanal);
-		List<UekspedertForsendelse> uekspederteForsendelser = response.getUekspederteForsendelser();
+		List<HentUekspederteForsendelserResponse.UekspedertForsendelse> uekspederteForsendelser = response.getUekspederteForsendelser();
 
 		log.info("Sdist002 fant {} forsendelser med distribusjonskanal={} som ikke har mottatt kvittering", uekspederteForsendelser.size(), distribusjonskanal);
 

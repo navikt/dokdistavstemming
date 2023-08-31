@@ -12,5 +12,29 @@ then
     export dokdistavstemming_jira_password=$(cat /var/run/secrets/nais.io/srvjiradokdistavstemming/password)
 fi
 
+if test -f /var/run/secrets/nais.io/srvdokdistavstemming/username;
+then
+    echo "Setting serviceuser_username"
+    export  serviceuser_username=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/username)
+fi
+if test -f /var/run/secrets/nais.io/srvdokdistavstemming/password;
+then
+    echo "Setting serviceuser_password"
+    export  serviceuser_password=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
+fi
+
+#if test -f /var/run/secrets/nais.io/certificate/keystore
+#then
+#    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE"
+#    CERT_PATH='/var/run/secrets/nais.io/certificate/keystore-extracted'
+#    openssl base64 -d -A -in /var/run/secrets/nais.io/certificate/keystore -out $CERT_PATH
+#    export DOKDISTAVSTEMMINGCERT_KEYSTORE=$CERT_PATH
+#fi
+
+#if test -f /var/run/secrets/nais.io/certificate/keystorepassword
+#then
+#    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"
+#    export DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD=$(cat /var/run/secrets/nais.io/certificate/keystorepassword)
+#fi
 
 

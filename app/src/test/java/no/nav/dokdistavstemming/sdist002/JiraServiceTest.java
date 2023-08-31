@@ -10,7 +10,7 @@ import com.pep1.jira.client.domain.issue.Status;
 import com.pep1.jira.client.domain.issue.request.IssueInput;
 import com.pep1.jira.client.domain.project.Project;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
-import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;

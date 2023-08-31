@@ -3,19 +3,19 @@ package no.nav.dokdistavstemming;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
-import no.nav.dokdistavstemming.domain.DistribusjonKanalCode;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.Varsel;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
-import no.nav.dokdistavstemming.domain.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
-import no.nav.dokdistavstemming.domain.UtsendingsKanalCode;
+import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 
 import java.util.List;
 import java.util.Objects;
 
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.DITTNAV;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

@@ -1,6 +1,6 @@
 package no.nav.dokdistavstemming.domain.map;
 
-import no.nav.dokdistavstemming.domain.HentUekspederteForsendelserResponse.UekspedertForsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 
 import java.util.List;

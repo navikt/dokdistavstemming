@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming.domain.map;
 
 import no.nav.dokdistavstemming.domain.Forsendelse;
-import no.nav.dokdistavstemming.domain.OppdaterForsendelserAvstemtInfo;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 

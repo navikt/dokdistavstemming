@@ -1,14 +1,23 @@
 {
+  "MIN_REPLICAS": 2,
+  "MAX_REPLICAS": 2,
+  "INGRESSES": [
+    "https://dokdistavstemming.intern.nav.no"
+  ],
   "DOKDISTAVSTEMMING_JIRA_URL": "https://jira.adeo.no",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest/journalpostapi/v1",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://prod-fss.teamdokumenthandtering.dokdistadmin/.default",
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
+  "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
-  "MIN_REPLICAS": 2,
-  "MAX_REPLICAS": 2,
-  "INGRESSES": [
-    "https://dokdistavstemming.intern.nav.no"
-  ]
+  "MQGATEWAY01_CHANNEL_NAME": "P_DOKDISTAVSTEMMING",
+  "MQGATEWAY01_CHANNEL_SECURENAME":"P_DOKDISTAVSTEMMING",
+  "MQGATEWAY01_CHANNEL_ENABLETLS": "false",
+  "MQGATEWAY01_HOSTNAME": "mpls01.adeo.no",
+  "MQGATEWAY01_PORT": "1414",
+  "MQGATEWAY01_NAME": "MPLS01",
+  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.P_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT",
+  "DOKDISTAVSTEMMINGCERT": "/certificate/data/prod/srvdokdistavstemming"
 }

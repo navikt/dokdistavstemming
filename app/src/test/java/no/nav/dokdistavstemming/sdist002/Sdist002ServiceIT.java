@@ -5,10 +5,8 @@ import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
-import no.nav.dokdistavstemming.exceptions.DokdistadminTechnicalException;
-import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
-import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,9 +22,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.E_HANDEL;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.PRINT;
-import static no.nav.dokdistavstemming.domain.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.E_HANDEL;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISRIBUSJON_DATO_J;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_PRINT;
 import static no.nav.dokdistavstemming.utils.TestDataUtils.DISTRIBUSJON_ID_SDP;
@@ -164,7 +162,7 @@ public class Sdist002ServiceIT extends AbstractIT {
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 
-		assertThrows(DokdistadminTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
+		assertThrows(DokdistavstemmingTechnicalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));

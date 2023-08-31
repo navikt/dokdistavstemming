@@ -4,8 +4,8 @@ package no.nav.dokdistavstemming.consumer.journalpostapi;
 import lombok.Builder;
 import lombok.Data;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
-import no.nav.dokdistavstemming.domain.Varsel;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
+import no.nav.dokdistavstemming.domain.Varsel;
 
 import java.time.OffsetDateTime;
 

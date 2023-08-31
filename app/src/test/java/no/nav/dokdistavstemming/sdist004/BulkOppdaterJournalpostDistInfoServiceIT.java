@@ -3,7 +3,7 @@ package no.nav.dokdistavstemming.sdist004;
 import no.nav.dokdistavstemming.AbstractIT;
 import no.nav.dokdistavstemming.BulkOppdaterJournalpostDistInfoService;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
-import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterJournalpostDistInfoConsumer;
+import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,11 +36,11 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractIT {
 	private Rdist001administrerforsendelse administrerforsendelse;
 
 	@Autowired
-	private BulkOppdaterJournalpostDistInfoConsumer bulkOppdaterJournalpostDistInfo;
+	private DokarkivConsumer dokarkivConsumer;
 
 	@BeforeEach
 	public void setUp() {
-		sdist004BulkOppdaterService = new BulkOppdaterJournalpostDistInfoService(bulkOppdaterJournalpostDistInfo, administrerforsendelse);
+		sdist004BulkOppdaterService = new BulkOppdaterJournalpostDistInfoService(dokarkivConsumer, administrerforsendelse);
 	}
 
 	@Test

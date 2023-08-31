@@ -1,7 +1,8 @@
-package no.nav.dokdistavstemming.domain;
+package no.nav.dokdistavstemming.consumer.dokdistadmin.to;
 
 import lombok.Builder;
 import lombok.Data;
+import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
 
 import java.util.List;
 

@@ -1,105 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.10</version>
-    </parent>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.10</version>
+	</parent>
 
-    <groupId>no.nav.dokdistavstemming</groupId>
-    <artifactId>dokdistavstemming</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+	<groupId>no.nav.dokdistavstemming</groupId>
+	<artifactId>dokdistavstemming</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-    <modules>
-        <module>app</module>
+	<modules>
+		<module>app</module>
 		<module>core</module>
 		<module>sdist004</module>
+		<module>sdist006</module>
 	</modules>
 
-    <properties>
-        <java.version>17</java.version>
-        <pep1-jira-client.version>0.5</pep1-jira-client.version>
+	<properties>
+		<java.version>17</java.version>
+		<pep1-jira-client.version>0.5</pep1-jira-client.version>
 
-        <logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-        <resilience4j.version>1.7.1</resilience4j.version>
-        <spring-cloud-wiremock.version>3.1.6</spring-cloud-wiremock.version>
+		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
+		<resilience4j.version>1.7.1</resilience4j.version>
+		<spring-cloud-wiremock.version>3.1.6</spring-cloud-wiremock.version>
+		<wmq.version>9.3.3.0</wmq.version>
+		<camel.version>3.20.3</camel.version>
 
-        <!-- Plugins -->
-        <maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
-    </properties>
+		<!-- Plugins -->
+		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
+	</properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>no.nav.dokdistavstemming</groupId>
-                <artifactId>core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.dokdistavstemming</groupId>
-                <artifactId>sdist004</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.logstash.logback</groupId>
-                <artifactId>logstash-logback-encoder</artifactId>
-                <version>${logstash-logback-encoder.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.pep1.jira</groupId>
-                <artifactId>jira-spring-boot-client-starter</artifactId>
-                <version>${pep1-jira-client.version}</version>
-                <type>pom</type>
-            </dependency>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>no.nav.dokdistavstemming</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.dokdistavstemming</groupId>
+				<artifactId>sdist004</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.dokdistavstemming</groupId>
+				<artifactId>sdist006</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.logstash.logback</groupId>
+				<artifactId>logstash-logback-encoder</artifactId>
+				<version>${logstash-logback-encoder.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pep1.jira</groupId>
+				<artifactId>jira-spring-boot-client-starter</artifactId>
+				<version>${pep1-jira-client.version}</version>
+				<type>pom</type>
+			</dependency>
 
-            <!-- test -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-contract-wiremock</artifactId>
-                <version>${spring-cloud-wiremock.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+			<!-- mq -->
+			<dependency>
+				<groupId>com.ibm.mq</groupId>
+				<artifactId>com.ibm.mq.allclient</artifactId>
+				<version>${wmq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-spring-boot-bom</artifactId>
+				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+			<!-- test -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-wiremock</artifactId>
+				<version>${spring-cloud-wiremock.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <version>${maven-toolchains-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>${java.version}</version>
-                            <vendor>openjdk</vendor>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-toolchains-plugin</artifactId>
+				<version>${maven-toolchains-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>toolchain</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<toolchains>
+						<jdk>
+							<version>${java.version}</version>
+							<vendor>openjdk</vendor>
+						</jdk>
+					</toolchains>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

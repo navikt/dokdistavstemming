@@ -28,7 +28,7 @@ public class WireMockResponse {
 	public static final String HENT_EKSPEDERTE_FORSENDELSER_URL = "/administrerforsendelse/hentekspederteforsendelser";
 	public static final String AVSTEM_FORSENDELSER_URL = "/administrerforsendelse/avstemforsendelser";
 	public static final String AVSTEM_EKSPEDERTE_FORSENDELSER_URL = "/administrerforsendelse/avstemekspederteforsendelser";
-	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/bulkOppdaterDistribusjonsinfo";
+	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/v1/bulkOppdaterDistribusjonsinfo";
 
 	public static void happilyHentUekspederteForsendelser(String filePath) throws Exception {
 		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
