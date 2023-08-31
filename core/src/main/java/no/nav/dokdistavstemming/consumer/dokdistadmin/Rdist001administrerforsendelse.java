@@ -6,7 +6,6 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendels
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvstemtInfo;

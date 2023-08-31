@@ -98,7 +98,7 @@ public class DokarkivConsumer {
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterDistribusjonsinfo"})
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
-		log.info(String.format("oppdaterDistribusjonsinfo har mottatt kall om å oppdatere distribusjonsinfo på journalpost=%s.", journalpostId));
+		log.info(String.format("Sdist006 oppdaterer distribusjonsinfo for journalpost=%s.", journalpostId));
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder

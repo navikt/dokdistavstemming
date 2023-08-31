@@ -5,7 +5,6 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsend
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
@@ -17,12 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
-import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
-import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VEDTAK;
-import static no.nav.dokdistavstemming.domain.enums.DistribusjonsTypeKode.VIKTIG;
-import static no.nav.dokdistavstemming.domain.enums.DokumentStatusCode.EKSPEDERT;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;

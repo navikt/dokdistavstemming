@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.bind.JAXBContext.newInstance;
 import static org.apache.camel.LoggingLevel.ERROR;
+import static org.apache.camel.LoggingLevel.INFO;
 import static org.apache.camel.LoggingLevel.WARN;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class DistribuerTilSentralPrintRoute extends RouteBuilder {
 				.setProperty(PROPERTY_FORSENDELSE_ID, simple("${body.forsendelseId}"))
 				.marshal(new JaxbDataFormat(newInstance(DistribuerTilKanal.class)))
 				.convertBodyTo(String.class, UTF_8.toString())
-				.log("sdist006 har lagt forsendelse med forsendelseId=${exchangeProperty." + PROPERTY_FORSENDELSE_ID + "} på kø til qdist009 for distribusjon av forsendelse til print")
+				.log(INFO, log, "sdist006 har lagt forsendelse med forsendelseId=${exchangeProperty." + PROPERTY_FORSENDELSE_ID + "} på kø til qdist009 for distribusjon av forsendelse til print")
 				.to("jms:" + qdist009.getQueueName());
 	}
 
