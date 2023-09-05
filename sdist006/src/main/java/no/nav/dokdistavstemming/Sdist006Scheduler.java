@@ -20,10 +20,9 @@ public class Sdist006Scheduler {
 		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
 	}
 
-	//kjør en gang 90s etter oppstart for å få ut logger
-	@Scheduled(initialDelay = 1000 * 90, fixedDelay=Long.MAX_VALUE) //cron = "${sdist006.cron.job}")
+	//kjør en gang 60s etter oppstart for å få ut logger
+	@Scheduled(initialDelay = 1000 * 60, fixedDelay = Long.MAX_VALUE) //cron = "${sdist006.cron.job}")
 	public void runSdist006() {
-		log.info("runSdist006");
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist006 cron-jobb");
 			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);

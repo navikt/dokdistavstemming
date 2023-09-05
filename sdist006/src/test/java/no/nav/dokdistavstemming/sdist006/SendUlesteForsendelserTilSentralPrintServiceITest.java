@@ -17,12 +17,13 @@ import javax.jms.Queue;
 import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
@@ -43,12 +44,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestConfig {
 
 	private static final String NY_FORSENDELSE_ID = "33333";
-	private static final String JOURNALPOST_ID = "123456789";
 	private static final int OK = 200;
 
-	private static final String HENTFORSENDELSER_URL = "/rest/v1/administrerforsendelse/hentForsendelser";
-	private static final String FINNULESTEFORSENDELSER_URL = "[/rest/journalpostapi/v1/journalpost/finnUlesteJournalposter/DITTNAV/].*[/].*";
-	private static final String OPPDATERDISTRIBUSJONSINFO_URL = "/rest/journalpostapi/v1/journalpost/123456789/oppdaterDistribusjonsinfo";
+	private static final String HENTFORSENDELSER_URL = "/rest/v1/administrerforsendelse/hentForsendelser.*";
+	private static final String FINNULESTEFORSENDELSER_URL = "/rest/internal/sikkerhetsnivaa/finnUlesteJournalposter/NAV_NO/202[\\d]-.*";
+	private static final String OPPDATERDISTRIBUSJONSINFO_URL = "/rest/journalpostapi/v1/journalpost/.*/oppdaterDistribusjonsinfo";
 	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
 	private static final String FEILREGISTRERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/feilregistrerforsendelse";
 
@@ -71,16 +71,15 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 						.withBodyFile("azure/token_response.json")));
 	}
 
-
 	//@Test
 	//TODO: Enable denne igjen når vi har enablet mer av routen
 	public void shouldFeilregistrerForsendelseOgOppdaterForsendelse() throws IOException {
-		stubFinnUlesteForsendelser(OK);
-		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-happy.json", JOURNALPOST_ID, OK);
-		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse-happy.json", OK);
-		stubPutFeilregistrerforsendelse(OK);
-		stubPutOppdaterForsendelse(OK);
-		stuboppdaterDistribusjonsinfo(OK);
+		stubGetFinnUlesteForsendelser("[123456789,987654321]");
+		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-happy.json");
+		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse-happy.json");
+		stubPutFeilregistrerforsendelse();
+		stubPutOppdaterForsendelse();
+		stubPatchOppdaterDistribusjonsinfo();
 
 
 		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
@@ -89,62 +88,88 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 			//Sjekk at riktig forsendelseId blir sendt til qdist009/print
 			String message = receive(qdist009).toString();
 			assertThat(message).contains(NY_FORSENDELSE_ID);
+			String message2 = receive(qdist009).toString();
+			assertThat(message2).contains(NY_FORSENDELSE_ID);
 		});
 
 		verifyAndCountForsendelse();
 	}
 
+	@Test
+	public void shouldStopWhenNoJournalpostsFromDokarkiv() {
+		stubGetFinnUlesteForsendelser("[]");
+
+		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+
+		verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
+		verify(exactly(0), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
+	}
+
+	@Test
+	public void shouldStopWhenNoForsendelserFromDokdistadmin() throws IOException {
+		stubGetFinnUlesteForsendelser("[123456789]");
+		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-empty.json");
+
+		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+
+		verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
+		verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
+		verify(exactly(0), postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));
+		verify(exactly(0), putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
+		verify(exactly(0), putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
+		verify(exactly(0), patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
+	}
+
 	private void verifyAndCountForsendelse() {
-		verify(getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
-		verify(getRequestedFor(urlEqualTo(HENTFORSENDELSER_URL)));
-		verify(postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));
-		verify(putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
-		verify(putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
-		verify(postRequestedFor(urlEqualTo(OPPDATERDISTRIBUSJONSINFO_URL)));
+		verify(exactly(1), getRequestedFor(urlPathMatching((FINNULESTEFORSENDELSER_URL))));
+		verify(exactly(1), getRequestedFor(urlPathMatching(HENTFORSENDELSER_URL)));
+		verify(exactly(2), postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));
+		verify(exactly(2), putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
+		verify(exactly(2), putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
+		verify(exactly(2), patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
 	}
 
-	private void stubFinnUlesteForsendelser(int httpStatusValue) {
-		stubFor(post(urlPathMatching(FINNULESTEFORSENDELSER_URL))
+	private void stubGetFinnUlesteForsendelser(String journalpostListe) {
+		stubFor(get(urlPathMatching(FINNULESTEFORSENDELSER_URL))
 				.willReturn(aResponse()
-						.withStatus(httpStatusValue)
+						.withStatus(OK)
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody("[123456789]")));
+						.withBody(journalpostListe)));
 	}
 
-	private void stubGetHentForsendelser(String responsebody, String journalpostId, int httpStatusvalue) throws IOException {
-		stubFor(get(HENTFORSENDELSER_URL)
-				.withRequestBody(containing(journalpostId))
+	private void stubGetHentForsendelser(String responsebody) throws IOException {
+		stubFor(get(urlPathMatching(HENTFORSENDELSER_URL))
 				.willReturn(aResponse()
-						.withStatus(httpStatusvalue)
+						.withStatus(OK)
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(responsebody))));
 	}
 
-	private void stubPutOppdaterForsendelse(int httpStatusvalue) {
+	private void stubPutOppdaterForsendelse() {
 		stubFor(put(OPPDATERFORSENDELSE_URL)
 				.willReturn(aResponse()
-						.withStatus(httpStatusvalue)));
+						.withStatus(OK)));
 	}
 
-	private void stubPutFeilregistrerforsendelse(int httpStatusValue) {
+	private void stubPutFeilregistrerforsendelse() {
 		stubFor(put(FEILREGISTRERFORSENDELSE_URL)
 				.willReturn(aResponse()
-						.withStatus(httpStatusValue)));
+						.withStatus(OK)));
 	}
 
-	private void stubPostOpprettForsendelse(String responseBody, int httpStatusValue) throws IOException {
+	private void stubPostOpprettForsendelse(String responseBody) throws IOException {
 		stubFor(post(urlEqualTo("/rest/v1/administrerforsendelse"))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withStatus(httpStatusValue)
+						.withStatus(OK)
 						.withBody(classpathToString(responseBody))));
 	}
 
-	private void stuboppdaterDistribusjonsinfo(int httpStatusValue) {
-		stubFor(post(OPPDATERDISTRIBUSJONSINFO_URL)
+	private void stubPatchOppdaterDistribusjonsinfo() {
+		stubFor(patch(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withStatus(httpStatusValue)));
+						.withStatus(OK)));
 	}
 
 	@SuppressWarnings("unchecked")

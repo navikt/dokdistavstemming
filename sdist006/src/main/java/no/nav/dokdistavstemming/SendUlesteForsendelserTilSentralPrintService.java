@@ -17,9 +17,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
+import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
-import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
+import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
+import static no.nav.dokdistavstemming.utils.Sdist006utils.partitionList;
 
 @Slf4j
 @Component
@@ -42,24 +44,34 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			log.info("Sdist006 fant ingen uleste journalposter i Joark.");
 			return;
 		}
+
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
+
+		List<List<String>> partitionedJournalpostList = partitionList(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS);
+		partitionedJournalpostList.forEach(this::handleUlesteJournalposterList);
+	}
+
+	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
+		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
 
 		//2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
 		if (ulesteForsendelserOptional.isEmpty() || ulesteForsendelserOptional.get().forsendelseListe().isEmpty()) {
-			log.info("Sdist006 fant ingen forsendelser for de uleste journalpostene.");
+			log.info("Sdist006 fant ingen forsendelser for partisjonen av uleste journalposter.");
 			return;
 		}
-		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
-		log.info("Sdist006 fant antall={} forsendelser tilhørende de uleste journalpostene", ulesteForsendelser.size());
 
-		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
+		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
+		log.info("Sdist006 fant antall={} forsendelser tilhørende partisjonen av uleste journalposter", ulesteForsendelser.size());
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
-		//MDC.clear();
 
 		//3. Behandle forsendelser
-/*
-		ulesteForsendelser.forEach(gammelForsendelse -> {
+		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
+	}
+
+	//TODO: Enable denne når sikker mq er på plass
+	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
+		/*ulesteForsendelser.forEach(gammelForsendelse -> {
 			try {
 				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
 				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
