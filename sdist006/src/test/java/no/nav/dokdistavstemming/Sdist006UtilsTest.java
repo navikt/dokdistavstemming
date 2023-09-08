@@ -8,10 +8,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static java.time.Month.AUGUST;
-import static no.nav.dokdistavstemming.utils.DateUtils.determineEkspedertTil;
+import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class DateUtilsTest {
+public class Sdist006UtilsTest {
 
 	LocalDateTime friday1PM = ZonedDateTime.of(LocalDateTime.of(2023, AUGUST, 18, 13, 0), ZoneId.systemDefault()).toLocalDateTime();
 	LocalDateTime friday4PM = friday1PM.plusHours(3);

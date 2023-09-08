@@ -48,6 +48,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 public class Rdist001administrerforsendelseConsumer implements Rdist001administrerforsendelse {
 
+	//max url-lengde i nginx er 8k tegn, apache håndterer ca 6k (+- 6.15kb)
+	//200 journalposter gir en url på ca 5.7k tegn og 5.5kb i size
+	public static int HENTFORSENDELSER_MAX_JOURNALPOSTS = 200;
+
 	private final HentUekspederteForsendelserResponse EMPTY_UEKSPEDERTEFORSENDELSER = HentUekspederteForsendelserResponse.builder()
 			.uekspederteForsendelser(emptyList())
 			.build();
