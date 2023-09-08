@@ -12,7 +12,7 @@
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
-  "MQGATEWAY01_CHANNEL_NAME": "P_DOKDISTAVSTEMMING",
+  "MQGATEWAY01_CHANNELNAME": "P_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mpls01.adeo.no",
   "MQGATEWAY01_PORT": "1414",
   "MQGATEWAY01_NAME": "MPLS01",

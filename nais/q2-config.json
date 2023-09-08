@@ -12,7 +12,7 @@
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
   "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
-  "MQGATEWAY01_CHANNEL_NAME": "Q2_DOKDISTAVSTEMMING",
+  "MQGATEWAY01_CHANNELNAME": "Q2_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",
   "MQGATEWAY01_PORT": "1413",
   "MQGATEWAY01_NAME": "MQLS01",
