@@ -23,18 +23,17 @@ then
     export  serviceuser_password=$(cat /var/run/secrets/nais.io/srvdokdistavstemming/password)
 fi
 
-#if test -f /var/run/secrets/nais.io/certificate/keystore
-#then
-#    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE"
-#    CERT_PATH='/var/run/secrets/nais.io/certificate/keystore-extracted'
-#    openssl base64 -d -A -in /var/run/secrets/nais.io/certificate/keystore -out $CERT_PATH
-#    export DOKDISTAVSTEMMINGCERT_KEYSTORE=$CERT_PATH
-#fi
-
-#if test -f /var/run/secrets/nais.io/certificate/keystorepassword
-#then
-#    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"
-#    export DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD=$(cat /var/run/secrets/nais.io/certificate/keystorepassword)
-#fi
+if test -f /var/run/secrets/nais.io/certificate/keystore
+then
+    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE"
+    CERT_PATH='/var/run/secrets/nais.io/certificate/keystore-extracted'
+    openssl base64 -d -A -in /var/run/secrets/nais.io/certificate/keystore -out $CERT_PATH
+    export DOKDISTAVSTEMMINGCERT_KEYSTORE=$CERT_PATH
+fi
+if test -f /var/run/secrets/nais.io/certificate/keystorepassword
+then
+    echo "Setting DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD"
+    export DOKDISTAVSTEMMINGCERT_KEYSTORE_PASSWORD=$(cat /var/run/secrets/nais.io/certificate/keystorepassword)
+fi
 
 

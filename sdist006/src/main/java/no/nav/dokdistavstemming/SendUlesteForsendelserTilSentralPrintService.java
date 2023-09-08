@@ -8,6 +8,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import org.jboss.logging.MDC;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
@@ -68,7 +70,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	//TODO: Enable denne når sikker mq er på plass
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
-		/*ulesteForsendelser.forEach(gammelForsendelse -> {
+		ulesteForsendelser.forEach(gammelForsendelse -> {
 			try {
 				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
 				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
@@ -93,7 +95,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			} finally {
 				MDC.clear();
 			}
-		});*/
+		});
 	}
 
 	private List<String> finnUlesteJournalposter() {

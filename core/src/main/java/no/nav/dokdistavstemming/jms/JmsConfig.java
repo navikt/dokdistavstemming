@@ -47,14 +47,10 @@ public class JmsConfig {
 		connectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
 
 		// Konfigurasjon for IBM MQ broker med TLS og autorisasjon med serviceuser mot onpremise Active Directory.
-		if (mqGatewayAlias.getChannel().isEnabletls()) {
-			connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
-			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-			connectionFactory.setSSLSocketFactory(factory);
-			connectionFactory.setChannel(mqGatewayAlias.getChannel().getSecurename());
-		} else {
-			connectionFactory.setChannel(mqGatewayAlias.getChannel().getName());
-		}
+		connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
+		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		connectionFactory.setSSLSocketFactory(factory);
+		connectionFactory.setChannel(mqGatewayAlias.getName());
 
 		UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
 		adapter.setTargetConnectionFactory(connectionFactory);

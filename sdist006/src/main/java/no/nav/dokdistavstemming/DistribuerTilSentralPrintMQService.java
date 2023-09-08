@@ -27,7 +27,7 @@ public class DistribuerTilSentralPrintMQService {
 				.withProperty(PROPERTY_FORSENDELSE_ID, forsendelsesId)
 				.withBody(new DistribuerTilKanal(String.valueOf(forsendelsesId)))
 				.build();
-		//producerTemplate.send(DIRECT_SENTRALPRINT, exchange);
+		producerTemplate.send(DIRECT_SENTRALPRINT, exchange);
 	}
 
 }
