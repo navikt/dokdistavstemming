@@ -8,7 +8,6 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,12 +15,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
+import static com.google.common.collect.Lists.partition;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
-import static no.nav.dokdistavstemming.utils.Sdist006utils.partitionList;
 
 @Slf4j
 @Component
@@ -47,8 +45,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
-		List<List<String>> partitionedJournalpostList = partitionList(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS);
-		partitionedJournalpostList.forEach(this::handleUlesteJournalposterList);
+		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
