@@ -79,6 +79,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				//3.1 Opprett ny forsendelse
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse);
+				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId:{} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
 				//3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), gammelDistribusjonId);
