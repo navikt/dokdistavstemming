@@ -12,14 +12,18 @@ import javax.validation.constraints.Positive;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties("mqgateway01")
 @Validated
+@ConfigurationProperties("mqgateway01")
 public class MqGatewayAlias {
+	@Positive
+	private int port;
+	@NotEmpty
+	private String name;
 	@NotEmpty
 	private String hostname;
 	@NotEmpty
-	private String name;
-	@Positive
-	private int port;
+	private String channelName;
 
 }
+
+

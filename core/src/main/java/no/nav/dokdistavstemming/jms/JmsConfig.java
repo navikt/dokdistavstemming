@@ -50,7 +50,7 @@ public class JmsConfig {
 		connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
 		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		connectionFactory.setSSLSocketFactory(factory);
-		connectionFactory.setChannel(mqGatewayAlias.getName());
+		connectionFactory.setChannel(mqGatewayAlias.getChannelName());
 
 		UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
 		adapter.setTargetConnectionFactory(connectionFactory);

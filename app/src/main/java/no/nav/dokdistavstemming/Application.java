@@ -6,7 +6,6 @@ import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
 import no.nav.dokdistavstemming.config.WebClientConfig;
-import no.nav.dokdistavstemming.jms.JmsConfig;
 import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,8 +30,7 @@ import static java.lang.System.setProperty;
 		AvstemForsendelseConfig.class,
 		CoreConfig.class,
 		Sdist004Scheduler.class,
-		Sdist006Scheduler.class,
-		JmsConfig.class
+		Sdist006Scheduler.class
 })
 @SpringBootApplication
 public class Application {
