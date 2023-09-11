@@ -21,7 +21,7 @@ public class DistribuerTilSentralPrintMQService {
 		this.producerTemplate = producerTemplate;
 	}
 
-	//bytter tilbake til long etter prod-verifisering av mq
+	//TODO: bytt tilbake til long etter prod-verifisering av mq
 	public void sendToQdist009(String forsendelsesId) {
 
 		Exchange exchange = new ExchangeBuilder(context)

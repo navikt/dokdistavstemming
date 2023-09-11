@@ -23,7 +23,6 @@ public class MqGatewayAlias {
 	private String hostname;
 	@NotEmpty
 	private String channelname;
-
 }
 
 
