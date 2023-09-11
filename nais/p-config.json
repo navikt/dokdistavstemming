@@ -9,13 +9,16 @@
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://prod-fss.teamdokumenthandtering.dokdistadmin/.default",
+
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/prod/srvjiradokdistavstemming",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/prod/srvdokdistavstemming",
+
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
+  "DOKDISTAVSTEMMINGCERT": "/kv/prod/fss/dokdistavstemming/certificate",
+
   "MQGATEWAY01_CHANNELNAME": "P_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mpls01.adeo.no",
   "MQGATEWAY01_PORT": "1414",
   "MQGATEWAY01_NAME": "MPLS01",
-  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.P_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT",
-  "DOKDISTAVSTEMMINGCERT": "/certificate/data/prod/srvdokdistavstemming"
+  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.P_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT"
 }
