@@ -8,7 +8,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

@@ -41,6 +41,7 @@ public class JmsConfig {
 		connectionFactory.setHostName(mqGatewayAlias.getHostname());
 		connectionFactory.setPort(mqGatewayAlias.getPort());
 		connectionFactory.setQueueManager(mqGatewayAlias.getName());
+		connectionFactory.setChannel(mqGatewayAlias.getChannelname());
 		connectionFactory.setTransportType(WMQ_CM_CLIENT);
 		connectionFactory.setCCSID(UTF_8_WITH_PUA);
 		connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
@@ -50,7 +51,6 @@ public class JmsConfig {
 		connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
 		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		connectionFactory.setSSLSocketFactory(factory);
-		connectionFactory.setChannel(mqGatewayAlias.getChannelName());
 
 		UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
 		adapter.setTargetConnectionFactory(connectionFactory);
