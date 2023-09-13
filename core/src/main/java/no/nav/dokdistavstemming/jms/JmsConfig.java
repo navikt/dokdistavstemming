@@ -38,23 +38,19 @@ public class JmsConfig {
 	@Bean
 	public ConnectionFactory wmqConnectionFactory(MqGatewayAlias mqGatewayAlias, DokdistavstemmingServiceuser serviceuserAlias) throws JMSException {
 		MQConnectionFactory connectionFactory = new MQConnectionFactory();
-		connectionFactory.setHostName(mqGatewayAlias.getHostname());
-		connectionFactory.setPort(mqGatewayAlias.getPort());
-		connectionFactory.setQueueManager(mqGatewayAlias.getName());
+		connectionFactory.setHostName(mqGatewayAlias.hostname());
+		connectionFactory.setPort(mqGatewayAlias.port());
+		connectionFactory.setQueueManager(mqGatewayAlias.name());
+		connectionFactory.setChannel(mqGatewayAlias.channelname());
 		connectionFactory.setTransportType(WMQ_CM_CLIENT);
 		connectionFactory.setCCSID(UTF_8_WITH_PUA);
 		connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
 		connectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
 
 		// Konfigurasjon for IBM MQ broker med TLS og autorisasjon med serviceuser mot onpremise Active Directory.
-		if (mqGatewayAlias.getChannel().isEnabletls()) {
-			connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
-			SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-			connectionFactory.setSSLSocketFactory(factory);
-			connectionFactory.setChannel(mqGatewayAlias.getChannel().getSecurename());
-		} else {
-			connectionFactory.setChannel(mqGatewayAlias.getChannel().getName());
-		}
+		connectionFactory.setSSLCipherSuite(ANY_TLS13_OR_HIGHER);
+		SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		connectionFactory.setSSLSocketFactory(factory);
 
 		UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
 		adapter.setTargetConnectionFactory(connectionFactory);

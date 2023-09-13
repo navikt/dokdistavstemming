@@ -18,7 +18,6 @@ public class DokdistavstemmingProperties {
 	private final Sdist002Properties sdist002 = new Sdist002Properties();
 	private final JiraUser jira = new JiraUser();
 	private final Sdist004Properties sdist004 = new Sdist004Properties();
-	private final MqGatewayAlias mqGatewayAlias = new MqGatewayAlias();
 
 	@Data
 	@Validated

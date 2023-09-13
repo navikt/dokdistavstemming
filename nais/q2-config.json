@@ -9,15 +9,16 @@
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.dev.intern.nav.no/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
+
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
-  "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
-  "MQGATEWAY01_CHANNEL_NAME": "Q2_DOKDISTAVSTEMMING",
-  "MQGATEWAY01_CHANNEL_SECURENAME":"Q2_DOKDISTAVSTEMMING",
-  "MQGATEWAY01_CHANNEL_ENABLETLS": "false",
+
+  "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
+  "DOKDISTAVSTEMMINGCERT": "/kv/preprod/fss/dokdistavstemming/certificate",
+
+  "MQGATEWAY01_CHANNELNAME": "Q2_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",
   "MQGATEWAY01_PORT": "1413",
   "MQGATEWAY01_NAME": "MQLS01",
-  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.Q2_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT",
-  "DOKDISTAVSTEMMINGCERT": "/kv/preprod/fss/dokdistavstemming/certificate"
+  "DOKDISTSENTRALPRINT_QDIST009_DIST_S_PRINT_QUEUENAME": "QA.Q2_DOKDISTSENTRALPRINT.QDIST009_DIST_S_PRINT"
 }

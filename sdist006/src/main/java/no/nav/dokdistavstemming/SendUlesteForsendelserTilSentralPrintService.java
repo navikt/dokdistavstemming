@@ -8,6 +8,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
@@ -63,12 +65,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
+		distribuerTilSentralPrintService.sendToQdist009("Dette er en test for å verifisere at mq er satt opp riktig.");
 		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
-	//TODO: Enable denne når sikker mq er på plass
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
-		/*ulesteForsendelser.forEach(gammelForsendelse -> {
+		ulesteForsendelser.forEach(gammelForsendelse -> {
 			try {
 				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
 				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
@@ -78,6 +80,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				//3.1 Opprett ny forsendelse
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse);
+				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId:{} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
 				//3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), gammelDistribusjonId);
@@ -89,11 +92,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				oppdaterJournalpost(journalpostId);
 
 				//3.5 Distribuer ny forsendelse
-				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+			//	distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 			} finally {
 				MDC.clear();
 			}
-		});*/
+		});
 	}
 
 	private List<String> finnUlesteJournalposter() {

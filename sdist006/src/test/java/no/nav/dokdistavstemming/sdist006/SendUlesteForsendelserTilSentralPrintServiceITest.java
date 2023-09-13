@@ -72,7 +72,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	}
 
 	//@Test
-	//TODO: Enable denne igjen når vi har enablet mer av routen
+	//TODO: Enable denne etter at jeg har verifisert at mq-config for prod er riktig (får sendt en melding med dummy-innhold til qdist009)
 	public void shouldFeilregistrerForsendelseOgOppdaterForsendelse() throws IOException {
 		stubGetFinnUlesteForsendelser("[123456789,987654321]");
 		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-happy.json");
