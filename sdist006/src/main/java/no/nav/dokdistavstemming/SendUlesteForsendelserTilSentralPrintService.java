@@ -65,7 +65,6 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
-		distribuerTilSentralPrintService.sendToQdist009("Dette er en test for å verifisere at mq er satt opp riktig.");
 		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
