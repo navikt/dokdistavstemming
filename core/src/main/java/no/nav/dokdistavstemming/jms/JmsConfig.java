@@ -38,10 +38,10 @@ public class JmsConfig {
 	@Bean
 	public ConnectionFactory wmqConnectionFactory(MqGatewayAlias mqGatewayAlias, DokdistavstemmingServiceuser serviceuserAlias) throws JMSException {
 		MQConnectionFactory connectionFactory = new MQConnectionFactory();
-		connectionFactory.setHostName(mqGatewayAlias.getHostname());
-		connectionFactory.setPort(mqGatewayAlias.getPort());
-		connectionFactory.setQueueManager(mqGatewayAlias.getName());
-		connectionFactory.setChannel(mqGatewayAlias.getChannelname());
+		connectionFactory.setHostName(mqGatewayAlias.hostname());
+		connectionFactory.setPort(mqGatewayAlias.port());
+		connectionFactory.setQueueManager(mqGatewayAlias.name());
+		connectionFactory.setChannel(mqGatewayAlias.channelname());
 		connectionFactory.setTransportType(WMQ_CM_CLIENT);
 		connectionFactory.setCCSID(UTF_8_WITH_PUA);
 		connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);

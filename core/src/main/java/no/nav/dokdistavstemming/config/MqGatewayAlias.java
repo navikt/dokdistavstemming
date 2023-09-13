@@ -9,20 +9,12 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
-@Getter
-@Setter
-@ToString
 @Validated
 @ConfigurationProperties("mqgateway01")
-public class MqGatewayAlias {
-	@Positive
-	private int port;
-	@NotEmpty
-	private String name;
-	@NotEmpty
-	private String hostname;
-	@NotEmpty
-	private String channelname;
-}
+public record MqGatewayAlias (
+	@Positive int port,
+	@NotEmpty String name,
+	@NotEmpty String hostname,
+	@NotEmpty String channelname){}
 
 

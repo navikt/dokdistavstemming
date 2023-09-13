@@ -39,8 +39,7 @@ public class DistribuerTilSentralPrintRoute extends RouteBuilder {
 		onException(JAXBException.class)
 				.handled(true)
 				.useOriginalMessage()
-				.log(WARN, log, "sdist006 feilet med å legge forsendelseId=${exchangeProperty." + PROPERTY_FORSENDELSE_ID + "} på kø til qdist009")
-				.log(WARN, log, "${exception};");
+				.log(WARN, log, "sdist006 feilet med å legge forsendelseId=${exchangeProperty." + PROPERTY_FORSENDELSE_ID + "} på kø til qdist009. Exception:${exception};");
 
 		from(DIRECT_SENTRALPRINT)
 				.routeId("sentralprint_route")
