@@ -65,8 +65,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
-		distribuerTilSentralPrintService.sendToQdist009("Dette er en test for å verifisere at mq er satt opp riktig.");
-		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
+		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
@@ -92,7 +91,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				oppdaterJournalpost(journalpostId);
 
 				//3.5 Distribuer ny forsendelse
-			//	distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 			} finally {
 				MDC.clear();
 			}

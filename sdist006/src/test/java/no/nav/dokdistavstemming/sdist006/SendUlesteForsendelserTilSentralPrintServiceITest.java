@@ -71,8 +71,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 						.withBodyFile("azure/token_response.json")));
 	}
 
-	//@Test
-	//TODO: Enable denne etter at jeg har verifisert at mq-config for prod er riktig (får sendt en melding med dummy-innhold til qdist009)
+	@Test
 	public void shouldFeilregistrerForsendelseOgOppdaterForsendelse() throws IOException {
 		stubGetFinnUlesteForsendelser("[123456789,987654321]");
 		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-happy.json");
