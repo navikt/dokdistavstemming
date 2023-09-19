@@ -16,6 +16,7 @@
   "DOKDISTAVSTEMMING_VAULT": "/kv/prod/fss/dokdistavstemming/default",
   "DOKDISTAVSTEMMINGCERT": "/kv/prod/fss/dokdistavstemming/certificate",
 
+  "KAFKA_POOL": "nav-prod",
   "MQGATEWAY01_CHANNELNAME": "P_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mpls01.adeo.no",
   "MQGATEWAY01_PORT": "1414",
