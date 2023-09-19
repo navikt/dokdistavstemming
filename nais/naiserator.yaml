@@ -6,6 +6,8 @@ metadata:
   labels:
     team: teamdokumenthandtering
 spec:
+  kafka:
+    pool: {{KAFKA_POOL}}
   env:
     - name: DOKDISTAVSTEMMING_JIRA_URL
       value: {{ DOKDISTAVSTEMMING_JIRA_URL }}

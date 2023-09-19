@@ -8,6 +8,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
+import static no.nav.dokdistavstemming.utils.Sdist006utils.DOKDISTAVSTEMMING;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
 
 @Slf4j
@@ -30,11 +32,13 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
+	private final KafkaEventProducer kafkaEventProducer;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;
+		this.kafkaEventProducer = kafkaEventProducer;
 	}
 
 	public void sendUlesteForsendelserTilSentralPrint() {
@@ -65,7 +69,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
-		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
+		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
@@ -91,7 +95,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				oppdaterJournalpost(journalpostId);
 
 				//3.5 Distribuer ny forsendelse
-			//	distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+
+				//3.6
+				avbrytRenotifikasjon(gammelForsendelse.getBestillingsId());
 			} finally {
 				MDC.clear();
 			}
@@ -139,6 +146,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				.tilbakestillJournalpost(true)
 				.build();
 		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
+	}
+
+	private void avbrytRenotifikasjon(String bestillingsId) {
+		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(bestillingsId, DOKDISTAVSTEMMING);
+		kafkaEventProducer.publish(doknotifikasjonStopp);
 	}
 
 }

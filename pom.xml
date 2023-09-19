@@ -31,6 +31,8 @@
 		<wmq.version>9.3.3.0</wmq.version>
 		<camel.version>3.20.3</camel.version>
 		<guava.version>32.1.2-jre</guava.version>
+		<kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
+		<teamdokumenthandtering-avro-schemas.version>08c0b2d2</teamdokumenthandtering-avro-schemas.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -82,6 +84,18 @@
 				<version>${camel.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<!-- kafka -->
+			<dependency>
+				<groupId>io.confluent</groupId>
+				<artifactId>kafka-avro-serializer</artifactId>
+				<version>${kafka-avro-serializer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.teamdokumenthandtering</groupId>
+				<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
+				<version>${teamdokumenthandtering-avro-schemas.version}</version>
 			</dependency>
 
 			<!-- test -->

@@ -22,7 +22,7 @@ public class DistribuerTilSentralPrintMQService {
 	}
 
 	//TODO: bytt tilbake til long etter prod-verifisering av mq
-	public void sendToQdist009(String forsendelsesId) {
+	public void sendToQdist009(long forsendelsesId) {
 
 		Exchange exchange = new ExchangeBuilder(context)
 				.withProperty(PROPERTY_FORSENDELSE_ID, forsendelsesId)
