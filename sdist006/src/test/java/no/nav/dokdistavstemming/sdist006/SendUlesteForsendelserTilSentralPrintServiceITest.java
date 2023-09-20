@@ -67,7 +67,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	private static final int OK = 200;
 	private static final String NY_FORSENDELSE_ID = "33333";
-	private static final String DOKDISTAVSTEMMING = "dokdistavstemming";
+	private static final String DOKDISTDITTNAV = "dokdistdittnav";
 	public static final String RENOTIFIKASJON_STOPP_TOPIC = "teamdokumenthandtering.privat-dok-notifikasjon-stopp";
 	private static final String GAMMEL_BESTILLINGSID1 = "811c0c5d-e74c-491a-8b8c-d94075c822c3";
 	private static final String GAMMEL_BESTILLINGSID2 = "811c0c5d-e74c-491a-8b8c-dette-er-en-annen";
@@ -140,7 +140,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	private void assertRecord(DoknotifikasjonStopp doknotifikasjonStopp, String bestillingsId){
 		assertEquals(bestillingsId, doknotifikasjonStopp.getBestillingsId());
-		assertEquals(DOKDISTAVSTEMMING, doknotifikasjonStopp.getBestillerId());
+		assertEquals(DOKDISTDITTNAV, doknotifikasjonStopp.getBestillerId());
 
 	}
 
