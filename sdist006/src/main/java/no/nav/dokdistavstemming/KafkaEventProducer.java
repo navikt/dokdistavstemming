@@ -5,7 +5,6 @@ import no.nav.dokdistavstemming.Exceptions.KafkaTechnicalException;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
-import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -25,7 +24,7 @@ class KafkaEventProducer {
 
 	private static final String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
 	private static final String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
-	private static final String RENOTIFIKASJON_STOPP_TOPIC = "privat-dok-notifikasjon-stopp";
+	private static final String RENOTIFIKASJON_STOPP_TOPIC = "teamdokumenthandtering.privat-dok-notifikasjon-stopp";
 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -46,8 +45,8 @@ class KafkaEventProducer {
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
-			log.info("Sdist006 har skrevet avbryt renotifikasjon evtnt til topic for bestillingsId={}. hendelseMetadata={}",
-					event.getBestillingsId(), sendResult.getRecordMetadata()
+			log.info("Sdist006 har skrevet avbryt renotifikasjon event til topic={} for bestillingsId={}. hendelseMetadata={}",
+					RENOTIFIKASJON_STOPP_TOPIC, event.getBestillingsId(), sendResult.getRecordMetadata()
 			);
 		} catch (ExecutionException executionException) {
 			if (executionException.getCause() instanceof KafkaProducerException kafkaProducerException) {
@@ -56,7 +55,7 @@ class KafkaEventProducer {
 				}
 			}
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + RENOTIFIKASJON_STOPP_TOPIC, executionException);
-		} catch (InterruptedException | KafkaException e) {
+		} catch (Exception e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + RENOTIFIKASJON_STOPP_TOPIC, e);
 		}
 	}

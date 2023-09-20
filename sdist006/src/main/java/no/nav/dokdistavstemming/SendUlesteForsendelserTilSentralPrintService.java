@@ -97,7 +97,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				//3.5 Distribuer ny forsendelse
 				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 
-				//3.6
+				//3.6 stopp renotifikasjon av digital distribusjon
 				avbrytRenotifikasjon(gammelForsendelse.getBestillingsId());
 			} finally {
 				MDC.clear();
