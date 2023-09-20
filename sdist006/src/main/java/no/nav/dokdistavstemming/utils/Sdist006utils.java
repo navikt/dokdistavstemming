@@ -10,7 +10,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class Sdist006utils {
 
-	public final static String DOKDISTAVSTEMMING = "dokdistavstemming";
+	public final static String DOKDISTDITTNAV = "dokdistdittnav";
 	public static LocalDateTime determineEkspedertTil(LocalDateTime ekspedertTil) {
 		return switch (ekspedertTil.getDayOfWeek()) {
 			case SATURDAY -> setKlokkeslettTil16(ekspedertTil.minusDays(1));
