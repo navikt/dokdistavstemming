@@ -96,7 +96,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	@Autowired
 	private SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService;
 
-
 	public static Consumer<String, DoknotifikasjonStopp> consumer;
 
 	@Autowired
@@ -108,7 +107,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 		// KafkaConsumer for å kunne konsumere meldinger som InngaaendeHendelsePublisher dytter til 'test-ut-topic'
 		this.setUpConsumerForTopicUt();
 	}
-
 
 	@BeforeEach
 	void setUp() {
@@ -130,7 +128,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID1);
 		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID2);
 		stubPatchOppdaterDistribusjonsinfo();
-
 
 		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
 

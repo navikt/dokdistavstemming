@@ -12,12 +12,12 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.Math.min;
+import static java.time.LocalDateTime.now;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
@@ -119,25 +119,24 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private List<String> finnUlesteJournalposter() {
-		LocalDateTime ulesteJournalposterEkspedertTil = LocalDateTime.now().minusHours(40);
-		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, LocalDateTime.now().minusDays(7), determineEkspedertTil(ulesteJournalposterEkspedertTil));
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(7), determineEkspedertTil(now().minusHours(40)));
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
-
 		return rdist001administrerforsendelseConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
 	private Long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
-		ForsendelseTo opprettForsendelseRequest = mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId);
-		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
+		return rdist001administrerforsendelseConsumer
+				.opprettForsendelse(mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId))
+				.getForsendelseId();
 	}
 
 	private void feilregistrerForsendelse(long gammelForsendelseId, String nyBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
 				.forsendelseId(gammelForsendelseId)
 				.feilTypeCode("MELDINGSFEIL")
-				.tidspunkt(LocalDateTime.now())
+				.tidspunkt(now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
 				.resendingDistribusjonId(nyBestillingsId)
 				.build();
@@ -162,8 +161,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void avbrytRenotifikasjon(String bestillingsId) {
-		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV);
-		kafkaEventProducer.publish(doknotifikasjonStopp);
+		kafkaEventProducer.publish(new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV));
 	}
 
 }

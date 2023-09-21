@@ -14,7 +14,7 @@ public class OpprettForsendelseMapper {
 	private static final String DOKUMENTTYPE_ID = "U000001";
 	private static final String HOVEDDOKUMENT = "HOVEDDOKUMENT";
 
-	public static ForsendelseTo mapForsendelseToTilOpprettForsendelse(ForsendelseTo hentForsendelseResponse, String newBestillingsId) {
+	public static ForsendelseTo mapForsendelseToTilOpprettForsendelse(ForsendelseTo hentForsendelseResponse, String newBestillingId) {
 
 		if (hentForsendelseResponse == null) {
 			throw new IllegalArgumentException("HentForsendelseResponseTo kan ikke være null");
@@ -23,7 +23,7 @@ public class OpprettForsendelseMapper {
 		AtomicReference<Integer> rekkefolge = new AtomicReference<>(2);
 
 		return ForsendelseTo.builder()
-				.bestillingsId(newBestillingsId)
+				.bestillingsId(newBestillingId)
 				.distribusjonsKanal(DISTRIBUSJON_KANAL_PRINT)
 				.tema(hentForsendelseResponse.getTema())
 				.forsendelseTittel(hentForsendelseResponse.getForsendelseTittel())
