@@ -53,7 +53,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
 		// start kode for prod-verifisering
-			handleUlesteJournalposterList(ulesteJournalposter.subList(0, min(ulesteJournalposter.size(), HENTFORSENDELSER_MAX_JOURNALPOSTS)));
+		handleUlesteJournalposterList(ulesteJournalposter.subList(0, min(ulesteJournalposter.size(), HENTFORSENDELSER_MAX_JOURNALPOSTS)));
 		// end kode for prod-verifisering
 
 		//TODO: enable denne igjen etter prod-verifisering
@@ -77,7 +77,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//3. Behandle forsendelser
 
 		//start kode for prod-verifisering
-			feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser.subList(0, min(ulesteForsendelser.size(), MAX_ANTALL_FORSENDELSER_TIL_PRINT)));
+		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser.subList(0, min(ulesteForsendelser.size(), MAX_ANTALL_FORSENDELSER_TIL_PRINT)));
 		//end kode for prod-verifisering
 
 		//TODO: enable denne igjen etter prod-verifisering
@@ -94,11 +94,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(gammelForsendelse);
+				String nyBestillingsId = UUID.randomUUID().toString();
+				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId:{} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
 				//3.2 Feilregistrer original forsendelse
-				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), gammelDistribusjonId);
+				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), nyBestillingsId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
@@ -127,18 +128,18 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return rdist001administrerforsendelseConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
-	private Long opprettForsendelse(ForsendelseTo oldForsendelse) {
-		ForsendelseTo opprettForsendelseRequest = mapForsendelseToTilOpprettForsendelse(oldForsendelse, UUID.randomUUID().toString());
+	private Long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
+		ForsendelseTo opprettForsendelseRequest = mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId);
 		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(long gammelDistribusjonsId, String nyBestillingsId) {
+	private void feilregistrerForsendelse(long gammelForsendelseId, String nyBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
+				.forsendelseId(gammelForsendelseId)
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(LocalDateTime.now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
 				.resendingDistribusjonId(nyBestillingsId)
-				.forsendelseId(gammelDistribusjonsId)
 				.build();
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}

@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -54,6 +56,7 @@ import static no.nav.dokdistavstemming.sdist006.SendUlesteForsendelserTilSentral
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -66,7 +69,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestConfig {
 
 	private static final int OK = 200;
-	private static final String NY_FORSENDELSE_ID = "33333";
+	private static final String NY_FORSENDELSE_ID1 = "33333";
+	private static final String NY_FORSENDELSE_ID2 = "44444";
+	private static final String OLD_FORSENDELSEID1 = "987654321";
+	private static final String OLD_FORSENDELSEID2 = "287654321";
+	private static final String JOURNALPOSTID1 = "123456789";
+	private static final String JOURNALPOSTID2 = "999654321";
+	private static final String JOURNALPOSTLISTE = "[" + JOURNALPOSTID1 + "," + JOURNALPOSTID2 + "]";
 	private static final String DOKDISTDITTNAV = "dokdistdittnav";
 	public static final String RENOTIFIKASJON_STOPP_TOPIC = "teamdokumenthandtering.privat-dok-notifikasjon-stopp";
 	private static final String GAMMEL_BESTILLINGSID1 = "811c0c5d-e74c-491a-8b8c-d94075c822c3";
@@ -112,11 +121,14 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	@Test
 	public void shouldFeilregistrerForsendelseOgOppdaterForsendelse() throws IOException {
-		stubGetFinnUlesteForsendelser("[123456789,987654321]");
+		stubGetFinnUlesteForsendelser(JOURNALPOSTLISTE);
 		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-happy.json");
-		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse-happy.json");
-		stubPutFeilregistrerforsendelse();
-		stubPutOppdaterForsendelse();
+		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse1-happy.json", GAMMEL_BESTILLINGSID1);
+		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse2-happy.json", GAMMEL_BESTILLINGSID2);
+		stubPutFeilregistrerforsendelse(OLD_FORSENDELSEID1);
+		stubPutFeilregistrerforsendelse(OLD_FORSENDELSEID2);
+		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID1);
+		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID2);
 		stubPatchOppdaterDistribusjonsinfo();
 
 
@@ -125,9 +137,9 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			//Sjekk at riktig forsendelseId blir sendt til qdist009/print
 			String message = receive(qdist009).toString();
-			assertThat(message).contains(NY_FORSENDELSE_ID);
+			assertThat(message).contains(NY_FORSENDELSE_ID1);
 			String message2 = receive(qdist009).toString();
-			assertThat(message2).contains(NY_FORSENDELSE_ID);
+			assertThat(message2).contains(NY_FORSENDELSE_ID2);
 
 			List<DoknotifikasjonStopp> records = this.getAllCurrentRecordsOnTopicRenotifikasjonStopp();
 			assertEquals(2, records.size());
@@ -138,10 +150,9 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 		verifyAndCountForsendelse();
 	}
 
-	private void assertRecord(DoknotifikasjonStopp doknotifikasjonStopp, String bestillingsId){
+	private void assertRecord(DoknotifikasjonStopp doknotifikasjonStopp, String bestillingsId) {
 		assertEquals(bestillingsId, doknotifikasjonStopp.getBestillingsId());
 		assertEquals(DOKDISTDITTNAV, doknotifikasjonStopp.getBestillerId());
-
 	}
 
 	@Test
@@ -156,7 +167,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	@Test
 	public void shouldStopWhenNoForsendelserFromDokdistadmin() throws IOException {
-		stubGetFinnUlesteForsendelser("[123456789]");
+		stubGetFinnUlesteForsendelser(JOURNALPOSTLISTE);
 		stubGetHentForsendelser("__files/rdist001/hentForsendelseresponse-empty.json");
 
 		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
@@ -188,26 +199,37 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	private void stubGetHentForsendelser(String responsebody) throws IOException {
 		stubFor(get(urlPathMatching(HENTFORSENDELSER_URL))
+				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID1))
+				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID2))
 				.willReturn(aResponse()
 						.withStatus(OK)
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(responsebody))));
 	}
 
-	private void stubPutOppdaterForsendelse() {
+	private void stubPutOppdaterForsendelse(String forsendelsesId) {
 		stubFor(put(OPPDATERFORSENDELSE_URL)
+				.withRequestBody(containing("\"forsendelseId\":" + forsendelsesId))
+				.withRequestBody(containing("\"forsendelseStatus\":\"KLAR_FOR_DIST\""))
 				.willReturn(aResponse()
 						.withStatus(OK)));
 	}
 
-	private void stubPutFeilregistrerforsendelse() {
+	private void stubPutFeilregistrerforsendelse(String forsendelsesId) {
 		stubFor(put(FEILREGISTRERFORSENDELSE_URL)
+				.withRequestBody(containing("\"forsendelseId\":" + forsendelsesId))
+				.withRequestBody(containing("\"feilTypeCode\":\"MELDINGSFEIL\""))
+				.withRequestBody(containing("\"detaljer\":\"Forsendelse til NAV.NO er ikke lest innen frist.\""))
 				.willReturn(aResponse()
 						.withStatus(OK)));
 	}
 
-	private void stubPostOpprettForsendelse(String responseBody) throws IOException {
+	private void stubPostOpprettForsendelse(String responseBody, String oldBestillingsId) throws IOException {
 		stubFor(post(urlEqualTo("/rest/v1/administrerforsendelse"))
+				.withRequestBody(containing("\"originalDistribusjonId\":" + "\"" + oldBestillingsId + "\""))
+				.withRequestBody(containing("\"distribusjonsKanal\":\"PRINT\""))
+				.withRequestBody(containing("\"dokumenttypeId\":\"U000001\""))
+				.withRequestBody(containing("\"bestillingsId\":" + anyString()))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withStatus(OK)
@@ -216,6 +238,9 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	private void stubPatchOppdaterDistribusjonsinfo() {
 		stubFor(patch(urlPathMatching(OPPDATERDISTRIBUSJONSINFO_URL))
+				.withRequestBody(containing("\"settStatusEkspedert\":false"))
+				.withRequestBody(containing("\"utsendingsKanal\":\"S\""))
+				.withRequestBody(containing("\"tilbakestillJournalpost\":true"))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withStatus(OK)));
@@ -225,7 +250,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	private <T> T receive(Queue queue) {
 		Object response = jmsTemplate.receiveAndConvert(queue);
 		if (response instanceof JAXBElement) {
-			response = ((JAXBElement) response).getValue();
+			response = ((JAXBElement<?>) response).getValue();
 		}
 		return (T) response;
 	}
