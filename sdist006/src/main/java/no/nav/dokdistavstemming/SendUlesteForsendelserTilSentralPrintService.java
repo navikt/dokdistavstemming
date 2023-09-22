@@ -111,7 +111,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 
 				//3.6 stopp renotifikasjon av digital distribusjon
-				avbrytRenotifikasjon(gammelForsendelse.getBestillingsId());
+				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
 			} finally {
 				MDC.clear();
 			}
@@ -160,7 +160,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
 	}
 
-	private void avbrytRenotifikasjon(String bestillingsId) {
+	private void stoppRenotifikasjon(String bestillingsId) {
 		kafkaEventProducer.publish(new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV));
 	}
 

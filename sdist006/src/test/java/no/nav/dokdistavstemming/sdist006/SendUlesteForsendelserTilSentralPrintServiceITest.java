@@ -104,8 +104,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	@BeforeEach
 	public void setUpClass() {
-		// KafkaConsumer for å kunne konsumere meldinger som InngaaendeHendelsePublisher dytter til 'test-ut-topic'
-		this.setUpConsumerForTopicUt();
+		this.setUpConsumerForTopicNotifikasjonStopp();
 	}
 
 	@BeforeEach
@@ -258,7 +257,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.collect(Collectors.toList());
 	}
 
-	public void setUpConsumerForTopicUt() {
+	public void setUpConsumerForTopicNotifikasjonStopp() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("test", "true", kafkaEmbedded);
 		consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 		consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
