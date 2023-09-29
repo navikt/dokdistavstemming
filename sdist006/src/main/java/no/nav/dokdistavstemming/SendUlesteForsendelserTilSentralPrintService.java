@@ -96,7 +96,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				//3.1 Opprett ny forsendelse
 				String nyBestillingsId = UUID.randomUUID().toString();
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
-				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId:{} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
+				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
 				//3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), nyBestillingsId);
@@ -112,6 +112,9 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				//3.6 stopp renotifikasjon av digital distribusjon
 				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
+
+				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
+						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
 			} finally {
 				MDC.clear();
 			}
