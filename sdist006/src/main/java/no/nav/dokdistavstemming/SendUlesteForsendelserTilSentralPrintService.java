@@ -8,19 +8,21 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.google.common.collect.Lists.partition;
+import static java.lang.Math.min;
+import static java.time.LocalDateTime.now;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
+import static no.nav.dokdistavstemming.utils.Sdist006utils.DOKDISTDITTNAV;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
 
 @Slf4j
@@ -30,11 +32,14 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
+	private final KafkaEventProducer kafkaEventProducer;
+	private final int MAX_ANTALL_FORSENDELSER_TIL_PRINT = 10;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;
+		this.kafkaEventProducer = kafkaEventProducer;
 	}
 
 	public void sendUlesteForsendelserTilSentralPrint() {
@@ -47,7 +52,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
-		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
+		// start kode for prod-verifisering
+		handleUlesteJournalposterList(ulesteJournalposter.subList(0, min(ulesteJournalposter.size(), HENTFORSENDELSER_MAX_JOURNALPOSTS)));
+		// end kode for prod-verifisering
+
+		//TODO: enable denne igjen etter prod-verifisering
+		//partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
@@ -65,6 +75,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
+
+		//start kode for prod-verifisering
+		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser.subList(0, min(ulesteForsendelser.size(), MAX_ANTALL_FORSENDELSER_TIL_PRINT)));
+		//end kode for prod-verifisering
+
+		//TODO: enable denne igjen etter prod-verifisering
 		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
@@ -78,11 +94,12 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
 
 				//3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(gammelForsendelse);
+				String nyBestillingsId = UUID.randomUUID().toString();
+				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId:{} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
 				//3.2 Feilregistrer original forsendelse
-				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), gammelDistribusjonId);
+				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), nyBestillingsId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
@@ -91,7 +108,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				oppdaterJournalpost(journalpostId);
 
 				//3.5 Distribuer ny forsendelse
-			//	distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
+
+				//3.6 stopp renotifikasjon av digital distribusjon
+				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
 			} finally {
 				MDC.clear();
 			}
@@ -99,27 +119,26 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private List<String> finnUlesteJournalposter() {
-		LocalDateTime ulesteJournalposterEkspedertTil = LocalDateTime.now().minusHours(40);
-		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, LocalDateTime.now().minusDays(7), determineEkspedertTil(ulesteJournalposterEkspedertTil));
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(7), determineEkspedertTil(now().minusHours(40)));
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
-
 		return rdist001administrerforsendelseConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
-	private Long opprettForsendelse(ForsendelseTo oldForsendelse) {
-		ForsendelseTo opprettForsendelseRequest = mapForsendelseToTilOpprettForsendelse(oldForsendelse, UUID.randomUUID().toString());
-		return rdist001administrerforsendelseConsumer.opprettForsendelse(opprettForsendelseRequest).getForsendelseId();
+	private Long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
+		return rdist001administrerforsendelseConsumer
+				.opprettForsendelse(mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId))
+				.getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(long gammelDistribusjonsId, String nyBestillingsId) {
+	private void feilregistrerForsendelse(long gammelForsendelseId, String nyBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
+				.forsendelseId(gammelForsendelseId)
 				.feilTypeCode("MELDINGSFEIL")
-				.tidspunkt(LocalDateTime.now())
+				.tidspunkt(now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
 				.resendingDistribusjonId(nyBestillingsId)
-				.forsendelseId(gammelDistribusjonsId)
 				.build();
 		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}
@@ -139,6 +158,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				.tilbakestillJournalpost(true)
 				.build();
 		dokarkivConsumer.oppdaterDistribusjonsinfo(oppdaterDistribusjonsinfoRequest, journalpostId);
+	}
+
+	private void stoppRenotifikasjon(String bestillingsId) {
+		kafkaEventProducer.publish(new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV));
 	}
 
 }

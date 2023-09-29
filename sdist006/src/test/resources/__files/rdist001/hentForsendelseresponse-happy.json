@@ -41,7 +41,7 @@
     },
     {
       "forsendelseId": "287654321",
-      "bestillingsId": "811c0c5d-e74c-491a-8b8c-d94075c822c3",
+      "bestillingsId": "811c0c5d-e74c-491a-8b8c-dette-er-en-annen",
       "konversasjonId": "37efbd4c-413d-4e2c-bbc5-257ef4a65a45",
       "bestillendeFagsystem": "bestillendeFagsystem",
       "batchId": "batchId",
@@ -59,7 +59,7 @@
       },
       "arkivInformasjon": {
         "arkivSystem": "JOARK",
-        "arkivId": "987654321"
+        "arkivId": "999654321"
       },
       "postadresse": {
         "adresselinje1": "Adresslinje 1",

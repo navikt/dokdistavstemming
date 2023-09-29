@@ -16,6 +16,7 @@
   "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
   "DOKDISTAVSTEMMINGCERT": "/kv/preprod/fss/dokdistavstemming/certificate",
 
+  "KAFKA_POOL": "nav-dev",
   "MQGATEWAY01_CHANNELNAME": "Q2_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",
   "MQGATEWAY01_PORT": "1413",
