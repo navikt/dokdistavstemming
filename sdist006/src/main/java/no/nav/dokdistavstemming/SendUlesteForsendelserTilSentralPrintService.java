@@ -33,6 +33,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
+	private final int ANTALL_DAGER_TILBAKE_MAX = 5;
+	private final int ANTALL_TIMER_TILBAKE_MIN = 40;
 
 	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
@@ -110,7 +112,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private List<String> finnUlesteJournalposter() {
-		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(7), determineEkspedertTil(now().minusHours(40)));
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(ANTALL_DAGER_TILBAKE_MAX), determineEkspedertTil(now().minusHours(ANTALL_TIMER_TILBAKE_MIN)));
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
