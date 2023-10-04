@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.lang.Math.min;
+import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
@@ -33,7 +33,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
-	private final int MAX_ANTALL_FORSENDELSER_TIL_PRINT = 10;
+	private final int ANTALL_DAGER_TILBAKE_MAX = 5;
+	private final int ANTALL_TIMER_TILBAKE_MIN = 40;
 
 	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
@@ -52,12 +53,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
-		// start kode for prod-verifisering
-		handleUlesteJournalposterList(ulesteJournalposter.subList(0, min(ulesteJournalposter.size(), HENTFORSENDELSER_MAX_JOURNALPOSTS)));
-		// end kode for prod-verifisering
-
-		//TODO: enable denne igjen etter prod-verifisering
-		//partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
+		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
@@ -75,13 +71,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		//3. Behandle forsendelser
-
-		//start kode for prod-verifisering
-		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser.subList(0, min(ulesteForsendelser.size(), MAX_ANTALL_FORSENDELSER_TIL_PRINT)));
-		//end kode for prod-verifisering
-
-		//TODO: enable denne igjen etter prod-verifisering
-		//feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
+		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
@@ -122,7 +112,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private List<String> finnUlesteJournalposter() {
-		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(7), determineEkspedertTil(now().minusHours(40)));
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(ANTALL_DAGER_TILBAKE_MAX), determineEkspedertTil(now().minusHours(ANTALL_TIMER_TILBAKE_MIN)));
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {

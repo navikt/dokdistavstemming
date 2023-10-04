@@ -20,9 +20,7 @@ public class Sdist006Scheduler {
 		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
 	}
 
-	//kjør en gang 60s etter oppstart og hver time etter det.
-	//Byttes ut med sdist006.cron etter prod-verifisering
-	//@Scheduled(initialDelay = 1000 * 60, fixedDelay = 1000 * 60 * 60 * 1) //cron = "${sdist006.cron.job}")
+	@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist006 cron-jobb");
