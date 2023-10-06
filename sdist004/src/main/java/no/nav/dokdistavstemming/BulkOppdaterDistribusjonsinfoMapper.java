@@ -1,13 +1,18 @@
 package no.nav.dokdistavstemming;
 
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
+import no.nav.dokdistavstemming.consumer.journalpostapi.to.EpostvarselTo;
+import no.nav.dokdistavstemming.consumer.journalpostapi.to.SmsvarselTo;
+import no.nav.dokdistavstemming.consumer.journalpostapi.to.VarselTo;
 import no.nav.dokdistavstemming.domain.Digitalpostkasse;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.domain.Varsel;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
+import no.nav.dokdistavstemming.domain.Epostvarsel;
 import no.nav.dokdistavstemming.domain.PostadresseTo;
+import no.nav.dokdistavstemming.domain.Smsvarsel;
+import no.nav.dokdistavstemming.domain.Varsel;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 
 import java.util.List;
@@ -73,15 +78,32 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 
 	}
 
-	private Varsel mapVarsel(Varsel varsel, String kanal) {
-		return varsel != null && (DITTNAV.name().equals(kanal) || SDP.name().equals(kanal)) ?
-				Varsel.builder()
-						.epostvarsel(varsel.getEpostvarsel())
-						.smsvarsel(varsel.getSmsvarsel())
-						.build() : null;
+	private VarselTo mapVarsel(Varsel varsel, String kanal) {
+		if (varsel != null && (DITTNAV.name().equals(kanal) || SDP.name().equals(kanal)))
+			return new VarselTo(mapEpostVarsler(varsel.getEpostvarsel()), mapSmsVarsler(varsel.getSmsvarsel()));
 
+		return null;
 	}
 
+	private List<EpostvarselTo> mapEpostVarsler(List<Epostvarsel> epostvarsler) {
+		if (epostvarsler == null) {
+			return null;
+		}
+
+		return epostvarsler.stream()
+				.map(EpostvarselTo::fromEpostvarsel)
+				.toList();
+	}
+
+	private List<SmsvarselTo> mapSmsVarsler(List<Smsvarsel> smsvarsler) {
+		if (smsvarsler == null) {
+			return null;
+		}
+
+		return smsvarsler.stream()
+				.map(SmsvarselTo::fromSmsvarsel)
+				.toList();
+	}
 	private String mapUtsendingsKanalCode(String distKanal) {
 		DistribusjonKanalCode distribusjonKanalCode = DistribusjonKanalCode.valueOf(distKanal);
 		switch (distribusjonKanalCode) {
