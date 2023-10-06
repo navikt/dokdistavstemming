@@ -4,10 +4,9 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendel
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostWithDistribusjonsinfo;
 import no.nav.dokdistavstemming.domain.EkspedertForsendelse;
-import no.nav.dokdistavstemming.domain.EpostVarsel;
-import no.nav.dokdistavstemming.domain.SmsVarsel;
+import no.nav.dokdistavstemming.domain.Epostvarsel;
+import no.nav.dokdistavstemming.domain.Smsvarsel;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
-import no.nav.dokdistavstemming.utils.DataUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -55,20 +54,20 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoPrint.getVarsel());
 		assertNull(jpDistInfoPrint.getDigitalpostkasse());
 
-		EkspedertForsendelse dittNavEkspederteForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(14);
-		EpostVarsel eksepdertForsendelseEpostVarsel = dittNavEkspederteForsendelse.getVarsel().getEpostvarsel().get(0);
-		SmsVarsel ekspedertForsendelseSmsVarsel = dittNavEkspederteForsendelse.getVarsel().getSmsvarsel().get(0);
+		EkspedertForsendelse dittNavEkspedertForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(14);
+		Epostvarsel ekspedertForsendelseEpostvarsel = dittNavEkspedertForsendelse.getVarsel().getEpostvarsel().get(0);
+		Smsvarsel ekspedertForsendelseSmsvarsel = dittNavEkspedertForsendelse.getVarsel().getSmsvarsel().get(0);
 		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(14);
 
-		assertEquals(Long.valueOf(dittNavEkspederteForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
+		assertEquals(Long.valueOf(dittNavEkspedertForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
 		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
-		assertEquals(eksepdertForsendelseEpostVarsel.getAdresse(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getAdresse());
-		assertEquals(eksepdertForsendelseEpostVarsel.getTittel(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTittel());
-		assertEquals(eksepdertForsendelseEpostVarsel.getTekst(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTekst());
-		assertEquals(eksepdertForsendelseEpostVarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTidspunkt());
-		assertEquals(ekspedertForsendelseSmsVarsel.getTelefonnummer(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTelefonnummer());
-		assertEquals(ekspedertForsendelseSmsVarsel.getTekst(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTekst());
-		assertEquals(ekspedertForsendelseSmsVarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTidspunkt());
+		assertEquals(ekspedertForsendelseEpostvarsel.getAdresse(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getAdresse());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTittel(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTittel());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTekst(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTekst());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().getEpostvarsel().get(0).getTidspunkt());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTelefonnummer(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTelefonnummer());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTekst(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTekst());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().getSmsvarsel().get(0).getTidspunkt());
 		assertTrue(jpDistInfoDittNav.getSettStatusEkspedert());
 		assertNull(jpDistInfoDittNav.getPostadresse());
 		assertNull(jpDistInfoDittNav.getDigitalpostkasse());
