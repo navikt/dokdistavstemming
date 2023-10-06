@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EpostVarsel {
+public class Epostvarsel {
 	private final String adresse;
 	private final String tittel;
 	private final String tekst;
