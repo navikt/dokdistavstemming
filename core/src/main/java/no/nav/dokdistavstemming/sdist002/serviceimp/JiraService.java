@@ -1,10 +1,10 @@
 package no.nav.dokdistavstemming.sdist002.serviceimp;
 
 
-import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.request.IssueInput;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
+import no.nav.dokdistavstemming.consumer.jira.domain.Issue;
+import no.nav.dokdistavstemming.consumer.jira.domain.IssueInput;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
@@ -54,12 +54,12 @@ public class JiraService {
             log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
 
             Issue issue = jiraConsumer.opprettJiraSak(issueInput);
-            jiraConsumer.leggTilVedlegg(issue.getKey(), fil);
-            log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf());
+            jiraConsumer.leggTilVedlegg(issue.key(), fil);
+            log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.id(), issue.key(), issue.self());
             updateJiraStatus(issue);
             JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-                    .jiraSakKey(issue.getKey())
-                    .message(format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
+                    .jiraSakKey(issue.key())
+                    .message(format("%s%s/%s", getHostFraUrl(issue.self()), BROWSE, issue.key()))
                     .build();
 
             log.info("Sdist002 har opprettet Jira-sak med url={}", jiraSakResponseTo.getMessage());
@@ -74,22 +74,22 @@ public class JiraService {
     }
 
     private void updateJiraStatus(Issue issue) {
-        Issue updateIssue = jiraConsumer.oppdaterStatus(issue.getKey(), JiraTransition.builder()
+        Issue updateIssue = jiraConsumer.oppdaterStatus(issue.key(), JiraTransition.builder()
                 .transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
-        log.info("Har oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().getName());
+        log.info("Har oppdatert Jira-sak med key={} til status={}", issue.key(), updateIssue.fields().status().name());
     }
 
     private void validateInput(IssueInput issueInput) {
         if (!isGyldigInput(issueInput)) {
             log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
-                    issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName());
+                    issueInput.fields().project().key(), issueInput.fields().issuetype().name());
             throw new JiraFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
-                    issueInput.getFields().getProject().getKey(), issueInput.getFields().getIssuetype().getName()));
+                    issueInput.fields().project().key(), issueInput.fields().project().name()));
         }
     }
 
     private boolean isGyldigInput(IssueInput issueInput) {
-        return !issueInput.getFields().getProject().getKey().isEmpty() && !issueInput.getFields().getIssuetype().getName().isEmpty();
+        return !issueInput.fields().project().key().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
     }
 
     private boolean isFilExistOgNotNull(File fil) {

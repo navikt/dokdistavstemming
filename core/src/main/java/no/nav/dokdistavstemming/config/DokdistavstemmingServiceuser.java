@@ -1,12 +1,11 @@
 package no.nav.dokdistavstemming.config;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter

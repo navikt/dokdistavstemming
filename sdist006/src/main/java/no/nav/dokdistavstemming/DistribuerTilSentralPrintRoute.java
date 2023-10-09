@@ -1,15 +1,14 @@
 package no.nav.dokdistavstemming;
 
+import jakarta.jms.Queue;
+import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.springframework.stereotype.Component;
 
-import javax.jms.Queue;
-import javax.xml.bind.JAXBException;
-
+import static jakarta.xml.bind.JAXBContext.newInstance;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static javax.xml.bind.JAXBContext.newInstance;
 import static org.apache.camel.LoggingLevel.ERROR;
 import static org.apache.camel.LoggingLevel.INFO;
 import static org.apache.camel.LoggingLevel.WARN;

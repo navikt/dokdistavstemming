@@ -1,15 +1,15 @@
 package no.nav.dokdistavstemming.consumer.jira;
 
-import com.pep1.jira.client.domain.issue.Issue;
-import com.pep1.jira.client.domain.issue.request.IssueInput;
-import com.pep1.jira.client.domain.project.Project;
-import lombok.NonNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
+import no.nav.dokdistavstemming.consumer.jira.domain.Issue;
+import no.nav.dokdistavstemming.consumer.jira.domain.IssueInput;
+import no.nav.dokdistavstemming.consumer.jira.domain.Project;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
-import no.nav.dokdistavstemming.metrics.Monitor;
 import no.nav.dokdistavstemming.utils.CallIdInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.FileSystemResource;
@@ -26,16 +26,13 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.time.Duration;
 
 import static java.lang.String.format;
-import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 
-@Component
 @Slf4j
+@Component
 public class JiraConsumer {
 
 	private static final String ISSUE = "/rest/api/2/issue";
@@ -61,7 +58,6 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "oppretteJiraSak"}, percentiles = {0.5, 0.95})
 	public Issue opprettJiraSak(@Valid @NotNull IssueInput issueInputRequest) {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 
@@ -79,8 +75,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "leggTilVedlegg"}, percentiles = {0.5, 0.95})
-	public String leggTilVedlegg(String key, @NonNull File file) {
+	public String leggTilVedlegg(String key, @NotNull File file) {
 		if (key == null) {
 			throw new IllegalArgumentException("Kan ikke legge til vedlegg på Jira-saken. Prosjekt-key er null.");
 		} else if (file.length() == 0 && !file.exists()) {
@@ -109,7 +104,6 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "hentProsjekt"}, percentiles = {0.5, 0.95})
 	public Project hentProsjekt(String projectKey) {
 
 		if (projectKey == null) {
@@ -133,7 +127,6 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "hentIssue"}, percentiles = {0.5, 0.95})
 	public Issue hentIssue(final String sakKey) {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 		String url = format("%s/%s", issueBaseUri, sakKey);
@@ -152,8 +145,7 @@ public class JiraConsumer {
 	}
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "JIRA", "process_code", "oppdaterStatus"}, percentiles = {0.5, 0.95})
-	public Issue oppdaterStatus(final String key, @Valid @NonNull JiraTransition transition) {
+	public Issue oppdaterStatus(final String key, @Valid @NotNull JiraTransition transition) {
 		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
 		String url = format("%s/%s%s", issueBaseUri, key, TRANSITIONS);
 

@@ -1,8 +1,8 @@
 package no.nav.dokdistavstemming;
 
+import jakarta.jms.Queue;
 import no.nav.dokdistavstemming.constants.MDCConstants;
 import no.nav.dokdistavstemming.consumer.jira.JiraConsumer;
-import no.nav.dokdistavstemming.jms.JmsConfig;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
 import no.nav.dokdistavstemming.sdist002.serviceimp.JiraService;
 import no.nav.dokdistavstemming.sdist002.serviceimp.Sdist002Service;
@@ -17,7 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.jms.Queue;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;

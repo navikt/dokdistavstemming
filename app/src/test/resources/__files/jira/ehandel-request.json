@@ -7,43 +7,246 @@
       "key" : "MMA",
       "description" : "",
       "name" : "Team Dokument",
-      "lead" : {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/user?username=F138006",
-        "name" : "F138006",
-        "key" : "f138006",
-        "emailAddress" : null,
-        "avatarUrls" : {
-          "16x16" : "https://jira-q1.adeo.no/secure/useravatar?size=xsmall&ownerId=f138006&avatarId=22490",
-          "24x24" : "https://jira-q1.adeo.no/secure/useravatar?size=small&ownerId=f138006&avatarId=22490",
-          "32x32" : "https://jira-q1.adeo.no/secure/useravatar?size=medium&ownerId=f138006&avatarId=22490",
-          "48x48" : "https://jira-q1.adeo.no/secure/useravatar?ownerId=f138006&avatarId=22490"
-        },
-        "displayName" : "Test Test",
-        "active" : true
-      },
-      "avatarUrls" : {
-        "16x16" : "https://jira-q1.adeo.no/secure/projectavatar?size=xsmall&pid=19377&avatarId=14697",
-        "24x24" : "https://jira-q1.adeo.no/secure/projectavatar?size=small&pid=19377&avatarId=14697",
-        "32x32" : "https://jira-q1.adeo.no/secure/projectavatar?size=medium&pid=19377&avatarId=14697",
-        "48x48" : "https://jira-q1.adeo.no/secure/projectavatar?pid=19377&avatarId=14697"
-      },
-      "projectCategory" : {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/projectCategory/11090",
-        "name" : "Teams prosjekter",
-        "id" : "11090",
-        "key" : null,
-        "description" : "team prosjekter fra PK prosjekt"
-      },
+      "url" : null,
       "components" : [ {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26140",
+        "id" : "26140",
+        "name" : "Brevserver",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26141",
+        "id" : "26141",
+        "name" : "Distribusjonsvarsel",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26142",
+        "id" : "26142",
+        "name" : "dokarkiv",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26143",
+        "id" : "26143",
+        "name" : "dokdistkanal",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26144",
+        "id" : "26144",
+        "name" : "Dokkat",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26145",
+        "id" : "26145",
+        "name" : "Dokkonv",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26146",
+        "id" : "26146",
+        "name" : "Dokmot",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26147",
+        "id" : "26147",
+        "name" : "Dokmotaltinn",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26148",
+        "id" : "26148",
+        "name" : "Dokmotfordeling",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26149",
+        "id" : "26149",
+        "name" : "Dokmotinngaaende",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26150",
+        "id" : "26150",
+        "name" : "Dokmotsed",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26151",
+        "id" : "26151",
+        "name" : "Dokopp",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26152",
+        "id" : "26152",
+        "name" : "Dokprod",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26153",
+        "id" : "26153",
+        "name" : "Dokprodbatch",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/component/26154",
         "id" : "26154",
         "name" : "Dokumentdistribusjon",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26155",
+        "id" : "26155",
+        "name" : "Dokumentmal Exstream",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26156",
+        "id" : "26156",
+        "name" : "Dokumentmal Metaforce",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26157",
+        "id" : "26157",
+        "name" : "Inn-meta-dok",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26158",
+        "id" : "26158",
+        "name" : "Inn-prod-dok",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26159",
+        "id" : "26159",
+        "name" : "Joark",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26160",
+        "id" : "26160",
+        "name" : "Oppgavevarsel",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26161",
+        "id" : "26161",
+        "name" : "regoppslag",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26162",
+        "id" : "26162",
+        "name" : "Sikkerhetsnivaa",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26163",
+        "id" : "26163",
+        "name" : "Skanningmottak",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26164",
+        "id" : "26164",
+        "name" : "Varsel",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
+        "isAssigneeTypeValid" : false
+      }, {
+        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26165",
+        "id" : "26165",
+        "name" : "Varseloppgave",
+        "description" : null,
+        "lead" : null,
+        "displayName" : null,
+        "active" : null,
         "isAssigneeTypeValid" : false
       } ],
       "issueTypes" : [ {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
         "id" : "10901",
-        "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+        "description" : "En oppgave som må utføres.",
         "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
         "name" : "Oppgave",
         "subtask" : false,
@@ -54,7 +257,8 @@
         "description" : "Sakens deloppgave",
         "iconUrl" : "https://jira-q1.adeo.no/images/icons/issuetypes/task_agile.png",
         "name" : "Deloppgave",
-        "subtask" : true
+        "subtask" : true,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/17",
         "id" : "17",
@@ -85,42 +289,48 @@
         "description" : "Represents a Sub Test Execution",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/sub-test-execution.png",
         "name" : "Sub Test Execution",
-        "subtask" : true
+        "subtask" : true,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/12901",
         "id" : "12901",
         "description" : "Represents a Test",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/test.png",
         "name" : "Test",
-        "subtask" : false
+        "subtask" : false,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/12902",
         "id" : "12902",
         "description" : "Represents a Test Set",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/test-set.png",
         "name" : "Test Set",
-        "subtask" : false
+        "subtask" : false,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/12903",
         "id" : "12903",
         "description" : "Represents a Test Execution",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/test-execution.png",
         "name" : "Test Execution",
-        "subtask" : false
+        "subtask" : false,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/12904",
         "id" : "12904",
         "description" : "Represents a Pre-Condition",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/pre-condition.png",
         "name" : "Pre-Condition",
-        "subtask" : false
+        "subtask" : false,
+        "avatarId" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/12907",
         "id" : "12907",
         "description" : "Represents a Test Plan",
         "iconUrl" : "https://jira-q1.adeo.no/download/resources/com.xpandit.plugins.xray/images/test-plan.png",
         "name" : "Test Plan",
-        "subtask" : false
+        "subtask" : false,
+        "avatarId" : null
       } ],
       "versions" : [ {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32264",
@@ -129,11 +339,9 @@
         "name" : "dokkat:10.0.2",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-05-09T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "09.05.18",
         "projectId" : "19377",
-        "startDate" : "2018-04-11T00:00:00.000Z",
         "userStartDate" : "11.04.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32265",
@@ -142,11 +350,9 @@
         "name" : "dokprod:11.1.1",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-05-25T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "25.05.18",
         "projectId" : "19377",
-        "startDate" : "2018-04-19T00:00:00.000Z",
         "userStartDate" : "19.04.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32266",
@@ -155,11 +361,9 @@
         "name" : "dokdistkanal:0.1.28",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-05-23T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "23.05.18",
         "projectId" : "19377",
-        "startDate" : "2018-04-06T00:00:00.000Z",
         "userStartDate" : "06.04.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32267",
@@ -168,11 +372,9 @@
         "name" : "dokdistkanal:0.1.30",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-05-30T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "30.05.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32268",
@@ -181,11 +383,9 @@
         "name" : "dokprod:12.1.14",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-11T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "11.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32269",
@@ -194,11 +394,9 @@
         "name" : "dokumentdistribusjon:8.1.1",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-22T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "22.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32270",
@@ -207,11 +405,9 @@
         "name" : "Ingrid test 123",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32271",
@@ -220,11 +416,9 @@
         "name" : "dokprodbatch:5.2.7",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-22T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "22.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32272",
@@ -233,11 +427,9 @@
         "name" : "joark:19.9.6",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32273",
@@ -246,11 +438,9 @@
         "name" : "URbrev",
         "archived" : false,
         "released" : false,
-        "releaseDate" : "2018-06-22T00:00:00.000Z",
         "overdue" : true,
         "userReleaseDate" : "22.06.18",
         "projectId" : "19377",
-        "startDate" : "2018-06-22T00:00:00.000Z",
         "userStartDate" : "22.06.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32274",
@@ -259,11 +449,9 @@
         "name" : "dokprod:12.1.23",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-22T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "22.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32275",
@@ -272,11 +460,9 @@
         "name" : "joark:19.9.7.1",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32276",
@@ -285,11 +471,9 @@
         "name" : "dokprodbatch:5.2.8",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-26T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "26.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32277",
@@ -298,11 +482,9 @@
         "name" : "dokprod:12.1.26",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-27T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "27.06.18",
         "projectId" : "19377",
-        "startDate" : "2018-06-27T00:00:00.000Z",
         "userStartDate" : "27.06.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32278",
@@ -311,11 +493,9 @@
         "name" : "regoppslag:0.3.1",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : "2018-06-27T00:00:00.000Z",
         "userStartDate" : "27.06.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32279",
@@ -324,11 +504,9 @@
         "name" : "regoppslag:0.3.2",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : "2018-06-28T00:00:00.000Z",
         "userStartDate" : "28.06.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32280",
@@ -337,11 +515,9 @@
         "name" : "testversjon",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32281",
@@ -350,11 +526,9 @@
         "name" : "varseloppgave:1.0.54",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-29T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "29.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32282",
@@ -363,11 +537,9 @@
         "name" : "dokprod:12.1.27",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-06-29T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "29.06.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32283",
@@ -376,11 +548,9 @@
         "name" : "dokprod:12.1.29",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-07-02T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "02.07.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32284",
@@ -389,11 +559,9 @@
         "name" : "dokarkiv:0.0.16",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32285",
@@ -402,11 +570,9 @@
         "name" : "dokopp:0.0.30",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32286",
@@ -415,11 +581,9 @@
         "name" : "dokprod:12.1.30",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32287",
@@ -428,11 +592,9 @@
         "name" : "dokarkiv:0.0.20",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32288",
@@ -441,11 +603,9 @@
         "name" : "dokmot:5.2.6",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32289",
@@ -454,11 +614,9 @@
         "name" : "dokarkiv:0.0.25",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-07-06T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "06.07.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32290",
@@ -467,11 +625,9 @@
         "name" : "dokmot:5.3.0",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32291",
@@ -480,11 +636,9 @@
         "name" : "dokarkiv:0.0.26",
         "archived" : false,
         "released" : true,
-        "releaseDate" : "2018-07-06T00:00:00.000Z",
         "overdue" : null,
         "userReleaseDate" : "06.07.18",
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32292",
@@ -493,11 +647,9 @@
         "name" : "dokprod:12.1.31",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32293",
@@ -506,11 +658,9 @@
         "name" : "dokopp:0.0.31",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32294",
@@ -519,11 +669,9 @@
         "name" : "dokarkiv:0.0.28",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32295",
@@ -532,11 +680,9 @@
         "name" : "dokmot:5.4.0",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : "2018-07-09T00:00:00.000Z",
         "userStartDate" : "09.07.18"
       }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/version/32296",
@@ -545,11 +691,9 @@
         "name" : "dokmot:5.4.1",
         "archived" : false,
         "released" : false,
-        "releaseDate" : null,
         "overdue" : null,
         "userReleaseDate" : null,
         "projectId" : "19377",
-        "startDate" : null,
         "userStartDate" : null
       } ]
     },
@@ -557,23 +701,23 @@
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",
-      "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+      "description" : "En oppgave som må utføres.",
       "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
       "name" : "Oppgave",
       "subtask" : false,
       "avatarId" : 18108
     },
+    "components" : null,
+    "creator" : null,
+    "assignee" : null,
     "reporter" : {
-      "self" : null,
       "key" : "srvjiradokdistavstemming",
       "name" : "srvjiradokdistavstemming",
-      "emailAddress" : null,
-      "avatarUrls" : null,
-      "displayName" : null,
-      "active" : null,
-      "timeZone" : null
+      "self" : null
     },
+    "priority" : null,
     "description" : "Se vedlegg for oversikt over 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-    "labels" : [ "dokumentdistribusjon_avvik" ]
+    "labels" : [ "dokumentdistribusjon_avvik" ],
+    "status" : null
   }
 }
