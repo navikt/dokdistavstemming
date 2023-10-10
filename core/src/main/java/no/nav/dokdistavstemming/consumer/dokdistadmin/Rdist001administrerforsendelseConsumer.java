@@ -16,7 +16,6 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelserAvs
 import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
-import no.nav.dokdistavstemming.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
@@ -31,9 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
-import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CONSUMER_ID;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
@@ -77,10 +74,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelserKvitteringIkkeMottatt"})
 	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonskanal, int antallTimer) {
-		MDC.put(MDC_CONSUMER_ID, "hentForsendelserKvitteringIkkeMottatt");
-
 		log.info("hentForsendelserKvitteringIkkeMottatt henter forsendelser fra rdist001 (dokdistadmin) med distribusjonskanal={}, antallTimer={}",
 				distribusjonskanal, antallTimer);
 
@@ -95,7 +89,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelserAvstemDatoOgReferanse"})
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser fra rdist001 med avstemtReferanse={}",
 				oppdaterForsendelserAvstemtInfo.getForsendelser().size(), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
@@ -113,7 +106,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterAvstemEkspderteForsendelser"})
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
 		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 
@@ -130,7 +122,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentEkspederteforsendelser"})
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 
@@ -151,7 +142,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "hentForsendelser"})
 	public Optional<ForsendelseTos> hentForsendelser(List<String> journalpostListe) {
 		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", journalpostListe)));
 
@@ -173,7 +163,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "opprettForsendelse"})
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
 		log.info(String.format("opprettForsendelse oppretter forsendelse for bestillingsId=%s", forsendelseTo.getBestillingsId()));
 
@@ -187,7 +176,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "feilregistrerForsendelse"})
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
 		log.info(String.format("FeilregistrerForsendelse feilregistrerer forsendelsesId=%s", feilregistrerForsendelseRequest.getForsendelseId()));
 
@@ -203,7 +191,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 	@Override
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"consumer", "DOKDIST", "process_code", "oppdaterForsendelse"})
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
 		log.info(String.format("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
 

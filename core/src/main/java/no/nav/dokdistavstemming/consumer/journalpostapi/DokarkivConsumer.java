@@ -4,34 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.azure.AzureToken;
 import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
-import no.nav.dokdistavstemming.exceptions.JournalpostApiFunctionalException;
-import no.nav.dokdistavstemming.exceptions.JournalpostApiTechnicalException;
-import no.nav.dokdistavstemming.metrics.Monitor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UriUtils;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static java.lang.String.format;
-import static no.nav.dokdistavstemming.constants.MDCConstants.DOK_REQUEST;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -57,12 +45,11 @@ public class DokarkivConsumer {
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public List<String> finnUlesteJournalposter(UtsendingsKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
 		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
 				kanalCode.name(), ekspedertFra, ekspedertTil));
 
-		log.info("Kaller dokarkiv med ekspedertFra={}, ekspedertTil={}", ekspedertFra, ekspedertTil );
+		log.info("Kaller dokarkiv med ekspedertFra={}, ekspedertTil={}", ekspedertFra, ekspedertTil);
 
 		String[] journalposter = webClient.get()
 				.uri(uriBuilder -> uriBuilder
@@ -74,7 +61,7 @@ public class DokarkivConsumer {
 				.doOnError(this::handleError)
 				.block();
 
-		if(journalposter != null && journalposter.length > 0){
+		if (journalposter != null && journalposter.length > 0) {
 			return Arrays.stream(journalposter).toList();
 		} else {
 			return Collections.emptyList();
@@ -82,7 +69,6 @@ public class DokarkivConsumer {
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "bulkOppdaterJournalpostDistribusjonsInfo"})
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
@@ -96,13 +82,12 @@ public class DokarkivConsumer {
 	}
 
 	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	@Monitor(value = DOK_REQUEST, extraTags = {"process_code", "oppdaterDistribusjonsinfo"})
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
 		log.info(String.format("Sdist006 oppdaterer distribusjonsinfo for journalpost=%s.", journalpostId));
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
-						.path(JOURNALPOST_API_JOURNALPOST_URL +"/{journalpostId}/oppdaterDistribusjonsinfo")
+						.path(JOURNALPOST_API_JOURNALPOST_URL + "/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
