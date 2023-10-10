@@ -82,14 +82,14 @@ public class JiraService {
     private void validateInput(IssueInput issueInput) {
         if (!isGyldigInput(issueInput)) {
             log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
-                    issueInput.fields().project().key(), issueInput.fields().issuetype().name());
+                    issueInput.fields().project().getKey(), issueInput.fields().issuetype().name());
             throw new JiraFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
-                    issueInput.fields().project().key(), issueInput.fields().project().name()));
+                    issueInput.fields().project().getKey(), issueInput.fields().project().getName()));
         }
     }
 
     private boolean isGyldigInput(IssueInput issueInput) {
-        return !issueInput.fields().project().key().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
+        return !issueInput.fields().project().getKey().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
     }
 
     private boolean isFilExistOgNotNull(File fil) {
