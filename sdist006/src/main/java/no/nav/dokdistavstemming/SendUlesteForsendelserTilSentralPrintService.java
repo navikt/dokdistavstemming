@@ -36,7 +36,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final int ANTALL_DAGER_TILBAKE_MAX = 5;
 	private final int ANTALL_TIMER_TILBAKE_MIN = 40;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer,
+														DokarkivConsumer dokarkivConsumer,
+														DistribuerTilSentralPrintMQService distribuerTilSentralPrintService,
+														KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;

@@ -10,7 +10,6 @@ import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.utils.OppretteJiraSakRequestUtil;
 import org.slf4j.MDC;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,6 +18,7 @@ import java.net.URL;
 
 import static java.lang.String.format;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_REQUEST_ID;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Component
 @Slf4j
@@ -40,7 +40,7 @@ public class JiraService {
 			log.info("Fant ingen avvik fra dokumentdistribusjon (rdist002) og sdist002 kan ikke opprette Jira-sak");
 			return JiraSakResponseTo.builder()
 					.message("Ingen filer og kan ikke opprette jira-sak")
-					.httpStatusCode(HttpStatus.NO_CONTENT.value())
+					.httpStatusCode(NO_CONTENT.value())
 					.build();
 		}
 
@@ -79,14 +79,14 @@ public class JiraService {
 	private void validateInput(IssueInput issueInput) {
 		if (!isGyldigInput(issueInput)) {
 			log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
-					issueInput.fields().project().getKey(), issueInput.fields().issuetype().name());
+					issueInput.fields().project().key(), issueInput.fields().issuetype().name());
 			throw new JiraFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
-					issueInput.fields().project().getKey(), issueInput.fields().project().getName()));
+					issueInput.fields().project().key(), issueInput.fields().project().name()));
 		}
 	}
 
 	private boolean isGyldigInput(IssueInput issueInput) {
-		return !issueInput.fields().project().getKey().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
+		return !issueInput.fields().project().key().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {

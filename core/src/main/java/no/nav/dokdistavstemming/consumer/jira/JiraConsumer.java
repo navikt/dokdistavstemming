@@ -30,6 +30,7 @@ import java.io.File;
 import java.time.Duration;
 
 import static java.lang.String.format;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Component
@@ -59,7 +60,7 @@ public class JiraConsumer {
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue opprettJiraSak(@Valid @NotNull IssueInput issueInputRequest) {
-		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 
 		try {
 			return restTemplate.exchange(issueBaseUri, HttpMethod.POST, new HttpEntity<>(issueInputRequest, headers), Issue.class).getBody();
@@ -110,7 +111,7 @@ public class JiraConsumer {
 			throw new IllegalArgumentException("Kan ikke hente Jira-prosjekt. Project-key er null");
 		}
 
-		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 		String url = format("%s/%s", projectBaseUri, projectKey);
 
 		try {
@@ -128,7 +129,7 @@ public class JiraConsumer {
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue hentIssue(final String sakKey) {
-		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 		String url = format("%s/%s", issueBaseUri, sakKey);
 
 		try {
@@ -146,7 +147,7 @@ public class JiraConsumer {
 
 	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue oppdaterStatus(final String key, @Valid @NotNull JiraTransition transition) {
-		HttpHeaders headers = createSecurityHeaders(MediaType.APPLICATION_JSON);
+		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 		String url = format("%s/%s%s", issueBaseUri, key, TRANSITIONS);
 
 		try {

@@ -1,7 +1,6 @@
 package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.azure.AzureConfig;
-import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
@@ -27,7 +26,6 @@ import static java.lang.System.setProperty;
 @Import(value = {
 		WebClientConfig.class,
 		Sdist002ScheduleConfig.class,
-		AvstemForsendelseConfig.class,
 		CoreConfig.class,
 		Sdist004Scheduler.class,
 		Sdist006Scheduler.class

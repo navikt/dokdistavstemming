@@ -1,25 +1,21 @@
 package no.nav.dokdistavstemming.consumer.jira.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Project {
-	private String expand;
-	private String self;
-	private String id;
-	private String key;
-	private String describtion;
-	private String name;
-	private String url;
-	private List<Component> components;
-	private List<IssueType> issueTypes;
-	private List<Version> versions;
+public record Project(String expand, String self,
+					  String id, String key, String description,
+					  String name, String url,
+					  List<Component> components, List<IssueType> issueTypes,
+					  List<Version> versions) {
+
+	public Project addComponent(List<Component> components) {
+		if (!components.isEmpty()) {
+			return new Project(expand(), self(), id(), key(), description(), name(), url(), components, issueTypes(), versions());
+		}
+		return new Project(expand(), self(), id(), key(), description(), name(), url(), components(), issueTypes(), versions());
+	}
+
 }

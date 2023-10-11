@@ -1,6 +1,6 @@
 package no.nav.dokdistavstemming.sdist002.serviceimp;
 
-import no.nav.dokdistavstemming.config.AvstemForsendelseConfig;
+import no.nav.dokdistavstemming.CoreConfig;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.sdist002.CSVProdusere;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ContextConfiguration(classes = {AvstemForsendelseConfig.class})
+@ContextConfiguration(classes = {CoreConfig.class})
 @ExtendWith(SpringExtension.class)
 class CSVProdusereImplTest {
 

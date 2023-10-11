@@ -22,12 +22,12 @@ public class OppretteJiraSakRequestUtil {
 
 	public static IssueInput createJiraSaksRequest(Project project, String title, int avvikSize) {
 
-		List<Component> componenter = project.getComponents().stream()
+		List<Component> componenter = project.components().stream()
 				.filter(dokdistComp -> dokdistComp.name().equalsIgnoreCase("Dokumentdistribusjon"))
 				.toList();
-		project.setComponents(componenter);
+		project.addComponent(componenter);
 
-		IssueType issueType = project.getIssueTypes().stream()
+		IssueType issueType = project.issueTypes().stream()
 				.filter(issueType1 -> "Oppgave".equals(issueType1.name()))
 				.findFirst()
 				.orElse(null);
