@@ -9,234 +9,9 @@
       "name" : "Team Dokument",
       "url" : null,
       "components" : [ {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26140",
-        "id" : "26140",
-        "name" : "Brevserver",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26141",
-        "id" : "26141",
-        "name" : "Distribusjonsvarsel",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26142",
-        "id" : "26142",
-        "name" : "dokarkiv",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26143",
-        "id" : "26143",
-        "name" : "dokdistkanal",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26144",
-        "id" : "26144",
-        "name" : "Dokkat",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26145",
-        "id" : "26145",
-        "name" : "Dokkonv",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26146",
-        "id" : "26146",
-        "name" : "Dokmot",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26147",
-        "id" : "26147",
-        "name" : "Dokmotaltinn",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26148",
-        "id" : "26148",
-        "name" : "Dokmotfordeling",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26149",
-        "id" : "26149",
-        "name" : "Dokmotinngaaende",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26150",
-        "id" : "26150",
-        "name" : "Dokmotsed",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26151",
-        "id" : "26151",
-        "name" : "Dokopp",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26152",
-        "id" : "26152",
-        "name" : "Dokprod",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26153",
-        "id" : "26153",
-        "name" : "Dokprodbatch",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
         "self" : "https://jira-q1.adeo.no/rest/api/2/component/26154",
         "id" : "26154",
         "name" : "Dokumentdistribusjon",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26155",
-        "id" : "26155",
-        "name" : "Dokumentmal Exstream",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26156",
-        "id" : "26156",
-        "name" : "Dokumentmal Metaforce",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26157",
-        "id" : "26157",
-        "name" : "Inn-meta-dok",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26158",
-        "id" : "26158",
-        "name" : "Inn-prod-dok",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26159",
-        "id" : "26159",
-        "name" : "Joark",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26160",
-        "id" : "26160",
-        "name" : "Oppgavevarsel",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26161",
-        "id" : "26161",
-        "name" : "regoppslag",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26162",
-        "id" : "26162",
-        "name" : "Sikkerhetsnivaa",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26163",
-        "id" : "26163",
-        "name" : "Skanningmottak",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26164",
-        "id" : "26164",
-        "name" : "Varsel",
-        "description" : null,
-        "lead" : null,
-        "displayName" : null,
-        "active" : null,
-        "isAssigneeTypeValid" : false
-      }, {
-        "self" : "https://jira-q1.adeo.no/rest/api/2/component/26165",
-        "id" : "26165",
-        "name" : "Varseloppgave",
         "description" : null,
         "lead" : null,
         "displayName" : null,
@@ -701,7 +476,7 @@
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",
-      "description" : "En oppgave som må utføres.",
+      "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
       "iconUrl" : "https://jira-q1.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
       "name" : "Oppgave",
       "subtask" : false,
@@ -715,7 +490,9 @@
       "name" : "srvjiradokdistavstemming",
       "self" : null
     },
-    "priority" : null,
+    "priority" : {
+      "name" : "Viktig"
+    },
     "description" : "Se vedlegg for oversikt over 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
     "labels" : [ "dokumentdistribusjon_avvik" ],
     "status" : null

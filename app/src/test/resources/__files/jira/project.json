@@ -1,0 +1,52 @@
+{
+  "expand": "description,lead,url,projectKeys",
+  "self": "https://jira.adeo.no/rest/api/2/project/19954",
+  "id": "19954",
+  "key": "MMA",
+  "description": "",
+  "lead": {
+    "self": "https://jira.adeo.no/rest/api/2/user?username=B100881",
+    "key": "b100881",
+    "name": "B100881",
+    "displayName": "Boris Berger",
+    "active": true
+  },
+  "components": [
+    {
+      "self": "https://jira.adeo.no/rest/api/2/component/26794",
+      "id": "26794",
+      "name": "Dokumentdistribusjon",
+      "isAssigneeTypeValid": false
+    },
+  ],
+  "issueTypes": [
+    {
+      "self": "https://jira.adeo.no/rest/api/2/issuetype/10901",
+      "id": "10901",
+      "description": "En oppgave som må utføres.",
+      "iconUrl": "https://jira.adeo.no/secure/viewavatar?size=xsmall&avatarId=18108&avatarType=issuetype",
+      "name": "Oppgave",
+      "subtask": false,
+      "avatarId": 18108
+    }
+  ],
+  "assigneeType": "UNASSIGNED",
+  "versions": [
+    {
+      "self": "https://jira.adeo.no/rest/api/2/version/36093",
+      "id": "36093",
+      "name": "dokumentdistribusjon: 8.2.2",
+      "archived": false,
+      "released": false,
+      "projectId": 19954
+    }
+  ],
+  "name": "Team Dokumentløsninger",
+  "projectCategory": {
+    "self": "https://jira.adeo.no/rest/api/2/projectCategory/10791",
+    "id": "10791",
+    "name": "Utvikling"
+  },
+  "projectTypeKey": "software",
+  "archived": false
+}

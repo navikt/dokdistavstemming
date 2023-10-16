@@ -58,7 +58,7 @@ public class JiraConsumer {
 				.build();
 	}
 
-	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(retryFor = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue opprettJiraSak(@Valid @NotNull IssueInput issueInputRequest) {
 		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 
@@ -75,7 +75,7 @@ public class JiraConsumer {
 		}
 	}
 
-	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(retryFor = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public String leggTilVedlegg(String key, @NotNull File file) {
 		if (key == null) {
 			throw new IllegalArgumentException("Kan ikke legge til vedlegg på Jira-saken. Prosjekt-key er null.");
@@ -104,7 +104,7 @@ public class JiraConsumer {
 		}
 	}
 
-	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(retryFor = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Project hentProsjekt(String projectKey) {
 
 		if (projectKey == null) {
@@ -127,7 +127,7 @@ public class JiraConsumer {
 		}
 	}
 
-	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(retryFor = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue hentIssue(final String sakKey) {
 		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 		String url = format("%s/%s", issueBaseUri, sakKey);
@@ -145,7 +145,7 @@ public class JiraConsumer {
 		}
 	}
 
-	@Retryable(include = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
+	@Retryable(retryFor = JiraTechnicalException.class, backoff = @Backoff(delay = 1000, multiplier = 2))
 	public Issue oppdaterStatus(final String key, @Valid @NotNull JiraTransition transition) {
 		HttpHeaders headers = createSecurityHeaders(APPLICATION_JSON);
 		String url = format("%s/%s%s", issueBaseUri, key, TRANSITIONS);

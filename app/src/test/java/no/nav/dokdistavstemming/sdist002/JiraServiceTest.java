@@ -38,6 +38,7 @@ class JiraServiceTest {
 
 	private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
 	private static final String ATTACHMENT_URL = "https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments";
+	private static final String PROJECT_KEY = "MMA";
 
 	@Mock
 	private JiraConsumer jiraConsumer;
@@ -100,19 +101,29 @@ class JiraServiceTest {
 
 	private Issue createIssue() {
 
-		Component component = new Component("https://jira-q1.adeo.no/rest/api/2/component/26154", "26154",
-				"Dokumentdistribusjon", null, null, null, false, true);
+		Component component = Component.builder()
+				.id("26154")
+				.name("Dokumentdistribusjon")
+				.self("https://jira-q1.adeo.no/rest/api/2/component/26154")
+				.build();
 
 		Reporter reporter = new Reporter("srvjiradokdistavstemming", "srvjiradokdistavstemming",
 				"https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
 		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null, null,
 				"Klar for arbeid", "26154", null);
 
-		Project project = new Project(null, "https://jira-q1.adeo.no/rest/api/2/issue/534999", "MMA-134",
-				"MMA", null, null, null, singletonList(component), null, null);
-		IssueFields issueFields = new IssueFields(project, "", IssueType.builder().build(),
-				singletonList(component), reporter, null, null, null, null, null, status);
+		Project project = Project.builder().self("https://jira-q1.adeo.no/rest/api/2/issue/534999")
+				.id("MMA-134")
+				.key("MMA")
+				.components(singletonList(component))
+				.build();
 
+		IssueFields issueFields = IssueFields.builder()
+				.project(project)
+				.status(status)
+				.components(singletonList(component))
+				.reporter(reporter)
+				.build();
 
 		return new Issue(null, "534999", "https://jira-q1.adeo.no/rest/api/2/issue/534999",
 				"MMA-134", issueFields, status);
@@ -120,17 +131,28 @@ class JiraServiceTest {
 
 	private Issue updateIssue() {
 
+		Component component = Component.builder()
+				.id("26154")
+				.name("Dokumentdistribusjon")
+				.self("https://jira-q1.adeo.no/rest/api/2/component/26154")
+				.build();
 
-		Component component = new Component("https://jira-q1.adeo.no/rest/api/2/component/26154",
-				"26154", "Dokumentdistribusjon", null, null, null, true, false);
 		Reporter reporter = new Reporter("srvjiradokdistavstemming", "srvjiradokdistavstemming", "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
 
 		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null, null, "Klar for arbeid", "26154", null);
 
-		Project project = new Project(null, null, null, "MMA", null, null, null, singletonList(component), null, null);
-		IssueFields issueFields = new IssueFields(project, "", IssueType.builder().build(),
-				singletonList(component), reporter, null, null, null, null, null, status);
+		Project project = Project.builder()
+				.key(PROJECT_KEY)
+				.components(singletonList(component))
+				.build();
 
+		IssueFields issueFields = IssueFields.builder()
+				.components(singletonList(component))
+				.project(project)
+				.summary("")
+				.status(status)
+				.reporter(reporter)
+				.build();
 
 		return new Issue(null, "534999", "https://jira-q1.adeo.no/rest/api/2/issue/534999",
 				"MMA-134", issueFields, status);

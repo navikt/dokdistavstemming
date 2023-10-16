@@ -25,14 +25,13 @@ public class OppretteJiraSakRequestUtil {
 		List<Component> componenter = project.components().stream()
 				.filter(dokdistComp -> dokdistComp.name().equalsIgnoreCase("Dokumentdistribusjon"))
 				.toList();
-		project.addComponent(componenter);
+		Project newProject = project.addComponent(componenter);
 
-		IssueType issueType = project.issueTypes().stream()
+		IssueType newIssueType = project.issueTypes().stream()
 				.filter(issueType1 -> "Oppgave".equals(issueType1.name()))
+				.map(issueType -> issueType.withDescription(DESCRIPTION))
 				.findFirst()
 				.orElse(null);
-
-		issueType.withDescription(DESCRIPTION);
 
 		String[] labels = {"dokumentdistribusjon_avvik"};
 		Reporter reporter = new Reporter("srvjiradokdistavstemming", "srvjiradokdistavstemming", null);
@@ -44,14 +43,14 @@ public class OppretteJiraSakRequestUtil {
 		custemField.put("customfield_20211", customObject);
 
 		IssueFields issueFields = IssueFields.builder()
-				.project(project)
-				.issuetype(issueType)
+				.project(newProject)
+				.issuetype(newIssueType)
 				.reporter(reporter)
+				.priority(priority)
 				.labels(labels)
 				.summary(String.format("Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering", title, avvikSize))
 				.description(String.format("Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.", avvikSize))
 				.build();
-
 		return new IssueInput(issueFields);
 	}
 }
