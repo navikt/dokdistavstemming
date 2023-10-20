@@ -32,9 +32,9 @@ public class JiraService {
 		this.jiraConsumer = jiraConsumer;
 	}
 
-	public JiraSakResponseTo oppretteMMAJiraSak(String distribusjonKanal, File fil, int size) {
+	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, File fil, int size) {
 
-		MDC.put(MDC_REQUEST_ID, "oppretteMMAJiraSak");
+		MDC.put(MDC_REQUEST_ID, "opprettJirasak");
 
 		if (!isFilExistOgNotNull(fil)) {
 			log.info("Fant ingen avvik fra dokumentdistribusjon (rdist002) og sdist002 kan ikke opprette Jira-sak");
@@ -51,12 +51,12 @@ public class JiraService {
 			log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
 
 			Issue issue = jiraConsumer.opprettJiraSak(issueInput);
-			jiraConsumer.leggTilVedlegg(issue.key(), fil);
-			log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.id(), issue.key(), issue.self());
+			jiraConsumer.leggTilVedlegg(issue.getKey(), fil);
+			log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf());
 			updateJiraStatus(issue);
 			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
-					.jiraSakKey(issue.key())
-					.message(format("%s%s/%s", getHostFraUrl(issue.self()), BROWSE, issue.key()))
+					.jiraSakKey(issue.getKey())
+					.message(format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
 
 			log.info("Sdist002 har opprettet Jira-sak med url={}", jiraSakResponseTo.getMessage());
@@ -71,22 +71,22 @@ public class JiraService {
 	}
 
 	private void updateJiraStatus(Issue issue) {
-		Issue updateIssue = jiraConsumer.oppdaterStatus(issue.key(), JiraTransition.builder()
+		Issue updateIssue = jiraConsumer.oppdaterStatus(issue.getKey(), JiraTransition.builder()
 				.transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
-		log.info("Har oppdatert Jira-sak med key={} til status={}", issue.key(), updateIssue.fields().status().name());
+		log.info("Har oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().name());
 	}
 
 	private void validateInput(IssueInput issueInput) {
 		if (!isGyldigInput(issueInput)) {
 			log.error("Ett eller flere nødvendige felter mangler eller er null. projectKey={}, saksTypeNavn={}",
-					issueInput.fields().project().key(), issueInput.fields().issuetype().name());
+					issueInput.fields().getProject().key(), issueInput.fields().getIssuetype().name());
 			throw new JiraFunctionalException(format("Bestilling kan ikke utføres. Nødvendige felter mangler eller er null. projectKey=%s, saksTypeNavn=%s",
-					issueInput.fields().project().key(), issueInput.fields().project().name()));
+					issueInput.fields().getProject().key(), issueInput.fields().getProject().name()));
 		}
 	}
 
 	private boolean isGyldigInput(IssueInput issueInput) {
-		return !issueInput.fields().project().key().isEmpty() && !issueInput.fields().issuetype().name().isEmpty();
+		return !issueInput.fields().getProject().key().isEmpty() && !issueInput.fields().getProject().name().isEmpty();
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {

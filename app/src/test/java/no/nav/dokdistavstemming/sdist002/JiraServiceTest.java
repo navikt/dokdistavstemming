@@ -46,11 +46,6 @@ class JiraServiceTest {
 	@InjectMocks
 	private JiraService jiraService;
 
-	@BeforeEach
-	public void setUp() {
-		jiraService = new JiraService(jiraConsumer);
-	}
-
 	@Test
 	public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
 		when(jiraConsumer.opprettJiraSak(any(IssueInput.class))).thenReturn(createIssue());
@@ -59,7 +54,7 @@ class JiraServiceTest {
 		File avvikFil = new File(new ClassPathResource("__files/csv/csvfil_print.csv").getFile().toString());
 		when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
 
 		verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
 		verify(jiraConsumer, times(1)).hentProsjekt(anyString());
@@ -74,7 +69,7 @@ class JiraServiceTest {
 		File avvikFil = new File(new ClassPathResource("__files/csv/dokdist1.csv").getFile().toString());
 		when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
 
 		verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
 		verify(jiraConsumer, times(1)).hentProsjekt(anyString());
@@ -84,16 +79,16 @@ class JiraServiceTest {
 	@Test
 	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() {
 		File avvikFil = new File("");
-		JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(DistribusjonKanalCode.PRINT.name(), avvikFil, 0);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 0);
 		assertThat(jiraSakResponseTo.getMessage(), is("Ingen filer og kan ikke opprette jira-sak"));
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(HttpStatus.NO_CONTENT.value()));
 	}
 
 	private Project createProject() {
 		Component component = new Component("https://jira-q1.adeo.no/rest/api/2/component/26154", "26154", "Dokumentdistribusjon",
-				null, null, null, false, false);
+				false);
 
-		IssueType issueType = new IssueType("https://jira.adeo.no/rest/api/2/issuetype/10901", "10901", "En oppgave som må utføres.", null, "Oppgave", false, null);
+		IssueType issueType = new IssueType("https://jira.adeo.no/rest/api/2/issuetype/10901", "10901", "En oppgave som må utføres.", "Oppgave", false);
 
 		return new Project("Project", "https://jira.adeo.no/rest/api/2/project/19377", "19954", "MMA",
 				null, "Team Dokumentløsninger", null, singletonList(component), singletonList(issueType), null);
@@ -106,10 +101,13 @@ class JiraServiceTest {
 				.name("Dokumentdistribusjon")
 				.self("https://jira-q1.adeo.no/rest/api/2/component/26154")
 				.build();
+		Reporter reporter = Reporter.builder()
+				.self("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming")
+				.name("srvjiradokdistavstemming")
+				.key("srvjiradokdistavstemming")
+				.build();
 
-		Reporter reporter = new Reporter("srvjiradokdistavstemming", "srvjiradokdistavstemming",
-				"https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
-		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null, null,
+		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null,
 				"Klar for arbeid", "26154", null);
 
 		Project project = Project.builder().self("https://jira-q1.adeo.no/rest/api/2/issue/534999")
@@ -121,7 +119,6 @@ class JiraServiceTest {
 		IssueFields issueFields = IssueFields.builder()
 				.project(project)
 				.status(status)
-				.components(singletonList(component))
 				.reporter(reporter)
 				.build();
 
@@ -137,9 +134,14 @@ class JiraServiceTest {
 				.self("https://jira-q1.adeo.no/rest/api/2/component/26154")
 				.build();
 
-		Reporter reporter = new Reporter("srvjiradokdistavstemming", "srvjiradokdistavstemming", "https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming");
+		Reporter reporter = Reporter.builder()
+				.self("https://jira-q1.adeo.no/rest/api/2/user?username=srvjiradokdistavstemming")
+				.name("srvjiradokdistavstemming")
+				.key("srvjiradokdistavstemming")
+				.build();
 
-		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null, null, "Klar for arbeid", "26154", null);
+
+		Status status = new Status("https://jira-q1.adeo.no/rest/api/2/status/26154", null, "Klar for arbeid", "26154", null);
 
 		Project project = Project.builder()
 				.key(PROJECT_KEY)
@@ -147,7 +149,6 @@ class JiraServiceTest {
 				.build();
 
 		IssueFields issueFields = IssueFields.builder()
-				.components(singletonList(component))
 				.project(project)
 				.summary("")
 				.status(status)

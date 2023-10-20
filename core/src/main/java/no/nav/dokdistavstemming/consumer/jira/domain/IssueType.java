@@ -6,13 +6,11 @@ import lombok.Builder;
 public record IssueType(String self,
 						String id,
 						String description,
-						String iconUrl,
 						String name,
-						Boolean subtask,
-						Integer avatarId) {
+						Boolean subtask) {
 
 
 	public IssueType withDescription(String description) {
-		return new IssueType(self(), id(), description, iconUrl(), name(), subtask(), avatarId());
+		return new IssueType(self(), id(), description, name(), subtask());
 	}
 }

@@ -57,7 +57,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         jiraHappyGetIssue();
         List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
         File fil = csvProdusere.oppretteCsvFil(result);
-        JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size());
+        JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(PRINT.name(), fil, result.size());
 
         assertThat(jiraSakResponseTo.getMessage(), is(JIRA_MESSAGE));
         assertThat(jiraSakResponseTo.getHttpStatusCode(), is(0));
@@ -78,7 +78,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         jiraHappyGetIssue();
         List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL);
         File fil = csvProdusere.oppretteCsvFil(result);
-        JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(E_HANDEL.name(), fil, result.size());
+        JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(E_HANDEL.name(), fil, result.size());
 
         assertThat(jiraSakResponseTo.getMessage(), is(JIRA_MESSAGE));
         assertThat(jiraSakResponseTo.getHttpStatusCode(), is(0));
@@ -99,7 +99,7 @@ public class OpprettJiraSakServiceIT extends AbstractIT {
         File fil = csvProdusere.oppretteCsvFil(result);
 
         var exception = assertThrows(JiraFunctionalException.class, () ->
-                jiraService.oppretteMMAJiraSak(PRINT.name(), fil, result.size()));
+                jiraService.opprettJirasak(PRINT.name(), fil, result.size()));
 
         assertThat(exception.getMessage(), containsString("status=400 BAD_REQUEST, feilmelding=400 Bad Request"));
         assertTrue(fil.exists());
