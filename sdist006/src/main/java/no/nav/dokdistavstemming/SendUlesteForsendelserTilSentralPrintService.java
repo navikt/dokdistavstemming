@@ -28,13 +28,13 @@ import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil
 @Slf4j
 @Component
 public class SendUlesteForsendelserTilSentralPrintService {
+	private static final int ANTALL_DAGER_TILBAKE_MAX = 13;
+	private static final int ANTALL_TIMER_TILBAKE_MIN = 40;
 
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
-	private final int ANTALL_DAGER_TILBAKE_MAX = 5;
-	private final int ANTALL_TIMER_TILBAKE_MIN = 40;
 
 	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
