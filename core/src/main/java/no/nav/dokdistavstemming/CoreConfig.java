@@ -1,7 +1,5 @@
 package no.nav.dokdistavstemming;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.metrics.DokMonitoringAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
@@ -12,12 +10,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class CoreConfig {
 
 	private static final int MAX_POOL_SIZE = 10;
-
-
-	@Bean
-	public DokMonitoringAspect dokMonitoringAspect(MeterRegistry meterRegistry) {
-		return new DokMonitoringAspect(meterRegistry);
-	}
 
 	@Bean
 	public ThreadPoolTaskExecutor poolTaskExecutor() {

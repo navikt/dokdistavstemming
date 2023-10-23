@@ -36,7 +36,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer, DokarkivConsumer dokarkivConsumer, DistribuerTilSentralPrintMQService distribuerTilSentralPrintService, KafkaEventProducer kafkaEventProducer) {
+	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer,
+														DokarkivConsumer dokarkivConsumer,
+														DistribuerTilSentralPrintMQService distribuerTilSentralPrintService,
+														KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;

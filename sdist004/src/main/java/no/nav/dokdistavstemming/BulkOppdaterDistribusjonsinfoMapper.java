@@ -21,6 +21,7 @@ import java.util.Objects;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.valueOf;
 import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -105,26 +106,14 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.toList();
 	}
 	private String mapUtsendingsKanalCode(String distKanal) {
-		DistribusjonKanalCode distribusjonKanalCode = DistribusjonKanalCode.valueOf(distKanal);
-		switch (distribusjonKanalCode) {
-			case SDP -> {
-				return UtsendingsKanalCode.SDP.name();
-			}
-			case DITTNAV -> {
-				return UtsendingsKanalCode.NAV_NO.name();
-			}
-			case PRINT -> {
-				return UtsendingsKanalCode.S.name();
-			}
-			case TRYGDERETTEN -> {
-				return UtsendingsKanalCode.TRYGDERETTEN.name();
-			}
-			case DPVT -> {
-				return UtsendingsKanalCode.DPVT.name();
-			}
-			default -> {
-				return null;
-			}
-		}
+		DistribusjonKanalCode distribusjonKanalCode = valueOf(distKanal);
+		return switch (distribusjonKanalCode) {
+			case SDP -> UtsendingsKanalCode.SDP.name();
+			case DITTNAV -> UtsendingsKanalCode.NAV_NO.name();
+			case PRINT -> UtsendingsKanalCode.S.name();
+			case TRYGDERETTEN -> UtsendingsKanalCode.TRYGDERETTEN.name();
+			case DPVT -> UtsendingsKanalCode.DPVT.name();
+			default -> null;
+		};
 	}
 }

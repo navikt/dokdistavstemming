@@ -58,7 +58,7 @@ public class Sdist002Service {
 					}
 
 					File csvFil = csvProdusere.oppretteCsvFil(dokumenter);
-					JiraSakResponseTo jiraSakResponseTo = jiraService.oppretteMMAJiraSak(distribusjonskanal.name(), csvFil, dokumenter.size());
+					JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
 	}

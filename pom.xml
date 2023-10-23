@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.16</version>
+		<version>3.1.4</version>
 	</parent>
 
 	<groupId>no.nav.dokdistavstemming</groupId>
@@ -23,13 +23,11 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<pep1-jira-client.version>0.5</pep1-jira-client.version>
 
-		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<resilience4j.version>1.7.1</resilience4j.version>
-		<spring-cloud-contract-wiremock.version>3.1.8</spring-cloud-contract-wiremock.version>
-		<wmq.version>9.3.3.1</wmq.version>
-		<camel.version>3.21.1</camel.version>
+		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+		<spring-cloud-wiremock.version>4.0.3</spring-cloud-wiremock.version>
+		<ibm.mq.client.version>9.3.3.1</ibm.mq.client.version>
+		<camel.version>4.0.0</camel.version>
 		<guava.version>32.1.2-jre</guava.version>
 		<kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>08c0b2d2</teamdokumenthandtering-avro-schemas.version>
@@ -61,12 +59,6 @@
 				<version>${logstash-logback-encoder.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.pep1.jira</groupId>
-				<artifactId>jira-spring-boot-client-starter</artifactId>
-				<version>${pep1-jira-client.version}</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
@@ -75,8 +67,8 @@
 			<!-- mq -->
 			<dependency>
 				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mq.allclient</artifactId>
-				<version>${wmq.version}</version>
+				<artifactId>com.ibm.mq.jakarta.client</artifactId>
+				<version>${ibm.mq.client.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
@@ -102,7 +94,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-wiremock</artifactId>
-				<version>${spring-cloud-contract-wiremock.version}</version>
+				<version>${spring-cloud-wiremock.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

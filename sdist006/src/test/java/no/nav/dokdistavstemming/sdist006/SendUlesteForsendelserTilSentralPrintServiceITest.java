@@ -1,6 +1,8 @@
 package no.nav.dokdistavstemming.sdist006;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+import jakarta.jms.Queue;
+import jakarta.xml.bind.JAXBElement;
 import no.nav.dokdistavstemming.SendUlesteForsendelserTilSentralPrintService;
 import no.nav.dokdistavstemming.config.ApplicationTestConfig;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
@@ -22,10 +24,9 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.MimeTypeUtils;
 
-import javax.jms.Queue;
-import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,7 +50,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.dokdistavstemming.sdist006.SendUlesteForsendelserTilSentralPrintServiceITest.RENOTIFIKASJON_STOPP_TOPIC;
@@ -252,7 +252,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	}
 
 	public List<DoknotifikasjonStopp> getAllCurrentRecordsOnTopicRenotifikasjonStopp() {
-		return StreamSupport.stream(KafkaTestUtils.getRecords(consumer, ofSeconds(2).toMillis()).records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
+		return StreamSupport.stream(KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(2))
+						.records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
 				.map(ConsumerRecord::value)
 				.collect(Collectors.toList());
 	}

@@ -42,7 +42,7 @@ public class AzureToken {
 	}
 
 
-	@Retryable(include = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Cacheable(AZURE_TOKEN_CACHE)
 	public String accessToken(String scope) {
 		return fetchAccessToken(scope);
