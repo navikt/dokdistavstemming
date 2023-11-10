@@ -1,0 +1,77 @@
+package no.nav.dokdistavstemming.sdist002;
+
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
+import no.nav.dokdistavstemming.sdist002.CSVProdusere;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+
+
+@Component
+@Slf4j
+public class CSVProdusereImpl implements CSVProdusere {
+
+	private static final String CSV_FILTER_FIL = "dokdistcvs";
+	private static final String BASE_TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
+
+	public File oppretteCsvFil(List<UekspedertForsendelseDokument> uekspedertForsendelseDokument) {
+		File produced = null;
+
+		HashSet<String> kolonneNavn = new HashSet<>();
+		CsvMapper csvMapper = new CsvMapper();
+		CsvSchema csvSchema = csvMapper.schemaFor(UekspedertForsendelseDokument.class)
+				.withHeader()
+				.withColumnSeparator(';').sortedBy("forsendelseId");
+
+		for (CsvSchema.Column kolonne : csvSchema) {
+			kolonneNavn.add(kolonne.getName());
+		}
+
+		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
+		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+		String distribusjonKanal = uekspedertForsendelseDokument.get(0).getDistribusjonKanal();
+
+		try {
+			produced = new File(BASE_TMP_DIRECTORY + "/dokdistavstemming-" + distribusjonKanal + "-" + localDate + ".csv");
+			FileOutputStream fos = new FileOutputStream(produced);
+
+			log.info("Konverterer dokumentliste til CSV-fil med filnavn={}", produced.getName());
+
+			csvMapper.setFilterProvider(filterProvider);
+			csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
+			ObjectWriter objectWriter = csvMapper.writer(csvSchema);
+			objectWriter.writeValue(fos, uekspedertForsendelseDokument);
+
+		} catch (IOException e) {
+			try {
+				throw new IOException(String.format("Ugyldig input. Kan ikke opprette CSV-fil med feilmelding=%s", e.getMessage()));
+			} catch (IOException ex) {
+				log.warn(String.format("feilmelding=%s", ex.getMessage()));
+			}
+		}
+		return produced;
+	}
+
+	private static class CsvAnnotationIntrospector extends JacksonAnnotationIntrospector {
+		@Override
+		public Object findFilterId(Annotated a) {
+			return CSV_FILTER_FIL;
+		}
+	}
+}

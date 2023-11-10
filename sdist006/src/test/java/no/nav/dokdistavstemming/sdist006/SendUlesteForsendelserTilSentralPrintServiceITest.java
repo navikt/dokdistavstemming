@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.sdist006;
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import jakarta.jms.Queue;
 import jakarta.xml.bind.JAXBElement;
 import no.nav.dokdistavstemming.SendUlesteForsendelserTilSentralPrintService;
@@ -8,7 +7,6 @@ import no.nav.dokdistavstemming.config.ApplicationTestConfig;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +47,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.dokdistavstemming.sdist006.SendUlesteForsendelserTilSentralPrintServiceITest.RENOTIFIKASJON_STOPP_TOPIC;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_INSTANCE_ID_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,11 +104,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	public EmbeddedKafkaBroker kafkaEmbedded;
-
-	@BeforeEach
-	public void setUpClass() {
-		this.setUpConsumerForTopicNotifikasjonStopp();
-	}
 
 	@BeforeEach
 	void setUp() {
@@ -252,21 +250,24 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	}
 
 	public List<DoknotifikasjonStopp> getAllCurrentRecordsOnTopicRenotifikasjonStopp() {
+		Consumer<String, DoknotifikasjonStopp> consumer = setUpConsumerForTopicNotifikasjonStopp();
 		return StreamSupport.stream(KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(2))
 						.records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
 				.map(ConsumerRecord::value)
 				.collect(Collectors.toList());
 	}
 
-	public void setUpConsumerForTopicNotifikasjonStopp() {
+	public Consumer<String, DoknotifikasjonStopp> setUpConsumerForTopicNotifikasjonStopp() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("test", "true", kafkaEmbedded);
-		consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-		consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
-		consumerProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "mock://localhost");
-		consumerProps.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
+		consumerProps.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+		consumerProps.put(VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
+		consumerProps.put(SCHEMA_REGISTRY_URL_CONFIG, "mock://localhost");
+		consumerProps.put(SPECIFIC_AVRO_READER_CONFIG, "true");
+		consumerProps.put(GROUP_INSTANCE_ID_CONFIG, "itest-group-instance");
 
-		consumer = new DefaultKafkaConsumerFactory<String, DoknotifikasjonStopp>(consumerProps).createConsumer();
+		var consumer = new DefaultKafkaConsumerFactory<String, DoknotifikasjonStopp>(consumerProps).createConsumer();
 		consumer.subscribe(singletonList(RENOTIFIKASJON_STOPP_TOPIC));
+		return consumer;
 	}
 
 	public static String classpathToString(String path) throws IOException {

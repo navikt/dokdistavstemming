@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.1.5</version>
 	</parent>
 
 	<groupId>no.nav.dokdistavstemming</groupId>
@@ -17,6 +17,7 @@
 	<modules>
 		<module>app</module>
 		<module>core</module>
+		<module>sdist002</module>
 		<module>sdist004</module>
 		<module>sdist006</module>
 	</modules>
@@ -25,12 +26,12 @@
 		<java.version>17</java.version>
 
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
-		<spring-cloud-wiremock.version>4.0.3</spring-cloud-wiremock.version>
 		<ibm.mq.client.version>9.3.3.1</ibm.mq.client.version>
-		<camel.version>4.0.0</camel.version>
+		<camel.version>4.1.0</camel.version>
 		<guava.version>32.1.2-jre</guava.version>
-		<kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
+		<kafka-avro-serializer.version>7.5.1</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>08c0b2d2</teamdokumenthandtering-avro-schemas.version>
+		<spring-cloud-wiremock.version>4.0.4</spring-cloud-wiremock.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -41,6 +42,11 @@
 			<dependency>
 				<groupId>no.nav.dokdistavstemming</groupId>
 				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.dokdistavstemming</groupId>
+				<artifactId>sdist002</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

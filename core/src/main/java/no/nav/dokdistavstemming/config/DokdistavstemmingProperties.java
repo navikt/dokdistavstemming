@@ -14,8 +14,8 @@ import org.springframework.validation.annotation.Validated;
 public class DokdistavstemmingProperties {
 
 	private final Endpoints endpoints = new Endpoints();
-	private final Sdist002Properties sdist002 = new Sdist002Properties();
 	private final JiraUser jira = new JiraUser();
+	private final Sdist002Properties sdist002 = new Sdist002Properties();
 	private final Sdist004Properties sdist004 = new Sdist004Properties();
 
 	@Data
