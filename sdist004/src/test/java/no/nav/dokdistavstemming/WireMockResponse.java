@@ -1,13 +1,8 @@
-package no.nav.dokdistavstemming.sdist004;
+package no.nav.dokdistavstemming;
 
-import io.micrometer.core.instrument.util.IOUtils;
 import org.apache.http.HttpHeaders;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MimeTypeUtils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -25,11 +20,11 @@ public class WireMockResponse {
 	public static final String AVSTEM_EKSPEDERTE_FORSENDELSER_URL = "/administrerforsendelse/avstemekspederteforsendelser";
 	public static final String JOURNALPOST_API_URL = "/rest/journalpostapi/v1/bulkOppdaterDistribusjonsinfo";
 
-	public static void getEkspederteForsendelser(String filePath) throws Exception {
+	public static void getEkspederteForsendelser(String filename) {
 		stubFor(get(urlMatching(HENT_EKSPEDERTE_FORSENDELSER_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(classpathToString(filePath))));
+						.withBodyFile("rdist001/" + filename)));
 	}
 
 	public static void oppdaterAvstemArkivForsendelseInfo() {
@@ -38,11 +33,11 @@ public class WireMockResponse {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 	}
 
-	public static void oppdaterJournalpost(String path) throws IOException {
+	public static void oppdaterJournalpost(String filename) {
 		stubFor(post(urlMatching(JOURNALPOST_API_URL))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBody(classpathToString(path))));
+						.withBodyFile("journalpost/" + filename)));
 	}
 
 	public static void oppdaterJournalpostFeil(HttpStatus status) {
@@ -59,7 +54,4 @@ public class WireMockResponse {
 						.withBodyFile("azure/token_response.json")));
 	}
 
-	static String classpathToString(String path) throws IOException {
-		return IOUtils.toString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);
-	}
 }
