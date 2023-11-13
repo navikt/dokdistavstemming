@@ -1,0 +1,80 @@
+{
+  "uekspederteForsendelser": [
+    {
+      "distribusjonId": "39df91f9-173b-4bf4-89ec-2a9577f227fb",
+      "dokumenter": [
+        {
+          "forsendelseId": "5265785",
+          "dokumentId": "39df91f9-173b-4bf4-89ec-2a9577f227fb",
+          "dokumentStatus": "OVERSENDT",
+          "konversasjonId": "ODK-22900470",
+          "bestillendeFagsystem": "OEBS",
+          "fagomradeCode": "OKO",
+          "journalpostId": "23017",
+          "brevProduksjonApplikasjon": "OEBS_HANDEL"
+        }
+      ],
+      "distribusjonKanal": "SDP",
+      "distribusjonStatus": "OVERSENDT",
+      "opprettetDato": "2020-01-14 13:00:48",
+      "distribusjonDato": "2020-01-14 13:00:48"
+    },
+    {
+      "distribusjonId": "186439b5-babc-4912-b1fa-54bded4e4bba",
+      "dokumenter": [
+        {
+          "forsendelseId": "5267785",
+          "dokumentId": "186439b5-babc-4912-b1fa-54bded4e4bba",
+          "dokumentStatus": "OVERSENDT",
+          "konversasjonId": "O-42330",
+          "bestillendeFagsystem": "OEBS",
+          "fagomradeCode": "OKO",
+          "journalpostId": "33058",
+          "brevProduksjonApplikasjon": "OEBS_HANDEL"
+        }
+      ],
+      "distribusjonKanal": "SDP",
+      "distribusjonStatus": "OVERSENDT",
+      "opprettetDato": "2020-02-05 15:19:52",
+      "distribusjonDato": "2020-02-05 15:19:52"
+    },
+    {
+      "distribusjonId": "445d98dd-8b81-4502-b2c4-b5e57c587b24",
+      "dokumenter": [
+        {
+          "forsendelseId": "5267786",
+          "dokumentId": "445d98dd-8b81-4502-b2c4-b5e57c587b24",
+          "dokumentStatus": "OVERSENDT",
+          "konversasjonId": "O-42340",
+          "bestillendeFagsystem": "OEBS",
+          "fagomradeCode": "OKO",
+          "journalpostId": "33059",
+          "brevProduksjonApplikasjon": "OEBS_HANDEL"
+        }
+      ],
+      "distribusjonKanal": "SDP",
+      "distribusjonStatus": "OVERSENDT",
+      "opprettetDato": "2020-02-06 10:29:16",
+      "distribusjonDato": "2020-02-06 10:29:16"
+    },
+    {
+      "distribusjonId": "531350f8-d2ec-4019-94b2-265fb8797bcd",
+      "dokumenter": [
+        {
+          "forsendelseId": "5269785",
+          "dokumentId": "531350f8-d2ec-4019-94b2-265fb8797bcd",
+          "dokumentStatus": "OVERSENDT",
+          "konversasjonId": "O-42361",
+          "bestillendeFagsystem": "OEBS",
+          "fagomradeCode": "OKO",
+          "journalpostId": "33060",
+          "brevProduksjonApplikasjon": "OEBS_HANDEL"
+        }
+      ],
+      "distribusjonKanal": "SDP",
+      "distribusjonStatus": "OVERSENDT",
+      "opprettetDato": "2020-02-12 07:00:21",
+      "distribusjonDato": "2020-02-12 07:00:21"
+    }
+  ]
+}

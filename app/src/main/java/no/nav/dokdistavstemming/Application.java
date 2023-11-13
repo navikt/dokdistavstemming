@@ -5,7 +5,7 @@ import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
 import no.nav.dokdistavstemming.config.WebClientConfig;
-import no.nav.dokdistavstemming.scheduler.Sdist002ScheduleConfig;
+import no.nav.dokdistavstemming.sdist002.Sdist002Scheduler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,8 +25,8 @@ import static java.lang.System.setProperty;
 })
 @Import(value = {
 		WebClientConfig.class,
-		Sdist002ScheduleConfig.class,
 		CoreConfig.class,
+		Sdist002Scheduler.class,
 		Sdist004Scheduler.class,
 		Sdist006Scheduler.class
 })
