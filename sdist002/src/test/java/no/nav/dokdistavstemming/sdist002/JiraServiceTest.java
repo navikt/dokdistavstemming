@@ -78,7 +78,7 @@ class JiraServiceTest {
 	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() {
 		File avvikFil = new File("");
 		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 0);
-		assertThat(jiraSakResponseTo.getMessage(), is("Ingen filer og kan ikke opprette jira-sak"));
+		assertThat(jiraSakResponseTo.getMessage(), is("Kan ikke opprette Jira-sak. Fant ingen csv-fil"));
 		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(HttpStatus.NO_CONTENT.value()));
 	}
 

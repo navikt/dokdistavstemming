@@ -37,9 +37,9 @@ public class JiraService {
 		MDC.put(MDC_REQUEST_ID, "opprettJirasak");
 
 		if (!isFilExistOgNotNull(fil)) {
-			log.info("Fant ingen avvik fra dokumentdistribusjon (rdist002) og sdist002 kan ikke opprette Jira-sak");
+			log.error("sdist002 kan ikke opprette Jira-sak. Fant ingen csv-fil. Må undersøkes av utvikler");
 			return JiraSakResponseTo.builder()
-					.message("Ingen filer og kan ikke opprette jira-sak")
+					.message("Kan ikke opprette Jira-sak. Fant ingen csv-fil")
 					.httpStatusCode(NO_CONTENT.value())
 					.build();
 		}
@@ -90,7 +90,7 @@ public class JiraService {
 	}
 
 	private boolean isFilExistOgNotNull(File fil) {
-		return fil.exists() && fil.length() > 0;
+		return fil != null && fil.exists() && fil.length() > 0;
 	}
 
 	private String getHostFraUrl(String stringUrl) {
