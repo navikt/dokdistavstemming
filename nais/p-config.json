@@ -1,6 +1,6 @@
 {
-  "MIN_REPLICAS": 2,
-  "MAX_REPLICAS": 2,
+  "MIN_REPLICAS": 1,
+  "MAX_REPLICAS": 1,
   "INGRESSES": [
     "https://dokdistavstemming.intern.nav.no"
   ],
