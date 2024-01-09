@@ -9,7 +9,6 @@ import no.nav.dokdistavstemming.consumer.jira.domain.IssueType;
 import no.nav.dokdistavstemming.consumer.jira.domain.Project;
 import no.nav.dokdistavstemming.consumer.jira.domain.Reporter;
 import no.nav.dokdistavstemming.consumer.jira.domain.Status;
-import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import org.junit.jupiter.api.Test;
@@ -18,18 +17,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 
 import java.io.File;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
@@ -52,11 +51,11 @@ class JiraServiceTest {
 		File avvikFil = new File(new ClassPathResource("__files/csv/csvfil_print.csv").getFile().toString());
 		when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(PRINT.name(), avvikFil, 10);
 
 		verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
 		verify(jiraConsumer, times(1)).hentProsjekt(anyString());
-		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
+		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_SAK_URL);
 	}
 
 	@Test
@@ -67,19 +66,21 @@ class JiraServiceTest {
 		File avvikFil = new File(new ClassPathResource("__files/csv/dokdist1.csv").getFile().toString());
 		when(jiraConsumer.leggTilVedlegg("MMA-134", avvikFil)).thenReturn(ATTACHMENT_URL);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(PRINT.name(), avvikFil, 10);
 
 		verify(jiraConsumer, times(1)).opprettJiraSak(any(IssueInput.class));
 		verify(jiraConsumer, times(1)).hentProsjekt(anyString());
-		assertThat(jiraSakResponseTo.getMessage(), is(JIRA_SAK_URL));
+		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_SAK_URL);
 	}
 
 	@Test
 	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() {
 		File avvikFil = new File("");
-		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(DistribusjonKanalCode.PRINT.name(), avvikFil, 0);
-		assertThat(jiraSakResponseTo.getMessage(), is("Kan ikke opprette Jira-sak. Fant ingen csv-fil"));
-		assertThat(jiraSakResponseTo.getHttpStatusCode(), is(HttpStatus.NO_CONTENT.value()));
+
+		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(PRINT.name(), avvikFil, 0);
+
+		assertThat(jiraSakResponseTo.getMessage()).isEqualTo("Kan ikke opprette Jira-sak. Fant ingen csv-fil");
+		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(NO_CONTENT.value());
 	}
 
 	private Project createProject() {

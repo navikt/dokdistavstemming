@@ -2,12 +2,27 @@ package no.nav.dokdistavstemming.sdist002;
 
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.ARKIV_KODE;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.BESTILLENDE_FAGSYSTEM;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.BREVPRODUKSJONAPPLIKASJON;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_DATO;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_ID;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_KANAL;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_STATUS;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DOKUMENT_ID;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DOKUMENT_STATUS;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.FAGOMRADE_CODE;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.FORSENDELSE_ID_1;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.FORSENDELSE_ID_2;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.KONVERSASJON_ID;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.PRODUKSJON_DATO;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createDokumentInfoWithForsendelseId;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createUekspedertForsendelseWithDokumenter;
 import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,31 +33,33 @@ public class UekspedertForsendelseMapperTest {
 
 	@Test
 	public void shouldMapUekspedertForsendelse() {
-		var forsendelse = TestDataUtils.createUekspedertForsendelseWithDokumenter(List.of(
-				TestDataUtils.createDokumentInfoWithForsendelseId(TestDataUtils.FORSENDELSE_ID_1), TestDataUtils.createDokumentInfoWithForsendelseId(TestDataUtils.FORSENDELSE_ID_2))
+		var forsendelse = createUekspedertForsendelseWithDokumenter(
+				List.of(createDokumentInfoWithForsendelseId(FORSENDELSE_ID_1), createDokumentInfoWithForsendelseId(FORSENDELSE_ID_2))
 		);
+
 		List<UekspedertForsendelseDokument> dokumenter = mapper.mapUekspederteForsendelser(forsendelse);
+
 		assertEquals(2, dokumenter.size());
 		assertThat(dokumenter)
 				.extracting(UekspedertForsendelseDokument::getForsendelseId)
-				.containsExactlyInAnyOrder(TestDataUtils.FORSENDELSE_ID_1, TestDataUtils.FORSENDELSE_ID_2);
+				.containsExactlyInAnyOrder(FORSENDELSE_ID_1, FORSENDELSE_ID_2);
 
 		dokumenter.forEach(this::assertDokument);
 	}
 
 	private void assertDokument(UekspedertForsendelseDokument dokument) {
-		Assertions.assertEquals(TestDataUtils.DISTRIBUSJON_ID, dokument.getDistribusjonId());
-		Assertions.assertEquals(TestDataUtils.BESTILLENDE_FAGSYSTEM, dokument.getBestillendeFagsystem());
-		Assertions.assertEquals(TestDataUtils.DOKUMENT_STATUS, dokument.getDokumentStatus());
-		Assertions.assertEquals(TestDataUtils.KONVERSASJON_ID, dokument.getKonversasjonId());
-		Assertions.assertEquals(TestDataUtils.ARKIV_KODE, dokument.getJournalpostId());
-		Assertions.assertEquals(TestDataUtils.FAGOMRADE_CODE, dokument.getFagomradeCode());
-		Assertions.assertEquals(TestDataUtils.DISTRIBUSJON_KANAL.name(), dokument.getDistribusjonKanal());
-		Assertions.assertEquals(TestDataUtils.DISTRIBUSJON_STATUS, dokument.getDistribusjonStatus());
-		Assertions.assertEquals(TestDataUtils.PRODUKSJON_DATO, dokument.getOpprettetDato());
-		Assertions.assertEquals(TestDataUtils.DISTRIBUSJON_DATO, dokument.getDistribusjonDato());
-		Assertions.assertEquals(TestDataUtils.DOKUMENT_ID, dokument.getDokumentId());
-		Assertions.assertEquals(TestDataUtils.BREVPRODUKSJONAPPLIKASJON, dokument.getBrevProduksjonApplikasjon());
+		assertEquals(DISTRIBUSJON_ID, dokument.getDistribusjonId());
+		assertEquals(BESTILLENDE_FAGSYSTEM, dokument.getBestillendeFagsystem());
+		assertEquals(DOKUMENT_STATUS, dokument.getDokumentStatus());
+		assertEquals(KONVERSASJON_ID, dokument.getKonversasjonId());
+		assertEquals(ARKIV_KODE, dokument.getJournalpostId());
+		assertEquals(FAGOMRADE_CODE, dokument.getFagomradeCode());
+		assertEquals(DISTRIBUSJON_KANAL.name(), dokument.getDistribusjonKanal());
+		assertEquals(DISTRIBUSJON_STATUS, dokument.getDistribusjonStatus());
+		assertEquals(PRODUKSJON_DATO, dokument.getOpprettetDato());
+		assertEquals(DISTRIBUSJON_DATO, dokument.getDistribusjonDato());
+		assertEquals(DOKUMENT_ID, dokument.getDokumentId());
+		assertEquals(BREVPRODUKSJONAPPLIKASJON, dokument.getBrevProduksjonApplikasjon());
 	}
 
 	@Test

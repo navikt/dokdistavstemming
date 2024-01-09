@@ -8,8 +8,6 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsend
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +21,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_ID_3;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_KANAL_3;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_STATUS;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_STATUS_3;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.FORSENDELSE_ID_1;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -51,7 +54,6 @@ public class Sdist002ServiceTest {
 	@Mock
 	private Counter mockCounter;
 
-
 	@BeforeEach
 	public void setUp() {
 		hentForsendelseKvitteringIkkeMottatt = mock(Rdist001administrerforsendelseConsumer.class);
@@ -69,14 +71,14 @@ public class Sdist002ServiceTest {
 		UekspedertForsendelse uekspedertForsendelse = result.getUekspederteForsendelser().get(0);
 
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
-		MatcherAssert.assertThat(uekspedertForsendelse.getDistribusjonKanal(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_KANAL_3.name()));
-		assertThat(uekspedertForsendelse.getDistribusjonStatus(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_STATUS_3));
-		assertThat(uekspedertForsendelse.getDistribusjonId(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_ID_3));
+		assertThat(uekspedertForsendelse.getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_3.name());
+		assertThat(uekspedertForsendelse.getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_3);
+		assertThat(uekspedertForsendelse.getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_3);
 	}
 
 	@Test
 	public void shouldFilterAndHentForsendelserDistKanalPrint() {
-		var dokument = singletonList(TestDataUtils.createDokumentInfoWithForsendelseId(TestDataUtils.FORSENDELSE_ID_1));
+		var dokument = singletonList(TestDataUtils.createDokumentInfoWithForsendelseId(FORSENDELSE_ID_1));
 		var uekspedertForsendelse = singletonList(TestDataUtils.createUekspedertForsendelseWithDokumenter(dokument));
 		var response = HentUekspederteForsendelserResponse.builder().uekspederteForsendelser(uekspedertForsendelse).build();
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt())).thenReturn(response);
@@ -84,8 +86,8 @@ public class Sdist002ServiceTest {
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
-		MatcherAssert.assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_KANAL.name()));
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_STATUS));
+		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal()).isEqualTo(TestDataUtils.DISTRIBUSJON_KANAL.name());
+		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS);
 		verify(hentForsendelseKvitteringIkkeMottatt, times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 	}
 
@@ -109,8 +111,8 @@ public class Sdist002ServiceTest {
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
-		MatcherAssert.assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_KANAL_3.name()));
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_STATUS_3));
+		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_3.name());
+		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_3);
 		verify(hentForsendelseKvitteringIkkeMottatt, times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 	}
 
@@ -118,6 +120,7 @@ public class Sdist002ServiceTest {
 	public void shouldReturnEmptyListWhenHentForsendelserKvitteringIkkeMottattIsEmpty() {
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt()))
 				.thenReturn(HentUekspederteForsendelserResponse.builder().uekspederteForsendelser(emptyList()).build());
+
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
 		assertTrue(uekspedertForsendelseDokumenter.isEmpty());

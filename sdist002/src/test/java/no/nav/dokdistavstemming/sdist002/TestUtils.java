@@ -4,10 +4,12 @@ import io.micrometer.core.instrument.util.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TestUtils {
+
 	public static String classpathToString(String path) throws IOException {
-		return IOUtils.toString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);
+		return IOUtils.toString(new ClassPathResource(path).getInputStream(), UTF_8);
 	}
 }

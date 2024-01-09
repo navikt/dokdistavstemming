@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.DataUtils.getHentEkspederteForsendelserFromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -60,7 +61,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(14);
 
 		assertEquals(Long.valueOf(dittNavEkspedertForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
-		assertEquals(UtsendingsKanalCode.NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
+		assertEquals(NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
 		assertEquals(ekspedertForsendelseEpostvarsel.getAdresse(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).epostadresse());
 		assertEquals(ekspedertForsendelseEpostvarsel.getTittel(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).tittel());
 		assertEquals(ekspedertForsendelseEpostvarsel.getTekst(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).tekst());

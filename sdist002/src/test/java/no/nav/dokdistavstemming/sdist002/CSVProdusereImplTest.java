@@ -10,17 +10,18 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createHentUekspederteForsendelserResponse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 class CSVProdusereImplTest {
 
-	private CSVProdusere csvProdusere = new CSVProdusereImpl();
+	private final CSVProdusere csvProdusere = new CSVProdusereImpl();
 
 	@Test
 	public void shouldProdusereCSVFil() {
 		UekspedertForsendelseMapper mapper = new UekspedertForsendelseMapper();
-		List<UekspedertForsendelseDokument> dokDistAvStemmingResponseTo = TestDataUtils.createHentUekspederteForsendelserResponse().getUekspederteForsendelser().stream()
+		List<UekspedertForsendelseDokument> dokDistAvStemmingResponseTo = createHentUekspederteForsendelserResponse().getUekspederteForsendelser().stream()
 				.map(mapper::mapUekspederteForsendelser)
 				.flatMap(Collection::stream)
 				.toList();

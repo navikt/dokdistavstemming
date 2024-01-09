@@ -5,7 +5,6 @@ import jakarta.xml.bind.JAXBElement;
 import no.nav.dokdistavstemming.SendUlesteForsendelserTilSentralPrintService;
 import no.nav.dokdistavstemming.config.ApplicationTestConfig;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
-import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -13,14 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.util.MimeTypeUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,27 +49,25 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.dokdistavstemming.sdist006.SendUlesteForsendelserTilSentralPrintServiceITest.RENOTIFIKASJON_STOPP_TOPIC;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_INSTANCE_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.kafka.test.utils.KafkaTestUtils.getRecords;
 
 @EmbeddedKafka(
 		topics = {RENOTIFIKASJON_STOPP_TOPIC},
-		bootstrapServersProperty = "spring.kafka.bootstrap-servers",
 		partitions = 1
 )
 @ActiveProfiles("itest")
 class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestConfig {
 
-	private static final int OK = 200;
 	private static final String NY_FORSENDELSE_ID1 = "33333";
 	private static final String NY_FORSENDELSE_ID2 = "44444";
 	private static final String OLD_FORSENDELSEID1 = "987654321";
@@ -109,8 +105,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	void setUp() {
 		stubFor(post("/azure_token")
 				.willReturn(aResponse()
-						.withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response.json")));
 	}
 
@@ -128,18 +124,16 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
 
-		await().atMost(10, SECONDS).untilAsserted(() -> {
-			//Sjekk at riktig forsendelseId blir sendt til qdist009/print
-			String message = receive(qdist009).toString();
-			assertThat(message).contains(NY_FORSENDELSE_ID1);
-			String message2 = receive(qdist009).toString();
-			assertThat(message2).contains(NY_FORSENDELSE_ID2);
+		//Sjekk at riktig forsendelseId blir sendt til qdist009/print
+		String message = receive(qdist009).toString();
+		assertThat(message).contains(NY_FORSENDELSE_ID1);
+		String message2 = receive(qdist009).toString();
+		assertThat(message2).contains(NY_FORSENDELSE_ID2);
 
-			List<DoknotifikasjonStopp> records = this.getAllCurrentRecordsOnTopicRenotifikasjonStopp();
-			assertEquals(2, records.size());
-			assertRecord(records.get(0), GAMMEL_BESTILLINGSID1);
-			assertRecord(records.get(1), GAMMEL_BESTILLINGSID2);
-		});
+		List<DoknotifikasjonStopp> records = this.getAllCurrentRecordsOnTopicRenotifikasjonStopp();
+		assertEquals(2, records.size());
+		assertRecord(records.get(0), GAMMEL_BESTILLINGSID1);
+		assertRecord(records.get(1), GAMMEL_BESTILLINGSID2);
 
 		verifyAndCountForsendelse();
 	}
@@ -186,8 +180,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	private void stubGetFinnUlesteForsendelser(String journalpostListe) {
 		stubFor(get(urlPathMatching(FINNULESTEFORSENDELSER_URL))
 				.willReturn(aResponse()
-						.withStatus(OK)
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBody(journalpostListe)));
 	}
 
@@ -196,8 +190,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID1))
 				.withQueryParam("journalpostliste", equalTo(JOURNALPOSTID2))
 				.willReturn(aResponse()
-						.withStatus(OK)
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBody(classpathToString(responsebody))));
 	}
 
@@ -206,7 +200,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.withRequestBody(containing("\"forsendelseId\":" + forsendelsesId))
 				.withRequestBody(containing("\"forsendelseStatus\":\"KLAR_FOR_DIST\""))
 				.willReturn(aResponse()
-						.withStatus(OK)));
+						.withStatus(OK.value())));
 	}
 
 	private void stubPutFeilregistrerforsendelse(String forsendelsesId) {
@@ -215,7 +209,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.withRequestBody(containing("\"feilTypeCode\":\"MELDINGSFEIL\""))
 				.withRequestBody(containing("\"detaljer\":\"Forsendelse til NAV.NO er ikke lest innen frist.\""))
 				.willReturn(aResponse()
-						.withStatus(OK)));
+						.withStatus(OK.value())));
 	}
 
 	private void stubPostOpprettForsendelse(String responseBody, String oldBestillingsId) throws IOException {
@@ -225,8 +219,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.withRequestBody(containing("\"dokumenttypeId\":\"U000001\""))
 				.withRequestBody(containing("\"bestillingsId\":" + anyString()))
 				.willReturn(aResponse()
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withStatus(OK)
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())
 						.withBody(classpathToString(responseBody))));
 	}
 
@@ -236,8 +230,8 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 				.withRequestBody(containing("\"utsendingsKanal\":\"S\""))
 				.withRequestBody(containing("\"tilbakestillJournalpost\":true"))
 				.willReturn(aResponse()
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withStatus(OK)));
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -251,7 +245,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 
 	public List<DoknotifikasjonStopp> getAllCurrentRecordsOnTopicRenotifikasjonStopp() {
 		Consumer<String, DoknotifikasjonStopp> consumer = setUpConsumerForTopicNotifikasjonStopp();
-		return StreamSupport.stream(KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(2))
+		return StreamSupport.stream(getRecords(consumer, Duration.ofSeconds(10))
 						.records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
 				.map(ConsumerRecord::value)
 				.collect(Collectors.toList());
