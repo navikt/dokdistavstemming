@@ -45,12 +45,9 @@ public class DokarkivConsumer {
 				.build();
 	}
 
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public List<String> finnUlesteJournalposter(UtsendingsKanalCode kanalCode, LocalDateTime ekspedertFra, LocalDateTime ekspedertTil) {
-		log.info(String.format("finnUlesteJournalposter har mottatt kall for å finne journalposter fra kanal=%s med ekspedertFra=%s og ekspedertTil=%s.",
-				kanalCode.name(), ekspedertFra, ekspedertTil));
-
-		log.info("Kaller dokarkiv med ekspedertFra={}, ekspedertTil={}", ekspedertFra, ekspedertTil);
+		log.info("finnUlesteJournalposter ser etter journalposter med kanal={}, ekspedertFra={}, ekspedertTil={}",
+				kanalCode.name(), ekspedertFra, ekspedertTil);
 
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
@@ -59,7 +56,7 @@ public class DokarkivConsumer {
 				)
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
-					reactorRequest.responseTimeout(ofSeconds(120));
+					reactorRequest.responseTimeout(ofSeconds(180));
 				})
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
