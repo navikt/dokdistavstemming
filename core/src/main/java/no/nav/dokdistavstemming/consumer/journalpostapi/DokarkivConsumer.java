@@ -7,19 +7,20 @@ import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.lang.String.format;
+import static java.time.Duration.ofSeconds;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -51,21 +52,20 @@ public class DokarkivConsumer {
 
 		log.info("Kaller dokarkiv med ekspedertFra={}, ekspedertTil={}", ekspedertFra, ekspedertTil);
 
-		String[] journalposter = webClient.get()
+		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path(SIKKERHETSNIVAA_API_URL + "/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
 				)
+				.httpRequest(httpRequest -> {
+					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
+					reactorRequest.responseTimeout(ofSeconds(120));
+				})
 				.retrieve()
-				.bodyToMono(String[].class)
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+				})
 				.doOnError(this::handleError)
 				.block();
-
-		if (journalposter != null && journalposter.length > 0) {
-			return Arrays.stream(journalposter).toList();
-		} else {
-			return Collections.emptyList();
-		}
 	}
 
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
@@ -99,7 +99,7 @@ public class DokarkivConsumer {
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new DokdistavstemmingFunctionalException(
-					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getRawStatusCode(), response.getMessage()),
+					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
 					error);
 		} else {
 			throw new DokdistavstemmingTechnicalException(
