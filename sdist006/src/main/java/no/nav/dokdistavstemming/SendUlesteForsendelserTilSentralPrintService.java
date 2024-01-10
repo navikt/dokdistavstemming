@@ -86,24 +86,24 @@ public class SendUlesteForsendelserTilSentralPrintService {
 						gammelDistribusjonId);
 				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
 
-				//3.1 Opprett ny forsendelse
+				// 3.1 Opprett ny forsendelse
 				String nyBestillingsId = UUID.randomUUID().toString();
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
-				//3.2 Feilregistrer original forsendelse
+				// 3.2 Feilregistrer original forsendelse
 				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), nyBestillingsId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
 
-				//3.4 Oppdater journalpost
+				// 3.4 Oppdater journalpost
 				oppdaterJournalpost(journalpostId);
 
-				//3.5 Distribuer ny forsendelse
+				// 3.5 Distribuer ny forsendelse
 				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 
-				//3.6 stopp renotifikasjon av digital distribusjon
+				// 3.6 stopp renotifikasjon av digital distribusjon
 				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
 
 				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
