@@ -56,7 +56,7 @@ public class DokarkivConsumer {
 				)
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
-					reactorRequest.responseTimeout(ofSeconds(180));
+					reactorRequest.responseTimeout(ofSeconds(360));
 				})
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
