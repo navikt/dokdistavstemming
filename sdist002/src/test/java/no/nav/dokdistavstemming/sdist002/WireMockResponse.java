@@ -1,8 +1,6 @@
 package no.nav.dokdistavstemming.sdist002;
 
-import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.MimeTypeUtils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -97,8 +95,8 @@ public class WireMockResponse {
 	public static void postAzureToken() {
 		stubFor(post("/azure_token")
 				.willReturn(aResponse()
-						.withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response.json")));
 	}
 }

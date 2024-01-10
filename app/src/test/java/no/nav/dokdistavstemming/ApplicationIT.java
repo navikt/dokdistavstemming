@@ -10,15 +10,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(classes = {Application.class, ApplicationIT.Config.class}, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("itest")
 public class ApplicationIT {
+
 	public static class Config {
 		@Bean
 		public Queue qdist009Queue(@Value("${dokdistsentralprint_qdist009_dist_s_print.queuename}") String qdist009QueueName) throws JMSException {
@@ -51,7 +52,7 @@ public class ApplicationIT {
 
 		// verifisere at appen klarer starte opp
 		var liveness = testRestTemplate.getForEntity("/actuator/health/liveness", String.class);
-		assertThat(liveness.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(liveness.getStatusCode()).isEqualTo(OK);
 		assertThat(liveness.getBody()).contains("UP");
 	}
 }

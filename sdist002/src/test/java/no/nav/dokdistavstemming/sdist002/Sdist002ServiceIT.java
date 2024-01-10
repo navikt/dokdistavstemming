@@ -1,13 +1,8 @@
 package no.nav.dokdistavstemming.sdist002;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +19,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.E_HANDEL;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISRIBUSJON_DATO_J;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_ID_PRINT;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_ID_SDP;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_KANAL_P_J;
+import static no.nav.dokdistavstemming.sdist002.TestDataUtils.DISTRIBUSJON_STATUS_J;
 import static no.nav.dokdistavstemming.sdist002.TestUtils.classpathToString;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.AVSTEM_FORSENDELSER_URL;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.JIRA_MMA_URL;
@@ -40,8 +40,7 @@ import static no.nav.dokdistavstemming.sdist002.WireMockResponse.oppdaterAvstemF
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.oppdaterAvstemForsendelsesinfoFeil;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.postAzureToken;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.returnNoContentForHentUekspederteForsendelser;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,13 +57,13 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	public void shouldReturnUekspederteForsendelser() throws Exception {
+	public void shouldReturnUekspederteForsendelser() {
 		happilyHentUekspederteForsendelser("hentForsendelse-SDP-SixTime.json");
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
-		assertThat(uekspedertForsendelseDokumentList.get(0).getDistribusjonId(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_ID_SDP));
+		assertThat(uekspedertForsendelseDokumentList.get(0).getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_SDP);
 	}
 
 	@Test
@@ -77,27 +76,27 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	public void shouldHentListOkStatusKanalPrint() throws Exception {
+	public void shouldHentListOkStatusKanalPrint() {
 		happilyHentUekspederteForsendelser("henteforsendelse-print-overfemdager.json");
 
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
-		assertThat(result.get(0).getDistribusjonId(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_ID_PRINT));
-		assertThat(result.get(0).getDistribusjonStatus(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_STATUS_J));
-		MatcherAssert.assertThat(result.get(0).getDistribusjonKanal(), CoreMatchers.is(TestDataUtils.DISTRIBUSJON_KANAL_P_J.name()));
-		assertThat(result.get(0).getDistribusjonDato(), CoreMatchers.is(TestDataUtils.DISRIBUSJON_DATO_J));
+		assertThat(result.get(0).getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_PRINT);
+		assertThat(result.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_J);
+		assertThat(result.get(0).getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_P_J.name());
+		assertThat(result.get(0).getDistribusjonDato()).isEqualTo(DISRIBUSJON_DATO_J);
 	}
 
 	@Test
-	public void shouldOppretteCSVFilList() throws Exception {
+	public void shouldOppretteCSVFilList() {
 		happilyHentUekspederteForsendelser("henteforsendelse-print-overfemdager.json");
 
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
 		File csvFiler = csvProdusere.oppretteCsvFil(result);
-		assertThat(csvFiler.isFile(), is(true));
-		assertThat(csvFiler.length() != 0, is(true));
+		assertThat(csvFiler.isFile()).isTrue();
+		assertThat(csvFiler.length() != 0).isTrue();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
 	}
 
@@ -118,7 +117,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	public void shouldOppdatertForsendelserThrowsBadRequestException() throws Exception {
+	public void shouldOppdatertForsendelserThrowsBadRequestException() {
 		happilyHentUekspederteForsendelser("hentForsendelse-SDP-SixTime.json");
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
@@ -137,7 +136,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	public void shouldOppdatertForsendelserThrowsInternalServerException() throws Exception {
+	public void shouldOppdatertForsendelserThrowsInternalServerException() {
 		happilyHentUekspederteForsendelser("hentForsendelse-SDP-SixTime.json");
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();

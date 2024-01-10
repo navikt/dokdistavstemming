@@ -2,7 +2,6 @@ package no.nav.dokdistavstemming;
 
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
-import no.nav.dokdistavstemming.constants.MDCConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 
@@ -36,6 +36,6 @@ public abstract class AbstractSdist004ITest {
 
 	@BeforeEach
 	public void setUp() {
-		MDC.put(MDCConstants.MDC_CALL_ID, CALL_ID);
+		MDC.put(MDC_CALL_ID, CALL_ID);
 	}
 }

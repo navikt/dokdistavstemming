@@ -23,7 +23,6 @@ class OpprettForsendelseMapperTest {
 	private static final String ARKIV_SYSTEM = "JOARK";
 	private static final String ARKIV_ID = "arkivId";
 	private static final String MOTTAKER_ID_NAVN = "mottakerIdNavn";
-	private static final String ORGANISASJON_NAVN = "organisasjonNavn";
 	private static final String MOTTAKER_ID = "mottakerId";
 	private static final String ADRESSELINJE_1 = "adresselinje1";
 	private static final String ADRESSELINJE_2 = "adresselinje2";
