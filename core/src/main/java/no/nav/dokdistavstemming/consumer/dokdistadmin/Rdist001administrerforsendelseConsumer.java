@@ -139,6 +139,10 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 		return webClient.method(GET)
 				.uri("/hentekspederteforsendelser")
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
+				.httpRequest(httpRequest -> {
+					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
+					reactorRequest.responseTimeout(ofSeconds(120));
+				})
 				.retrieve()
 				.bodyToMono(HentEkspederteForsendelserResponse.class)
 				.defaultIfEmpty(EMPTY_EKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
