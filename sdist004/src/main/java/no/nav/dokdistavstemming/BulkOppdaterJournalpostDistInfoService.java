@@ -47,7 +47,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
 		if (hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
-			log.info("Fant ingen ekspederte forsendelser i dokdist-db.");
+			log.info("Fant ingen ekspederte forsendelser i dokdist-db. Avslutter sdist004 cron-jobb.");
 			return;
 		}
 
@@ -73,6 +73,8 @@ public class BulkOppdaterJournalpostDistInfoService {
 
 			});
 		}
+
+		log.info("Avslutter sdist004 cron-jobb");
 	}
 
 	private boolean isForsendelseNullOrEmpy(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {

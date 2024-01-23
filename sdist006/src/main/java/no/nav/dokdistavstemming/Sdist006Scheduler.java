@@ -25,7 +25,6 @@ public class Sdist006Scheduler {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist006 cron-jobb");
 			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);
-			log.info("Avslutter sdist006 cron-jobb");
 		}
 	}
 }

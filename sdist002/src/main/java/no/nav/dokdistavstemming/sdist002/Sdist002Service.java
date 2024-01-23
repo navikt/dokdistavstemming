@@ -60,6 +60,7 @@ public class Sdist002Service {
 					JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
+		log.info("Avslutter sdist002 cron-jobb");
 	}
 
 	public List<UekspedertForsendelseDokument> getForsendelserByDistribusjonKanal(DistribusjonKanalCode distribusjonskanal) {

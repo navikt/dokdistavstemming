@@ -57,6 +57,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
 		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
+
+		log.info("Avslutter sdist006 cron-jobb");
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
