@@ -26,6 +26,7 @@ public class Sdist002Scheduler {
 		if (leaderElection.isLeader()) {
 			log.info("Starter sdist002 cron-jobb");
 			poolTaskExecutor.execute(sdist002Service::oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal);
+			log.info("Avslutter sdist002 cron-jobb");
 		}
 	}
 
