@@ -50,7 +50,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		//1. Finn journalposter
 		List<String> ulesteJournalposter = finnUlesteJournalposter();
 		if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
-			log.info("Sdist006 fant ingen uleste journalposter i Joark.");
+			log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
 			return;
 		}
 
