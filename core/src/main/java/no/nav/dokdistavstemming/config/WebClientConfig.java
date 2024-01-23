@@ -25,7 +25,8 @@ public class WebClientConfig {
 	}
 
 	private HttpClient httpClient() {
-		return HttpClient.create().responseTimeout(Duration.ofSeconds(60))
+		return HttpClient.create()
+				.responseTimeout(Duration.ofSeconds(60))
 				.proxyWithSystemProperties();
 	}
 }

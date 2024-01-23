@@ -24,11 +24,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
+import static java.time.Duration.ofSeconds;
 import static java.util.Collections.emptyList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
@@ -64,7 +67,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 												  WebClient webClient,
 												  AzureToken azureToken) {
 		this.dokdistavstemmingProperties = dokdistavstemmingProperties;
-		System.out.println(dokdistavstemmingProperties.getEndpoints().getDokdistadmin());
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistavstemmingProperties.getEndpoints().getDokdistadmin().getUrl())
 				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProperties.getEndpoints().getDokdistadmin()))
@@ -80,6 +82,10 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 
 		return webClient.get()
 				.uri("/hentuekspederteforsendelser/{distribusjonkanal}/{antallTimer}", distribusjonskanal, antallTimer)
+				.httpRequest(httpRequest -> {
+					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
+					reactorRequest.responseTimeout(ofSeconds(240));
+				})
 				.retrieve()
 				.bodyToMono(HentUekspederteForsendelserResponse.class)
 				.defaultIfEmpty(EMPTY_UEKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
@@ -143,7 +149,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public Optional<ForsendelseTos> hentForsendelser(List<String> journalpostListe) {
-		log.info(String.format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", journalpostListe)));
+		log.info(format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", journalpostListe)));
 
 		return Optional.ofNullable(
 				webClient.method(GET)
@@ -164,7 +170,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
-		log.info(String.format("opprettForsendelse oppretter forsendelse for bestillingsId=%s", forsendelseTo.getBestillingsId()));
+		log.info(format("opprettForsendelse oppretter forsendelse for bestillingsId=%s", forsendelseTo.getBestillingsId()));
 
 		return webClient.post()
 				.body(Mono.justOrEmpty(forsendelseTo), ForsendelseTo.class)
@@ -177,7 +183,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
-		log.info(String.format("FeilregistrerForsendelse feilregistrerer forsendelsesId=%s", feilregistrerForsendelseRequest.getForsendelseId()));
+		log.info(format("FeilregistrerForsendelse feilregistrerer forsendelsesId=%s", feilregistrerForsendelseRequest.getForsendelseId()));
 
 		webClient.put()
 				.uri("/feilregistrerforsendelse")
@@ -192,7 +198,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
-		log.info(String.format("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
+		log.info(format("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
 
 		webClient.put()
 				.uri("/oppdaterforsendelse")
@@ -207,13 +213,11 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new DokdistavstemmingFunctionalException(
-					String.format("Kall mot rdist001 feilet med status=%s, feilmelding=%s",
-							response.getRawStatusCode(),
-							response.getMessage()),
+					format("Kall mot rdist001 feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
 					error);
 		} else {
-			throw new DokdistavstemmingTechnicalException(
-					String.format("Kall mot rdist001 feilet med feilmelding=%s", error.getMessage()),
+				throw new DokdistavstemmingTechnicalException(
+					format("Kall mot rdist001 feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}
 	}
