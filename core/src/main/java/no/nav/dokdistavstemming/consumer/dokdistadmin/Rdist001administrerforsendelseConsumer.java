@@ -127,7 +127,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public HentEkspederteForsendelserResponse hentEkspederteforsendelser() {
 		MDC.put(MDC_CALL_ID, UUID.randomUUID().toString());
 
@@ -141,7 +140,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.justOrEmpty(hentEkspederteForsendelserRequest), HentEkspederteForsendelserRequest.class)
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
-					reactorRequest.responseTimeout(ofSeconds(120));
+					reactorRequest.responseTimeout(ofSeconds(180));
 				})
 				.retrieve()
 				.bodyToMono(HentEkspederteForsendelserResponse.class)
