@@ -7,7 +7,7 @@
   "DOKDISTAVSTEMMING_JIRA_URL": "https://jira-q1.adeo.no",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
-  "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "https://dokdistadmin.dev.intern.nav.no/rest/v1/administrerforsendelse",
+  "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "http://dokdistadmin.teamdokumenthandtering.svc.nais.local/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
 
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
