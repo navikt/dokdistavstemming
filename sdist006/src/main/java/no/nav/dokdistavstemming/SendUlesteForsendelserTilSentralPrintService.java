@@ -13,12 +13,15 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCh_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
@@ -36,6 +39,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
+	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
 
 	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer,
 														DokarkivConsumer dokarkivConsumer,
@@ -48,18 +52,25 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	public void sendUlesteForsendelserTilSentralPrint() {
-		//1. Finn journalposter
-		List<String> ulesteJournalposter = finnUlesteJournalposter();
-		if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
-			log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
-			return;
+		try {
+			MDC.put(MDC_BATCh_ID, LocalDateTime.now().format(formatter));
+			log.info("Starter sdist006 cron-jobb");
+
+			//1. Finn journalposter
+			List<String> ulesteJournalposter = finnUlesteJournalposter();
+			if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
+				log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
+				return;
+			}
+
+			log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
+
+			partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
+
+			log.info("Avslutter sdist006 cron-jobb");
+		} finally {
+			MDC.clear();
 		}
-
-		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
-
-		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
-
-		log.info("Avslutter sdist006 cron-jobb");
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
@@ -110,7 +121,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
-			} catch (DokdistavstemmingFunctionalException e){
+			} catch (DokdistavstemmingFunctionalException e) {
 				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding:{}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
 			} finally {
