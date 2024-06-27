@@ -8,6 +8,7 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
@@ -81,15 +82,14 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
 		ulesteForsendelser.forEach(gammelForsendelse -> {
+			String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
+			String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
+			String nyBestillingsId = UUID.randomUUID().toString();
+			MDC.put(MDC_CALL_ID, gammelDistribusjonId);
+			log.info("Sdist006 behandler ulest forsendelse med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
+					gammelDistribusjonId);
 			try {
-				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
-				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
-				log.info("Sdist006 behandler ulest forsendelse med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
-						gammelDistribusjonId);
-				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
-
 				// 3.1 Opprett ny forsendelse
-				String nyBestillingsId = UUID.randomUUID().toString();
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
@@ -110,6 +110,9 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
+			} catch (DokdistavstemmingFunctionalException e){
+				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding:{}",
+						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
 			} finally {
 				MDC.clear();
 			}
