@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCh_ID;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
@@ -34,12 +34,12 @@ import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil
 public class SendUlesteForsendelserTilSentralPrintService {
 	private static final int ANTALL_DAGER_TILBAKE_MAX = 13;
 	private static final int ANTALL_TIMER_TILBAKE_MIN = 40;
+	private static final DateTimeFormatter BATCH_ID_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
 
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
 
 	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer,
 														DokarkivConsumer dokarkivConsumer,
@@ -53,7 +53,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	public void sendUlesteForsendelserTilSentralPrint() {
 		try {
-			MDC.put(MDC_BATCh_ID, LocalDateTime.now().format(formatter));
+			MDC.put(MDC_BATCH_ID, LocalDateTime.now().format(BATCH_ID_FORMATTER));
 			log.info("Starter sdist006 cron-jobb");
 
 			//1. Finn journalposter
@@ -97,7 +97,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
 			String nyBestillingsId = UUID.randomUUID().toString();
 			MDC.put(MDC_CALL_ID, gammelDistribusjonId);
-			log.info("Sdist006 behandler ulest forsendelse med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
+			log.info("Sdist006 behandler forsendelser med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
 					gammelDistribusjonId);
 			try {
 				// 3.1 Opprett ny forsendelse
