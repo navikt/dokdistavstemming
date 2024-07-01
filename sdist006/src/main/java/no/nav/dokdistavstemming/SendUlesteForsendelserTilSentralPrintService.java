@@ -8,16 +8,20 @@ import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
+import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
+import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
@@ -30,6 +34,7 @@ import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil
 public class SendUlesteForsendelserTilSentralPrintService {
 	private static final int ANTALL_DAGER_TILBAKE_MAX = 13;
 	private static final int ANTALL_TIMER_TILBAKE_MIN = 40;
+	private static final DateTimeFormatter BATCH_ID_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
 
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
@@ -47,18 +52,25 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	public void sendUlesteForsendelserTilSentralPrint() {
-		//1. Finn journalposter
-		List<String> ulesteJournalposter = finnUlesteJournalposter();
-		if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
-			log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
-			return;
+		try {
+			MDC.put(MDC_BATCH_ID, LocalDateTime.now().format(BATCH_ID_FORMATTER));
+			log.info("Starter sdist006 cron-jobb");
+
+			//1. Finn journalposter
+			List<String> ulesteJournalposter = finnUlesteJournalposter();
+			if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
+				log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
+				return;
+			}
+
+			log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
+
+			partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
+
+			log.info("Avslutter sdist006 cron-jobb");
+		} finally {
+			MDC.clear();
 		}
-
-		log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
-
-		partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
-
-		log.info("Avslutter sdist006 cron-jobb");
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
@@ -81,15 +93,14 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
 		ulesteForsendelser.forEach(gammelForsendelse -> {
+			String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
+			String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
+			String nyBestillingsId = UUID.randomUUID().toString();
+			MDC.put(MDC_CALL_ID, gammelDistribusjonId);
+			log.info("Sdist006 behandler forsendelser med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
+					gammelDistribusjonId);
 			try {
-				String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
-				MDC.put(MDC_CALL_ID, gammelDistribusjonId);
-				log.info("Sdist006 behandler ulest forsendelse med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
-						gammelDistribusjonId);
-				String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
-
 				// 3.1 Opprett ny forsendelse
-				String nyBestillingsId = UUID.randomUUID().toString();
 				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
 
@@ -110,6 +121,9 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
+			} catch (DokdistavstemmingFunctionalException e) {
+				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding:{}",
+						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
 			} finally {
 				MDC.clear();
 			}

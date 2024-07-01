@@ -23,7 +23,6 @@ public class Sdist006Scheduler {
 	@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
 		if (leaderElection.isLeader()) {
-			log.info("Starter sdist006 cron-jobb");
 			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);
 		}
 	}
