@@ -65,11 +65,11 @@ public class JiraConsumer {
 		try {
 			return restTemplate.exchange(issueBaseUri, HttpMethod.POST, new HttpEntity<>(issueInputRequest, headers), Issue.class).getBody();
 		} catch (HttpClientErrorException e) {
-			log.warn("oppretteJiraSak feilet funksjonelt med url={}, status={} feilmelding={}", issueBaseUri, e.getStatusCode(), e.getMessage());
+			log.warn("opprettJiraSak feilet funksjonelt med url={}, status={} feilmelding={}", issueBaseUri, e.getStatusCode(), e.getMessage());
 			throw new JiraFunctionalException(
 					format("Kall mot jira feilet funksjonelt med url=%s, status=%s, feilmelding=%s", issueBaseUri, e.getStatusCode(), e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
-			log.error("oppretteJiraSak feilet teknisk med feilmelding={}", e.getMessage());
+			log.error("opprettJiraSak feilet teknisk med feilmelding={}", e.getMessage());
 			throw new JiraTechnicalException(
 					format("Kall mot Jira feilet teknisk med statusKode=%s, feilmelding=%s", e.getStatusCode(), e.getMessage()), e);
 		}
