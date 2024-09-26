@@ -21,6 +21,7 @@ public class WireMockResponse {
 	public static final String JIRA_VEDLEGG_URL = "/rest/api/2/issue/MMA-134/attachments";
 	public static final String JIRA_MMA_URL = "/rest/api/2/project/MMA";
 	public static final String AVSTEM_FORSENDELSER_URL = "/administrerforsendelse/avstemforsendelser";
+	public static final String STATUS_TRANSITION = "/rest/api/2/issue/MMA-134/transitions";
 
 	public static void happilyHentUekspederteForsendelser(String filename) {
 		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
@@ -63,9 +64,7 @@ public class WireMockResponse {
 
 	public static void jiraHappyPostVedleggDokument() {
 		stubFor(post(urlMatching(JIRA_VEDLEGG_URL))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("jira/lagrevedlegg-happy.json")));
+				.willReturn(aResponse().withStatus(OK.value())));
 	}
 
 	public static void jiraFeilToOpprettSakForAvstemForsendelse() {

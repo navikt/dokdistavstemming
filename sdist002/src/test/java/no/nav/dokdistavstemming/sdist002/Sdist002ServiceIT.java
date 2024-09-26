@@ -29,6 +29,7 @@ import static no.nav.dokdistavstemming.sdist002.WireMockResponse.AVSTEM_FORSENDE
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.JIRA_MMA_URL;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.JIRA_OPPRETTE_URL;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.JIRA_VEDLEGG_URL;
+import static no.nav.dokdistavstemming.sdist002.WireMockResponse.STATUS_TRANSITION;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.happilyHentUekspederteForsendelser;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.jiraHappyGetIssue;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.jiraHappyHentProjectDetails;
@@ -118,6 +119,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 
 	@Test
 	public void shouldOppdatertForsendelserThrowsBadRequestException() {
+
 		happilyHentUekspederteForsendelser("hentForsendelse-SDP-SixTime.json");
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
@@ -132,6 +134,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(1, postRequestedFor(urlEqualTo(STATUS_TRANSITION)));
 		verify(1, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));
 	}
 
@@ -151,6 +154,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
+		verify(1, postRequestedFor(urlEqualTo(STATUS_TRANSITION)));
 		verify(3, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));
 	}
 }

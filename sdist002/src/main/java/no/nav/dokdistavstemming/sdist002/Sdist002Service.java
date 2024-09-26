@@ -30,20 +30,20 @@ public class Sdist002Service {
 	private final UekspedertForsendelseMapper uekspedertForsendelseMapper;
 	private final CSVProdusere csvProdusere;
 	private final MeterRegistry meterRegistry;
-	private final JiraService jiraService;
+	private final JiraOppgaveService jiraOppgaveService;
 	private final DokdistavstemmingProperties dokdistavstemmingProp;
 
 	public Sdist002Service(Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt,
 						   CSVProdusere csvProdusere,
 						   MeterRegistry meterRegistry,
-						   JiraService jiraService,
+						   JiraOppgaveService jiraOppgaveService,
 						   DokdistavstemmingProperties dokdistavstemmingProp) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
 		this.uekspedertForsendelseMapper = new UekspedertForsendelseMapper();
 		this.csvProdusere = csvProdusere;
 		this.meterRegistry = meterRegistry;
-		this.jiraService = jiraService;
+		this.jiraOppgaveService = jiraOppgaveService;
 		this.dokdistavstemmingProp = dokdistavstemmingProp;
 	}
 
@@ -57,7 +57,7 @@ public class Sdist002Service {
 					}
 
 					File csvFil = csvProdusere.oppretteCsvFil(dokumenter);
-					JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
+					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
 		log.info("Avslutter sdist002 cron-jobb");
