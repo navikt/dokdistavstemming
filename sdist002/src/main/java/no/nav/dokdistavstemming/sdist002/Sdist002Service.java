@@ -18,8 +18,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-@Component
 @Slf4j
+@Component
 public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";

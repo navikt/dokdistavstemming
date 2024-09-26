@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.List;
 
 import static java.lang.String.format;
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_REQUEST_ID;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Component
@@ -32,9 +31,6 @@ public class JiraOppgaveService {
 	}
 
 	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, File fil, int size) {
-
-		MDC.put(MDC_REQUEST_ID, "opprettJirasak");
-
 		if (!isFilExistOgNotNull(fil)) {
 			log.error("sdist002 kan ikke opprette Jira-sak. Fant ingen csv-fil. Må undersøkes av utvikler");
 			return JiraSakResponseTo.builder()
@@ -46,7 +42,7 @@ public class JiraOppgaveService {
 		try {
 			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, fil);
 
-			log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
+			log.info("opprettJirasak har mottatt kall om å opprette Jira-sak");
 
 			JiraResponse jiraResponse = jiraService.opprettJiraOppgaveVedVedlegg(jiraRequest);
 
@@ -58,9 +54,8 @@ public class JiraOppgaveService {
 					.build();
 
 		} catch (JiraFunctionalException | JiraClientException e) {
-			log.warn("{} kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}",
-					MDC.get(MDC_REQUEST_ID), e.getMessage());
-			throw new JiraFunctionalException(format("%s kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s", MDC.get(MDC_REQUEST_ID),
+			log.warn("opprettJirasak kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}", e.getMessage());
+			throw new JiraFunctionalException(format("opprettJirasak kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s",
 					e.getMessage()));
 		}
 	}
