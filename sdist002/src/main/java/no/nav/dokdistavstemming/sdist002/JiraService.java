@@ -9,7 +9,6 @@ import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.domain.to.JiraTransition;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.utils.OppretteJiraSakRequestUtil;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static java.lang.String.format;
-import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_REQUEST_ID;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Component
@@ -33,9 +31,6 @@ public class JiraService {
 	}
 
 	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, File fil, int size) {
-
-		MDC.put(MDC_REQUEST_ID, "opprettJirasak");
-
 		if (!isFilExistOgNotNull(fil)) {
 			log.error("sdist002 kan ikke opprette Jira-sak. Fant ingen csv-fil. Må undersøkes av utvikler");
 			return JiraSakResponseTo.builder()
@@ -48,24 +43,18 @@ public class JiraService {
 		validateInput(issueInput);
 
 		try {
-			log.info("{} har mottatt kall om å opprette Jira-sak", MDC.get(MDC_REQUEST_ID));
-
+			log.info("Oppretter Jira-sak for distribusjonKanal={}", distribusjonKanal);
 			Issue issue = jiraConsumer.opprettJiraSak(issueInput);
 			jiraConsumer.leggTilVedlegg(issue.getKey(), fil);
-			log.info("{} har opprettet Jira-sak med SaksId={} SaksKey={} self={}", MDC.get(MDC_REQUEST_ID), issue.getId(), issue.getKey(), issue.getSelf());
+			log.info("Opprettet Jira-sak med key={} for distribusjonKanal={}", issue.getKey(), distribusjonKanal);
 			updateJiraStatus(issue);
-			JiraSakResponseTo jiraSakResponseTo = JiraSakResponseTo.builder()
+			return JiraSakResponseTo.builder()
 					.jiraSakKey(issue.getKey())
 					.message(format("%s%s/%s", getHostFraUrl(issue.getSelf()), BROWSE, issue.getKey()))
 					.build();
-
-			log.info("Sdist002 har opprettet Jira-sak med url={}", jiraSakResponseTo.getMessage());
-			return jiraSakResponseTo;
-
 		} catch (JiraFunctionalException e) {
-			log.warn("{} kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}",
-					MDC.get(MDC_REQUEST_ID), e.getMessage());
-			throw new JiraFunctionalException(format("%s kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s", MDC.get(MDC_REQUEST_ID),
+			log.warn("Kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}", e.getMessage());
+			throw new JiraFunctionalException(format("Kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s",
 					e.getMessage()));
 		}
 	}
@@ -73,7 +62,7 @@ public class JiraService {
 	private void updateJiraStatus(Issue issue) {
 		Issue updateIssue = jiraConsumer.oppdaterStatus(issue.getKey(), JiraTransition.builder()
 				.transition(JiraTransition.Transition.builder().id(TRANSITION_ID).build()).build());
-		log.info("Har oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().name());
+		log.info("Oppdatert Jira-sak med key={} til status={}", issue.getKey(), updateIssue.getFields().getStatus().name());
 	}
 
 	private void validateInput(IssueInput issueInput) {
