@@ -7,7 +7,6 @@ import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiracore.exception.JiraClientException;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
-import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 

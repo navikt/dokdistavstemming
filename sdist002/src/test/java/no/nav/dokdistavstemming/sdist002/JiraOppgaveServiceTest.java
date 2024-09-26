@@ -23,8 +23,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 class JiraOppgaveServiceTest {
 
 	private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
-	private static final String ATTACHMENT_URL = "https://jira-q1.adeo.no/rest/api/2/issue/534999/attachments";
-	private static final String PROJECT_KEY = "MMA";
 	private static final String MMA_OPPGAVE_ID = "MMA-134";
 
 	@Mock
