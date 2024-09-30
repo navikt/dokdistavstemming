@@ -17,6 +17,7 @@ public class DokdistavstemmingProperties {
 	private final JiraUser jira = new JiraUser();
 	private final Sdist002Properties sdist002 = new Sdist002Properties();
 	private final Sdist004Properties sdist004 = new Sdist004Properties();
+	private final JiraProxy proxy = new JiraProxy();
 
 	@Data
 	@Validated
@@ -63,5 +64,12 @@ public class DokdistavstemmingProperties {
 		private String username;
 		@NotEmpty
 		private String password;
+	}
+
+	@Data
+	@Validated
+	public static class JiraProxy {
+		private String host;
+		private int port;
 	}
 }

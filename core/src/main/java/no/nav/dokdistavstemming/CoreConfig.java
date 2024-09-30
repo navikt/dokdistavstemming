@@ -30,9 +30,11 @@ public class CoreConfig {
 	@Bean
 	public JiraClient jiraClient(DokdistavstemmingProperties dokdistavstemmingProperties) {
 		DokdistavstemmingProperties.JiraUser jiraUser = dokdistavstemmingProperties.getJira();
+		DokdistavstemmingProperties.JiraProxy proxy = dokdistavstemmingProperties.getProxy();
 		return new JiraClient(JiraProperties.builder()
-				.jiraServieUser(new JiraProperties.JiraServieUser(jiraUser.getUsername(),jiraUser.getPassword()))
+				.jiraServieUser(new JiraProperties.JiraServieUser(jiraUser.getUsername(), jiraUser.getPassword()))
 				.url(jiraUser.getUrl())
+				.proxy(new JiraProperties.Proxy(proxy.getHost(), proxy.getPort()))
 				.build());
 	}
 
