@@ -5,8 +5,10 @@ import no.nav.dok.jiraapi.JiraRequest;
 import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiracore.exception.JiraClientException;
+import no.nav.dok.jiracore.exception.JiraServerException;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
+import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -52,10 +54,12 @@ public class JiraOppgaveService {
 					.httpStatusCode(HttpStatus.OK.value())
 					.build();
 
-		} catch (JiraFunctionalException | JiraClientException e) {
-			log.warn("opprettJirasak kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null, eller feil={}", e.getMessage());
-			throw new JiraFunctionalException(format("opprettJirasak kunne ikke opprette jirasak. Ett eller flere nødvendige felter i metadata er null eller feil=%s",
-					e.getMessage()));
+		} catch (JiraClientException e) {
+			log.warn("opprettJirasak kunne ikke opprette jirasak med feilmelding={}", e.getMessage());
+			throw new JiraFunctionalException(format("opprettJirasak kunne ikke opprette jirasak med feilmelding=%s",
+					e.getMessage()), e);
+		} catch (JiraServerException e) {
+			throw new JiraTechnicalException(format("opprettJirasak feilet teknisk med feilmelding=%s", e.getMessage()), e);
 		}
 	}
 
