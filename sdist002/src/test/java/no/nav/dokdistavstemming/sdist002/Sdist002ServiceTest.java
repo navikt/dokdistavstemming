@@ -49,7 +49,7 @@ public class Sdist002ServiceTest {
 	private MeterRegistry meterRegistry;
 
 	@Mock
-	private JiraService jiraService;
+	private JiraOppgaveService jiraOppgaveService;
 
 	@Mock
 	private Counter mockCounter;
@@ -60,7 +60,7 @@ public class Sdist002ServiceTest {
 		csvProdusere = mock(CSVProdusereImpl.class);
 		DokdistavstemmingProperties dokdistavstemmingProp = new DokdistavstemmingProperties();
 
-		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraService, dokdistavstemmingProp);
+		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraOppgaveService, dokdistavstemmingProp);
 	}
 
 	@Test

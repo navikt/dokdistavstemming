@@ -3,6 +3,9 @@
   "id": "534999",
   "self": "https://jira-q1.adeo.no/rest/api/2/issue/534999",
   "key": "MMA-134",
+  "status" : {
+    "name" : "Klar til arbeid"
+  },
   "fields": {
     "customfield_10070": null,
     "customfield_16615": null,
