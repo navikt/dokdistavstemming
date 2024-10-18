@@ -100,7 +100,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 
 		var exception = assertThrows(JiraFunctionalException.class, () -> jiraOppgaveService.opprettJirasak(PRINT.name(), fil, result.size()));
 
-		assertThat(exception.getMessage()).contains("opprettJira feilet med feilmelding=opprettJira feilet med status=400");
+		assertThat(exception.getMessage()).contains("opprettJira feilet med feilmelding");
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));

@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -64,8 +65,8 @@ public class WireMockResponse {
 	}
 
 	public static void jiraHappyPostVedleggDokument() {
-		stubFor(post(urlMatching(JIRA_VEDLEGG_URL))
-				.willReturn(aResponse().withStatus(OK.value())));
+		stubFor(post(urlEqualTo(JIRA_VEDLEGG_URL))
+				.willReturn(aResponse().withStatus(NO_CONTENT.value())));
 	}
 
 	public static void jiraFeilToOpprettSakForAvstemForsendelse() {

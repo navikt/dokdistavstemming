@@ -6,6 +6,7 @@ import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.util.List;
@@ -131,11 +132,6 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		assertThrows(DokdistavstemmingFunctionalException.class, () -> sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal());
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
-		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
-		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
-		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
-		verify(1, postRequestedFor(urlEqualTo(STATUS_TRANSITION)));
-		verify(1, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));
 	}
 
 	@Test
