@@ -6,7 +6,6 @@ import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.util.List;

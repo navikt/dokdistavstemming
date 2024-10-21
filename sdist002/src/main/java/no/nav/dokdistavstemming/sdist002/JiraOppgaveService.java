@@ -10,6 +10,7 @@ import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.util.List;
@@ -54,7 +55,7 @@ public class JiraOppgaveService {
 					.httpStatusCode(CREATED.value())
 					.build();
 
-		} catch (JiraClientException e) {
+		} catch (JiraClientException | ResourceAccessException e) {
 			log.warn(e.getMessage());
 			throw new JiraFunctionalException(e.getMessage(), e);
 		} catch (JiraServerException e) {
