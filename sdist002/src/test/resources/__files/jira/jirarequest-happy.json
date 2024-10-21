@@ -8,25 +8,19 @@
       "description" : null,
       "name" : "Team Dokument",
       "url" : null,
-      "components" : [ {
-        "self" : null,
-        "id" : null,
-        "name" : "Dokumentdistribusjon",
-        "isAssigneeTypeValid" : null
-      } ],
-      "issueTypes" : null,
-      "versions" : null
+      "components" : null,
+      "issueTypes" : null
     },
     "summary" : "Dokumentdistribusjon Kanal-PRINT: Utsendelse av 5 dokumenter/brev har ikke mottatt kvittering",
     "issuetype" : {
       "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
       "id" : "10901",
-      "description" : "Se vedlegg for oversikt over dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
+      "description" : "En oppgave som må utføres.",
       "name" : "Oppgave",
       "subtask" : false
     },
     "reporter" : {
-      "key" : "srvjiradokdistavstemming",
+      "key" : null,
       "name" : "srvjiradokdistavstemming",
       "self" : null
     },

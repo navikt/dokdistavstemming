@@ -38,7 +38,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 	private static final String JIRA_MESSAGE = "https://jira-q1.adeo.no/browse/MMA-134";
 
 	@Autowired
-	private JiraService jiraService;
+	private JiraOppgaveService jiraOppgaveService;
 
 	@BeforeEach
 	public void setUp() {
@@ -56,10 +56,10 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 		File fil = csvProdusere.oppretteCsvFil(result);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(PRINT.name(), fil, result.size());
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), fil, result.size());
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
-		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(0);
+		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)).withRequestBody(equalToJson(classpathToString("__files/jira/jirarequest-happy.json"))));
@@ -70,18 +70,18 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 	@Test
 	void shouldHappOppretteJiraSakForEhandel() throws Exception {
 		happilyHentUekspederteForsendelser("hentuekspederteforsendelser-ehandel.json");
-		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
+		jiraHappyHentProjectDetails();
 		jiraHappyPostVedleggDokument();
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL);
 		File fil = csvProdusere.oppretteCsvFil(result);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraService.opprettJirasak(E_HANDEL.name(), fil, result.size());
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(E_HANDEL.name(), fil, result.size());
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
-		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(0);
+		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)).withRequestBody(equalToJson(classpathToString("__files/jira/ehandel-request.json"))));
@@ -98,9 +98,9 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		jiraHappyPostVedleggDokument();
 		File fil = csvProdusere.oppretteCsvFil(result);
 
-		var exception = assertThrows(JiraFunctionalException.class, () -> jiraService.opprettJirasak(PRINT.name(), fil, result.size()));
+		var exception = assertThrows(JiraFunctionalException.class, () -> jiraOppgaveService.opprettJirasak(PRINT.name(), fil, result.size()));
 
-		assertThat(exception.getMessage()).contains("status=400 BAD_REQUEST, feilmelding=400 Bad Request");
+		assertThat(exception.getMessage()).contains("opprettJira feilet med feilmelding");
 		assertTrue(fil.exists());
 		assertTrue(fil.length() != 0);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));

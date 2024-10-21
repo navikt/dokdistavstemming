@@ -7,9 +7,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -21,6 +23,7 @@ public class WireMockResponse {
 	public static final String JIRA_VEDLEGG_URL = "/rest/api/2/issue/MMA-134/attachments";
 	public static final String JIRA_MMA_URL = "/rest/api/2/project/MMA";
 	public static final String AVSTEM_FORSENDELSER_URL = "/administrerforsendelse/avstemforsendelser";
+	public static final String STATUS_TRANSITION = "/rest/api/2/issue/MMA-134/transitions";
 
 	public static void happilyHentUekspederteForsendelser(String filename) {
 		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))
@@ -36,7 +39,7 @@ public class WireMockResponse {
 
 	public static void jiraHappyOpprettSakForAvstemForsendelse() {
 		stubFor(post(urlMatching(JIRA_OPPRETTE_URL))
-				.willReturn(aResponse().withStatus(OK.value())
+				.willReturn(aResponse().withStatus(CREATED.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("jira/jiraresponse.json")));
 	}
@@ -62,10 +65,8 @@ public class WireMockResponse {
 	}
 
 	public static void jiraHappyPostVedleggDokument() {
-		stubFor(post(urlMatching(JIRA_VEDLEGG_URL))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("jira/lagrevedlegg-happy.json")));
+		stubFor(post(urlEqualTo(JIRA_VEDLEGG_URL))
+				.willReturn(aResponse().withStatus(NO_CONTENT.value())));
 	}
 
 	public static void jiraFeilToOpprettSakForAvstemForsendelse() {

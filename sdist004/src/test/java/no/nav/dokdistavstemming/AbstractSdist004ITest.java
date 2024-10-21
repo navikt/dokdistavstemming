@@ -1,5 +1,6 @@
 package no.nav.dokdistavstemming;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,8 @@ public abstract class AbstractSdist004ITest {
 
 	@BeforeEach
 	public void setUp() {
+		WireMock.resetAllRequests();
+		WireMock.reset();
 		MDC.put(MDC_CALL_ID, CALL_ID);
 	}
 }
