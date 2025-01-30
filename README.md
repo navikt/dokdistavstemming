@@ -9,6 +9,9 @@ Sdist002 sørgjer for oppretting av Jira-oppgåver
 Sdist004 oppdaterer journalpostar i joark med ekspedertstatus og informasjon om utsending 
 - Prod: køyrer kvar time måndag-søndag
 
+Sdist006 finn sendingar distribuert til nav.no som ikkje er lese innan fristen og sender dei til sentral print
+- Prod: køyrer kvart 10. minutt måndag-søndag
+
 For meir informasjon om appen sjekk ut [Confluence-sida for dokdistavstemming](https://confluence.adeo.no/display/BOA/dokdistavstemming).
 
 ## Førespurnadar

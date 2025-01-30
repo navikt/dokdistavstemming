@@ -25,6 +25,7 @@ import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
+import static no.nav.dokdistavstemming.utils.LoggingUtils.loggListe;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.DOKDISTDITTNAV;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
@@ -56,7 +57,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			MDC.put(MDC_BATCH_ID, LocalDateTime.now().format(BATCH_ID_FORMATTER));
 			log.info("Starter sdist006 cron-jobb");
 
-			//1. Finn journalposter
+			// 1. Finn journalposter
 			List<String> ulesteJournalposter = finnUlesteJournalposter();
 			if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
 				log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
@@ -74,20 +75,20 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
-		log.info("Journalposter Sdist006 ønsker å sende til print:{}", String.join(",", ulesteJournalposter));
+		log.info("Sdist006 sender journalposter til print. journalpostIds={}", loggListe(ulesteJournalposter));
 
-		//2. Finn forsendelser
+		// 2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
 		if (ulesteForsendelserOptional.isEmpty() || ulesteForsendelserOptional.get().forsendelseListe().isEmpty()) {
-			log.info("Sdist006 fant ingen forsendelser for partisjonen av uleste journalposter.");
+			log.info("Sdist006 fant ingen forsendelser for partisjonen av uleste journalposter");
 			return;
 		}
 
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
 		log.info("Sdist006 fant antall={} forsendelser tilhørende partisjonen av uleste journalposter", ulesteForsendelser.size());
-		log.info("Forsendelser Sdist006 ønsker å feilregistrere/sende på nytt:{}", String.join(",", ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
+		log.info("Sdist006 vil feilregistrere og sende på nytt journalpostIds={}", loggListe(ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
-		//3. Behandle forsendelser
+		// 3. Behandle forsendelser
 		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
 	}
 
@@ -119,10 +120,10 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				// 3.6 stopp renotifikasjon av digital distribusjon
 				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
 
-				log.info("Sdist006 har håndtert: journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
+				log.info("Sdist006 har håndtert forsendelse. journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
 			} catch (DokdistavstemmingFunctionalException e) {
-				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding:{}",
+				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding={}",
 						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
 			} finally {
 				MDC.clear();
@@ -175,6 +176,5 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private void stoppRenotifikasjon(String bestillingsId) {
 		kafkaEventProducer.publish(new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV));
 	}
-
 }
 

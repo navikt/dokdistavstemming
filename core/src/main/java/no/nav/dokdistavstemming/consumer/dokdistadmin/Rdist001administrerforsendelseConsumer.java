@@ -17,7 +17,6 @@ import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.slf4j.MDC;
-import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,6 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.time.Duration.ofSeconds;
-import static java.util.Collections.emptyList;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
@@ -51,14 +49,6 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 	//max url-lengde i nginx er 8k tegn, apache håndterer ca 6k (+- 6.15kb)
 	//200 journalposter gir en url på ca 5.7k tegn og 5.5kb i size
 	public static int HENTFORSENDELSER_MAX_JOURNALPOSTS = 200;
-
-	private final HentUekspederteForsendelserResponse EMPTY_UEKSPEDERTEFORSENDELSER = HentUekspederteForsendelserResponse.builder()
-			.uekspederteForsendelser(emptyList())
-			.build();
-
-	private final HentEkspederteForsendelserResponse EMPTY_EKSPEDERTEFORSENDELSER = HentEkspederteForsendelserResponse.builder()
-			.forsendelser(emptyList())
-			.build();
 
 	private final WebClient webClient;
 	private final DokdistavstemmingProperties dokdistavstemmingProperties;
@@ -88,8 +78,8 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				})
 				.retrieve()
 				.bodyToMono(HentUekspederteForsendelserResponse.class)
-				.defaultIfEmpty(EMPTY_UEKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
-				.doOnError(this::handleError)
+				.defaultIfEmpty(HentUekspederteForsendelserResponse.empty()) // Håndtering av HttpStatus NO_CONTENT (204)
+				.onErrorMap(this::handleError)
 				.block();
 	}
 
@@ -104,7 +94,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.just(oppdaterForsendelserAvstemtInfo), OppdaterForsendelserAvstemtInfo.class)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError)
+				.onErrorMap(this::handleError)
 				.block();
 
 		log.info("avstemforsendelser har oppdatert {} forsendelser med avstemtReferanse og avstemtDato", oppdaterForsendelserAvstemtInfo.getForsendelser().size());
@@ -120,7 +110,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.just(avstemEkspederteForsendelserRequest), AvstemEkspederteForsendelserRequest.class)
 				.retrieve()
 				.toBodilessEntity()
-				.doOnError(this::handleError)
+				.onErrorMap(this::handleError)
 				.block();
 
 		log.info("avstemekspederteforsendelser har oppdatert {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
@@ -144,8 +134,8 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				})
 				.retrieve()
 				.bodyToMono(HentEkspederteForsendelserResponse.class)
-				.defaultIfEmpty(EMPTY_EKSPEDERTEFORSENDELSER) // Håndtering av HttpStatus NO_CONTENT (204)
-				.doOnError(this::handleError)
+				.defaultIfEmpty(HentEkspederteForsendelserResponse.empty()) // Håndtering av HttpStatus NO_CONTENT (204)
+				.onErrorMap(this::handleError)
 				.block();
 	}
 
@@ -166,7 +156,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 						)
 						.retrieve()
 						.bodyToMono(ForsendelseTos.class)
-						.doOnError(this::handleError)
+						.onErrorMap(this::handleError)
 						.block());
 	}
 
@@ -179,7 +169,7 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.justOrEmpty(forsendelseTo), ForsendelseTo.class)
 				.retrieve()
 				.bodyToMono(Forsendelse.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::handleError)
 				.block();
 	}
 
@@ -193,8 +183,8 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.justOrEmpty(feilregistrerForsendelseRequest), FeilregistrerForsendelseRequest.class)
 				.retrieve()
 				//response fra dokdistadmin er bare en tom responseEntity med 200 OK
-				.bodyToMono(ResponseEntity.class)
-				.doOnError(this::handleError)
+				.bodyToMono(Void.class)
+				.onErrorMap(this::handleError)
 				.block();
 	}
 
@@ -208,18 +198,18 @@ public class Rdist001administrerforsendelseConsumer implements Rdist001administr
 				.body(Mono.justOrEmpty(oppdaterForsendelseRequest), OppdaterForsendelseRequest.class)
 				.retrieve()
 				//response fra dokdistadmin er bare en tom responseEntity med 200 OK
-				.bodyToMono(ResponseEntity.class)
-				.doOnError(this::handleError)
+				.bodyToMono(Void.class)
+				.onErrorMap(this::handleError)
 				.block();
 	}
 
-	private void handleError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new DokdistavstemmingFunctionalException(
+	private Throwable handleError(Throwable error) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
+			return new DokdistavstemmingFunctionalException(
 					format("Kall mot rdist001 feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
 					error);
 		} else {
-				throw new DokdistavstemmingTechnicalException(
+			return new DokdistavstemmingTechnicalException(
 					format("Kall mot rdist001 feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}

@@ -10,4 +10,8 @@ import java.util.List;
 @Builder
 public class HentEkspederteForsendelserResponse {
 	private final List<EkspedertForsendelse> forsendelser;
+
+	public static HentEkspederteForsendelserResponse empty() {
+		return new HentEkspederteForsendelserResponse(List.of());
+	}
 }

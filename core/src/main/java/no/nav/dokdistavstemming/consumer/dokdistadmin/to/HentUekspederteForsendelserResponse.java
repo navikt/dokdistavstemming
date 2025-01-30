@@ -35,4 +35,8 @@ public class HentUekspederteForsendelserResponse {
 		private final String brevProduksjonApplikasjon;
 	}
 
+	public static HentUekspederteForsendelserResponse empty() {
+		return new HentUekspederteForsendelserResponse(List.of());
+	}
+
 }
