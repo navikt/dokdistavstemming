@@ -41,7 +41,10 @@ public abstract class AbstractSdist002ITest {
 	public Sdist002Service sdist002Service;
 
 	@BeforeEach
-	public void setUp() {
+	public void beforeEach() {
 		MDC.put(MDC_CALL_ID, CALL_ID);
+		setupResources();
 	}
+
+	protected abstract void setupResources();
 }

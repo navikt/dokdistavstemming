@@ -2,14 +2,14 @@ package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.JournalpostResultResponse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,11 +29,11 @@ import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.TRYGDE
 @Component
 public class BulkOppdaterJournalpostDistInfoService {
 
+	private static final int MAX_SIZE = 1000;
 	private final DokarkivConsumer dokarkivConsumer;
 	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
-	private static final int MAX_SIZE = 1000;
 
 	public BulkOppdaterJournalpostDistInfoService(DokarkivConsumer dokarkivConsumer,
 												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
@@ -47,7 +47,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
 
 		if (hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
-			log.info("Fant ingen ekspederte forsendelser i dokdist-db. Avslutter sdist004 cron-jobb.");
+			log.info("Sdist004 fant ingen ekspederte forsendelser i dokdist-db. Avslutter sdist004 cron-jobb.");
 			return;
 		}
 
@@ -62,11 +62,11 @@ public class BulkOppdaterJournalpostDistInfoService {
 						dokarkivConsumer.bulkOppdaterJournalpostDistribusjonsInfo(jpRequest);
 				logMelding(bulkOppdaterDistribusjonsinfoResponse);
 
-				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest = bulkOppdaterDistribusjonsinfoResponse == null ? null :
+				AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest =
 						avstemEkspederteForsendelserMapper.mapAvstemEkspederteForsendelser(hentEkspederteForsendelserResponse, bulkOppdaterDistribusjonsinfoResponse.getJournalposter());
 
 				if (avstemEkspederteForsendelserRequest != null) {
-					log.info("sdist004 oppdaterte {} journalposter med distribusjonsinformasjon på dokarkiv, og feilet totalt på {} journalposter",
+					log.info("Sdist004 oppdaterte {} journalposter med distribusjonsinformasjon på dokarkiv, og feilet totalt på {} journalposter",
 							countSuccess(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()), countFeil(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()));
 					rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
 				}
@@ -95,7 +95,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		if (response.getJournalposter() != null) {
 			if (response.getJournalposter().getFeilet() != null) {
 				List<JournalpostResponse> feil = response.getJournalposter().getFeilet();
-				log.warn("sdist004 feilet med å oppdatere {} journalposter på dokarkiv med feilmeldinger={}", countFeil(response.getJournalposter()), feil);
+				log.warn("Sdist004 feilet med å oppdatere {} journalposter på dokarkiv med feilmeldinger={}", countFeil(response.getJournalposter()), feil);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 		Map<DistribusjonKanalCode, Long> collectByKanal = forsendelserResponse.getForsendelser().stream()
 				.map(forsendelse -> DistribusjonKanalCode.valueOf(forsendelse.getDistribusjonsKanal()))
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-		log.info("sdist004 hentet {} ekspederte forsendelser fra dokdistadmin fordelt på følgende kanaler: DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}",
+		log.info("Sdist004 hentet {} ekspederte forsendelser fra dokdistadmin fordelt på følgende kanaler: DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}",
 				forsendelserResponse.getForsendelser().size(), collectByKanal.get(DPVT), collectByKanal.get(E_HANDEL), collectByKanal.get(DITTNAV), collectByKanal.get(PRINT), collectByKanal.get(SDP), collectByKanal.get(TRYGDERETTEN));
 	}
 }

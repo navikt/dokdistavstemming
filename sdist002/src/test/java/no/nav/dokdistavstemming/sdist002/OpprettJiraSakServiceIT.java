@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,8 +39,8 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 	@Autowired
 	private JiraOppgaveService jiraOppgaveService;
 
-	@BeforeEach
-	public void setUp() {
+	@Override
+	protected void setupResources() {
 		postAzureToken();
 	}
 

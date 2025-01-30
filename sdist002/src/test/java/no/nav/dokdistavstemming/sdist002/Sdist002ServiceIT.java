@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,8 +51,8 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 	@Autowired
 	private CSVProdusere csvProdusere;
 
-	@BeforeEach
-	public void setUp() {
+	@Override
+	protected void setupResources() {
 		postAzureToken();
 	}
 
@@ -64,7 +63,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
-		assertThat(uekspedertForsendelseDokumentList.get(0).getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_SDP);
+		assertThat(uekspedertForsendelseDokumentList.getFirst().getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_SDP);
 	}
 
 	@Test
@@ -83,10 +82,10 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
-		assertThat(result.get(0).getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_PRINT);
-		assertThat(result.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_J);
-		assertThat(result.get(0).getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_P_J.name());
-		assertThat(result.get(0).getDistribusjonDato()).isEqualTo(DISRIBUSJON_DATO_J);
+		assertThat(result.getFirst().getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_PRINT);
+		assertThat(result.getFirst().getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_J);
+		assertThat(result.getFirst().getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_P_J.name());
+		assertThat(result.getFirst().getDistribusjonDato()).isEqualTo(DISRIBUSJON_DATO_J);
 	}
 
 	@Test
