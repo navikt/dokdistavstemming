@@ -10,7 +10,7 @@ public final class LoggingUtils {
 		// ingen instansiering
 	}
 
-	public static String loggListe(List<String> liste) {
+	public static String trunkertListeToString(List<String> liste) {
 		if (liste.size() > MAKS_ELEMENTER_LOGGING) {
 			return Stream.concat(liste.stream().limit(MAKS_ELEMENTER_LOGGING), Stream.of("trunkert til maks " + MAKS_ELEMENTER_LOGGING + " elementer...")).toList().toString();
 		} else {

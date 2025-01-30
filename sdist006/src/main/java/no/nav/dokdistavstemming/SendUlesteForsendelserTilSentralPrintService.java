@@ -25,7 +25,7 @@ import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
-import static no.nav.dokdistavstemming.utils.LoggingUtils.loggListe;
+import static no.nav.dokdistavstemming.utils.LoggingUtils.trunkertListeToString;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.DOKDISTDITTNAV;
 import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
@@ -75,7 +75,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
-		log.info("Sdist006 sender journalposter til print. journalpostIds={}", loggListe(ulesteJournalposter));
+		log.info("Sdist006 sender journalposter til print. journalpostIds={}", trunkertListeToString(ulesteJournalposter));
 
 		// 2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
@@ -86,7 +86,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
 		log.info("Sdist006 fant antall={} forsendelser tilhørende partisjonen av uleste journalposter", ulesteForsendelser.size());
-		log.info("Sdist006 vil feilregistrere og sende på nytt journalpostIds={}", loggListe(ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
+		log.info("Sdist006 vil feilregistrere og sende på nytt journalpostIds={}", trunkertListeToString(ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
 
 		// 3. Behandle forsendelser
 		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
