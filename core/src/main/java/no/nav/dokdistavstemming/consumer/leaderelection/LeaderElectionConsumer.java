@@ -40,7 +40,7 @@ public class LeaderElectionConsumer {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			return hostname.equals(leader);
 		} catch (Exception e) {
-			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
+			log.warn("Kunne ikke bestemme lederpod. Feilmelding: {}", e.getMessage(), e);
 			return true;
 		}
 	}

@@ -14,7 +14,7 @@ import no.nav.dokdistavstemming.domain.Forsendelse;
 import java.util.List;
 import java.util.Optional;
 
-public interface Rdist001administrerforsendelse {
+public interface DokdistadminRdist001Api {
 
 	HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonKanal, int antallTimer);
 

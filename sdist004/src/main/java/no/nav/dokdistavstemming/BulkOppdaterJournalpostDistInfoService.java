@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminRdist001Api;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.AvstemEkspederteForsendelserRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
@@ -31,20 +31,20 @@ public class BulkOppdaterJournalpostDistInfoService {
 
 	private static final int MAX_SIZE = 1000;
 	private final DokarkivConsumer dokarkivConsumer;
-	private final Rdist001administrerforsendelse rdist001administrerforsendelse;
+	private final DokdistadminRdist001Api dokdistadminRdist001Api;
 	private final BulkOppdaterDistribusjonsinfoMapper bulkOppdaterDistribusjonsinfoMapper;
 	private final AvstemEkspederteForsendelserMapper avstemEkspederteForsendelserMapper;
 
 	public BulkOppdaterJournalpostDistInfoService(DokarkivConsumer dokarkivConsumer,
-												  Rdist001administrerforsendelse rdist001administrerforsendelse) {
+												  DokdistadminRdist001Api dokdistadminRdist001Api) {
 		this.dokarkivConsumer = dokarkivConsumer;
-		this.rdist001administrerforsendelse = rdist001administrerforsendelse;
+		this.dokdistadminRdist001Api = dokdistadminRdist001Api;
 		this.bulkOppdaterDistribusjonsinfoMapper = new BulkOppdaterDistribusjonsinfoMapper();
 		this.avstemEkspederteForsendelserMapper = new AvstemEkspederteForsendelserMapper();
 	}
 
 	public void oppdaterAvstemOgJournalpostDistInfo() {
-		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = rdist001administrerforsendelse.hentEkspederteforsendelser();
+		HentEkspederteForsendelserResponse hentEkspederteForsendelserResponse = dokdistadminRdist001Api.hentEkspederteforsendelser();
 
 		if (hentEkspederteForsendelserResponse.getForsendelser().isEmpty()) {
 			log.info("Sdist004 fant ingen ekspederte forsendelser i dokdist-db. Avslutter sdist004 cron-jobb.");
@@ -68,7 +68,7 @@ public class BulkOppdaterJournalpostDistInfoService {
 				if (avstemEkspederteForsendelserRequest != null) {
 					log.info("Sdist004 oppdaterte {} journalposter med distribusjonsinformasjon på dokarkiv, og feilet totalt på {} journalposter",
 							countSuccess(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()), countFeil(bulkOppdaterDistribusjonsinfoResponse.getJournalposter()));
-					rdist001administrerforsendelse.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
+					dokdistadminRdist001Api.oppdaterAvstemEkspederteForsendelser(avstemEkspederteForsendelserRequest);
 				}
 
 			});

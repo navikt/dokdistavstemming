@@ -3,8 +3,8 @@ package no.nav.dokdistavstemming.sdist002;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminRdist001Api;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.UekspedertForsendelse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
@@ -41,7 +41,7 @@ public class Sdist002ServiceTest {
 	@InjectMocks
 	private Sdist002Service sdist002Service;
 
-	private Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt;
+	private DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 
 	private CSVProdusere csvProdusere;
 
@@ -56,7 +56,7 @@ public class Sdist002ServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		hentForsendelseKvitteringIkkeMottatt = mock(Rdist001administrerforsendelseConsumer.class);
+		hentForsendelseKvitteringIkkeMottatt = mock(DokdistadminConsumer.class);
 		csvProdusere = mock(CSVProdusereImpl.class);
 		DokdistavstemmingProperties dokdistavstemmingProp = new DokdistavstemmingProperties();
 
