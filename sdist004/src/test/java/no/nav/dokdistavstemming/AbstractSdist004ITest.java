@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import no.nav.dokdistavstemming.config.AzureProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ActiveProfiles("itest")
 @EnableConfigurationProperties({
 		DokdistavstemmingProperties.class,
-		DokdistavstemmingServiceuser.class
+		DokdistavstemmingServiceuser.class,
+		AzureProperties.class
 })
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "no.nav.dokdistavstemming")

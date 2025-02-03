@@ -1,10 +1,10 @@
 package no.nav.dokdistavstemming;
 
-import no.nav.dokdistavstemming.azure.AzureConfig;
+import no.nav.dokdistavstemming.config.AzureProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
-import no.nav.dokdistavstemming.config.WebClientConfig;
+import no.nav.dokdistavstemming.config.OAuth2WebClientConfig;
 import no.nav.dokdistavstemming.sdist002.Sdist002Scheduler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,10 +21,10 @@ import static java.lang.System.setProperty;
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,
 		DokdistavstemmingServiceuser.class,
-		AzureConfig.class
+		AzureProperties.class
 })
 @Import(value = {
-		WebClientConfig.class,
+		OAuth2WebClientConfig.class,
 		CoreConfig.class,
 		Sdist002Scheduler.class,
 		Sdist004Scheduler.class,

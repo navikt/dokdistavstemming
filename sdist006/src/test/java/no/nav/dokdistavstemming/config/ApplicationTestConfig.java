@@ -16,7 +16,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @EnableConfigurationProperties({
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,
-		DokdistavstemmingServiceuser.class
+		DokdistavstemmingServiceuser.class,
+		AzureProperties.class
 })
 @Import({
 		JmsItestConfig.class

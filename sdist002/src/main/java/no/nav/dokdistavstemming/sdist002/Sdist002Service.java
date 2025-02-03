@@ -3,13 +3,13 @@ package no.nav.dokdistavstemming.sdist002;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminRdist001Api;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.map.OppdaterForsendelserAvstemtInfoMapper;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelse;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -25,7 +25,7 @@ public class Sdist002Service {
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
 	private static final String UKJENT = "Ukjent";
 
-	private final Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt;
+	private final DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
 	private final UekspedertForsendelseMapper uekspedertForsendelseMapper;
 	private final CSVProdusere csvProdusere;
@@ -33,7 +33,7 @@ public class Sdist002Service {
 	private final JiraOppgaveService jiraOppgaveService;
 	private final DokdistavstemmingProperties dokdistavstemmingProp;
 
-	public Sdist002Service(Rdist001administrerforsendelse hentForsendelseKvitteringIkkeMottatt,
+	public Sdist002Service(DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt,
 						   CSVProdusere csvProdusere,
 						   MeterRegistry meterRegistry,
 						   JiraOppgaveService jiraOppgaveService,

@@ -1,8 +1,6 @@
 package no.nav.dokdistavstemming.consumer.journalpostapi;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.azure.AzureToken;
-import no.nav.dokdistavstemming.azure.WebClientAzureAuthentication;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
@@ -21,10 +19,12 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static java.time.Duration.ofSeconds;
+import static no.nav.dokdistavstemming.config.OAuth2WebClientConfig.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 @Slf4j
 @Component
@@ -36,12 +36,10 @@ public class DokarkivConsumer {
 	private final String SIKKERHETSNIVAA_API_URL = "/internal/sikkerhetsnivaa";
 
 	public DokarkivConsumer(WebClient webClient,
-							DokdistavstemmingProperties dokdistavstemmingProp,
-							AzureToken azureToken) {
+							DokdistavstemmingProperties dokdistavstemmingProp) {
 		this.webClient = webClient.mutate()
 				.baseUrl(dokdistavstemmingProp.getEndpoints().getDokarkiv().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.filter(new WebClientAzureAuthentication(azureToken, dokdistavstemmingProp.getEndpoints().getDokarkiv()))
 				.build();
 	}
 
@@ -58,10 +56,11 @@ public class DokarkivConsumer {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
 					reactorRequest.responseTimeout(ofSeconds(360));
 				})
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
 				})
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapErrors)
 				.block();
 	}
 
@@ -71,35 +70,37 @@ public class DokarkivConsumer {
 
 		return webClient.post()
 				.uri(JOURNALPOST_API_URL + "/bulkOppdaterDistribusjonsinfo")
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.body(Mono.just(bulkOppdaterDistribusjonsinfoRequest), BulkOppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
 				.bodyToMono(BulkOppdaterDistribusjonsinfoResponse.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapErrors)
 				.block();
 	}
 
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
-		log.info(String.format("Sdist006 oppdaterer distribusjonsinfo for journalpost=%s.", journalpostId));
+		log.info("oppdaterDistribusjonsinfo oppdaterer distribusjonsinfo for journalpost={}.", journalpostId);
 
 		webClient.patch()
 				.uri(uriBuilder -> uriBuilder
 						.path(JOURNALPOST_API_JOURNALPOST_URL + "/{journalpostId}/oppdaterDistribusjonsinfo")
 						.build(journalpostId))
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.body(Mono.just(oppdaterDistribusjonsinfoRequest), OppdaterDistribusjonsinfoRequest.class)
 				.retrieve()
-				.bodyToMono(String.class)
-				.doOnError(this::handleError)
+				.bodyToMono(Void.class)
+				.onErrorMap(this::mapErrors)
 				.block();
 	}
 
-	private void handleError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new DokdistavstemmingFunctionalException(
+	private Throwable mapErrors(Throwable error) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
+			return new DokdistavstemmingFunctionalException(
 					format("Kall mot Journalpost-API feilet med status=%s, feilmelding=%s", response.getStatusCode(), response.getMessage()),
 					error);
 		} else {
-			throw new DokdistavstemmingTechnicalException(
+			return new DokdistavstemmingTechnicalException(
 					format("Kall mot Journalpost-API feilet med feilmelding=%s", error.getMessage()),
 					error);
 		}

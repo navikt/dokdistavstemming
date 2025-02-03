@@ -1,7 +1,7 @@
 package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer;
+import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
@@ -23,7 +23,7 @@ import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
-import static no.nav.dokdistavstemming.consumer.dokdistadmin.Rdist001administrerforsendelseConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
+import static no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.utils.LoggingUtils.trunkertListeToString;
 import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
@@ -38,16 +38,16 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private static final DateTimeFormatter BATCH_ID_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
 
 	private final DokarkivConsumer dokarkivConsumer;
-	private final Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer;
+	private final DokdistadminConsumer dokdistadminConsumer;
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
 
-	public SendUlesteForsendelserTilSentralPrintService(Rdist001administrerforsendelseConsumer rdist001administrerforsendelseConsumer,
+	public SendUlesteForsendelserTilSentralPrintService(DokdistadminConsumer dokdistadminConsumer,
 														DokarkivConsumer dokarkivConsumer,
 														DistribuerTilSentralPrintMQService distribuerTilSentralPrintService,
 														KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
-		this.rdist001administrerforsendelseConsumer = rdist001administrerforsendelseConsumer;
+		this.dokdistadminConsumer = dokdistadminConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;
 		this.kafkaEventProducer = kafkaEventProducer;
 	}
@@ -136,11 +136,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
-		return rdist001administrerforsendelseConsumer.hentForsendelser(ulesteJournalposter);
+		return dokdistadminConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
 	private Long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
-		return rdist001administrerforsendelseConsumer
+		return dokdistadminConsumer
 				.opprettForsendelse(mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId))
 				.getForsendelseId();
 	}
@@ -153,7 +153,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")
 				.resendingDistribusjonId(nyBestillingsId)
 				.build();
-		rdist001administrerforsendelseConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
+		dokdistadminConsumer.feilregistrerForsendelse(feilregistrerForsendelseRequest);
 	}
 
 	private void oppdaterForsendelse(Long nyForsendelsesId) {
@@ -161,7 +161,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				.forsendelseId(nyForsendelsesId)
 				.forsendelseStatus("KLAR_FOR_DIST")
 				.build();
-		rdist001administrerforsendelseConsumer.oppdaterForsendelse(oppdaterForsendelseRequest);
+		dokdistadminConsumer.oppdaterForsendelse(oppdaterForsendelseRequest);
 	}
 
 	private void oppdaterJournalpost(String journalpostId) {
