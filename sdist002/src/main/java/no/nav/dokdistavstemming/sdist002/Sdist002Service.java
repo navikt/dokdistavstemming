@@ -60,10 +60,9 @@ public class Sdist002Service {
 					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
-		log.info("Avslutter sdist002 cron-jobb");
 	}
 
-	public List<UekspedertForsendelseDokument> getForsendelserByDistribusjonKanal(DistribusjonKanalCode distribusjonskanal) {
+	List<UekspedertForsendelseDokument> getForsendelserByDistribusjonKanal(DistribusjonKanalCode distribusjonskanal) {
 		HentUekspederteForsendelserResponse response = hentForsendelserKvitteringIkkeMottattService(distribusjonskanal);
 		List<HentUekspederteForsendelserResponse.UekspedertForsendelse> uekspederteForsendelser = response.getUekspederteForsendelser();
 
@@ -91,7 +90,7 @@ public class Sdist002Service {
 				avstemForsendelse.getJournalpostId());
 	}
 
-	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode distribusjonKanal) {
+	HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode distribusjonKanal) {
 		// Defaulter til samme verdi for andre distribusjonskanaler enn PRINT og E_HANDEL
 		int antallTimer = switch (distribusjonKanal) {
 			case PRINT -> dokdistavstemmingProp.getSdist002().getDelayTimePrint();

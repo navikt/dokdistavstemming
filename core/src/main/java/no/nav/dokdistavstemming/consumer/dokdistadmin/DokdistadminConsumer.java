@@ -144,8 +144,6 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public Optional<ForsendelseTos> hentForsendelser(List<String> journalpostListe) {
-		log.info(format("hentForsendelser henter forsendelser for journalpostIder=%s", String.join(",", journalpostListe)));
-
 		return Optional.ofNullable(
 				webClient.method(GET)
 						.uri(uriBuilder -> uriBuilder
@@ -166,7 +164,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
-		log.info(format("opprettForsendelse oppretter forsendelse for bestillingsId=%s", forsendelseTo.getBestillingsId()));
+		log.info("opprettForsendelse oppretter forsendelse for bestillingsId={}", forsendelseTo.getBestillingsId());
 
 		return webClient.post()
 				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKDISTADMIN))
@@ -180,7 +178,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
-		log.info(format("FeilregistrerForsendelse feilregistrerer forsendelsesId=%s", feilregistrerForsendelseRequest.getForsendelseId()));
+		log.info("feilregistrerForsendelse feilregistrerer forsendelsesId={}", feilregistrerForsendelseRequest.getForsendelseId());
 
 		webClient.put()
 				.uri("/feilregistrerforsendelse")
@@ -196,7 +194,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
-		log.info(format("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId=%s", oppdaterForsendelseRequest.getForsendelseId()));
+		log.info("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId={}", oppdaterForsendelseRequest.getForsendelseId());
 
 		webClient.put()
 				.uri("/oppdaterforsendelse")

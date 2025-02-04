@@ -23,7 +23,7 @@ import static com.ibm.msg.client.jakarta.wmq.common.CommonConstants.WMQ_CM_CLIEN
 import static com.ibm.msg.client.jakarta.wmq.compat.base.internal.MQC.MQENC_NATIVE;
 
 @Configuration
-@Profile({"nais", "local"})
+@Profile({"nais"})
 public class JmsConfig {
 
 	private static final int UTF_8_WITH_PUA = 1208;

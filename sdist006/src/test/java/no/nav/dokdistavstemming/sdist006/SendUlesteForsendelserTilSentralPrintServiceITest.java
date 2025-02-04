@@ -95,8 +95,6 @@ class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestC
 	@Autowired
 	private SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService;
 
-	public static Consumer<String, DoknotifikasjonStopp> consumer;
-
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	public EmbeddedKafkaBroker kafkaEmbedded;

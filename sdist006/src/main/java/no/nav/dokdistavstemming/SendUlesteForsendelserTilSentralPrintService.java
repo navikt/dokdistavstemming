@@ -55,7 +55,6 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	public void sendUlesteForsendelserTilSentralPrint() {
 		try {
 			MDC.put(MDC_BATCH_ID, LocalDateTime.now().format(BATCH_ID_FORMATTER));
-			log.info("Starter sdist006 cron-jobb");
 
 			// 1. Finn journalposter
 			List<String> ulesteJournalposter = finnUlesteJournalposter();
@@ -67,8 +66,6 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
 
 			partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
-
-			log.info("Avslutter sdist006 cron-jobb");
 		} finally {
 			MDC.clear();
 		}

@@ -2,46 +2,48 @@ package no.nav.dokdistavstemming.consumer.leaderelection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.net.InetAddress;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static java.net.InetAddress.getLocalHost;
 
 @Slf4j
 @Component
 public class LeaderElectionConsumer {
-
-	private static final String ELECTOR_PATH = "ELECTOR_PATH";
-
 	private final WebClient webClient;
 	private final ObjectMapper mapper;
 
-	public LeaderElectionConsumer(WebClient webClient, ObjectMapper mapper) {
-		this.webClient = webClient;
+	public LeaderElectionConsumer(WebClient.Builder webClientBuilder,
+								  ObjectMapper mapper,
+								  @Value("${elector.path}") String electorPath) {
+		this.webClient = webClientBuilder
+				.baseUrl(electorPath.startsWith("http") ? electorPath : "http://" + electorPath)
+				.build();
 		this.mapper = mapper;
 	}
 
+	/**
+	 * @return true hvis denne podden er leader, ellers false
+	 */
 	public boolean isLeader() {
-		String electorPath = System.getenv(ELECTOR_PATH);
-		if (isBlank(electorPath)) {
-			log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel ELECTOR_PATH.");
-			return true;
-		}
+		return Boolean.TRUE.equals(isLeaderAsync().block());
+	}
 
-		try {
-			String response = webClient.get()
-					.uri("http://" + electorPath)
-					.retrieve()
-					.bodyToMono(String.class)
-					.block();
-			String leader = mapper.readTree(response).get("name").asText();
-			String hostname = InetAddress.getLocalHost().getHostName();
-			return hostname.equals(leader);
-		} catch (Exception e) {
-			log.warn("Kunne ikke bestemme lederpod. Feilmelding: {}", e.getMessage(), e);
-			return true;
-		}
+	public Mono<Boolean> isLeaderAsync() {
+		return webClient.get()
+				.retrieve()
+				.bodyToMono(String.class)
+				.map(response -> {
+					try {
+						String leader = mapper.readTree(response).get("name").asText();
+						String hostname = getLocalHost().getHostName();
+						return hostname.equals(leader);
+					} catch (Exception e) {
+						log.error("Kunne ikke bestemme lederpod. Feilmelding: {}", e.getMessage());
+						return false;
+					}
+				});
 	}
 }
