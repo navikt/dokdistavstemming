@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.Exceptions;
+package no.nav.dokdistavstemming.sdist006;
 
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 

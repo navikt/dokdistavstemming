@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist004;
 
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
@@ -11,14 +11,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static no.nav.dokdistavstemming.WireMockResponse.AVSTEM_EKSPEDERTE_FORSENDELSER_URL;
-import static no.nav.dokdistavstemming.WireMockResponse.HENT_EKSPEDERTE_FORSENDELSER_URL;
-import static no.nav.dokdistavstemming.WireMockResponse.JOURNALPOST_API_URL;
-import static no.nav.dokdistavstemming.WireMockResponse.getEkspederteForsendelser;
-import static no.nav.dokdistavstemming.WireMockResponse.oppdaterAvstemArkivForsendelseInfo;
-import static no.nav.dokdistavstemming.WireMockResponse.oppdaterJournalpost;
-import static no.nav.dokdistavstemming.WireMockResponse.oppdaterJournalpostFeil;
-import static no.nav.dokdistavstemming.WireMockResponse.postAzureToken;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.AVSTEM_EKSPEDERTE_FORSENDELSER_URL;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.HENT_EKSPEDERTE_FORSENDELSER_URL;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.JOURNALPOST_API_URL;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.getEkspederteForsendelser;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.oppdaterAvstemArkivForsendelseInfo;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.oppdaterJournalpost;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.oppdaterJournalpostFeil;
+import static no.nav.dokdistavstemming.sdist004.WireMockResponse.postAzureToken;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 

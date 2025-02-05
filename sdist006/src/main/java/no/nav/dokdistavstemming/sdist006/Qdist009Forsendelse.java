@@ -1,11 +1,10 @@
-package no.nav.dokdistavstemming;
-
-import lombok.Builder;
-import lombok.Data;
+package no.nav.dokdistavstemming.sdist006;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
+import lombok.Builder;
+import lombok.Data;
 
 @XmlType(
 		name = "Qdist009Forsendelse",

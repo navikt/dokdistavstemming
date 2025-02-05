@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist006;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer;
@@ -25,10 +25,10 @@ import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
+import static no.nav.dokdistavstemming.sdist006.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
+import static no.nav.dokdistavstemming.sdist006.Sdist006utils.DOKDISTDITTNAV;
+import static no.nav.dokdistavstemming.sdist006.Sdist006utils.determineEkspedertTil;
 import static no.nav.dokdistavstemming.utils.LoggingUtils.trunkertListeToString;
-import static no.nav.dokdistavstemming.utils.OpprettForsendelseMapper.mapForsendelseToTilOpprettForsendelse;
-import static no.nav.dokdistavstemming.utils.Sdist006utils.DOKDISTDITTNAV;
-import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
 
 @Slf4j
 @Component

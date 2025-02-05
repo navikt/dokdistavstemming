@@ -1,7 +1,6 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist006;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.Exceptions.KafkaTechnicalException;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.concurrent.ExecutionException;
 
-import static no.nav.dokdistavstemming.utils.Sdist006utils.getCallId;
+import static no.nav.dokdistavstemming.sdist006.Sdist006utils.getCallId;
 
 @Slf4j
 @Component

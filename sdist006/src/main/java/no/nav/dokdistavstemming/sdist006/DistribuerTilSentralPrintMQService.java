@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist006;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
@@ -7,8 +7,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 
-import static no.nav.dokdistavstemming.DistribuerTilSentralPrintRoute.DIRECT_SENTRALPRINT;
-import static no.nav.dokdistavstemming.DistribuerTilSentralPrintRoute.PROPERTY_FORSENDELSE_ID;
+import static no.nav.dokdistavstemming.sdist006.DistribuerTilSentralPrintRoute.DIRECT_SENTRALPRINT;
+import static no.nav.dokdistavstemming.sdist006.DistribuerTilSentralPrintRoute.PROPERTY_FORSENDELSE_ID;
 
 @Slf4j
 @Component

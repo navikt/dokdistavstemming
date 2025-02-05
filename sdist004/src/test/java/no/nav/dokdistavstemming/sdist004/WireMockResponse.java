@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist004;
 
 import org.springframework.http.HttpStatus;
 

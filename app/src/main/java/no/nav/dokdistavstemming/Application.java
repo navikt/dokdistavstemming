@@ -6,6 +6,8 @@ import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
 import no.nav.dokdistavstemming.config.MqGatewayAlias;
 import no.nav.dokdistavstemming.config.OAuth2WebClientConfig;
 import no.nav.dokdistavstemming.sdist002.Sdist002Scheduler;
+import no.nav.dokdistavstemming.sdist004.Sdist004Scheduler;
+import no.nav.dokdistavstemming.sdist006.Sdist006Scheduler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

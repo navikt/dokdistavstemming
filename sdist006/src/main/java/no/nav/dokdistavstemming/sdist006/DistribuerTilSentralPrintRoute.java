@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist006;
 
 import jakarta.jms.Queue;
 import jakarta.xml.bind.JAXBException;
