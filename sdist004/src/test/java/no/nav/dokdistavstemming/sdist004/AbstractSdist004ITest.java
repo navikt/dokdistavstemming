@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist004;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.dokdistavstemming.config.AzureProperties;

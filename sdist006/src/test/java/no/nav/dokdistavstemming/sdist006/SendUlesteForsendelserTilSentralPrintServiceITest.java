@@ -2,7 +2,6 @@ package no.nav.dokdistavstemming.sdist006;
 
 import jakarta.jms.Queue;
 import jakarta.xml.bind.JAXBElement;
-import no.nav.dokdistavstemming.SendUlesteForsendelserTilSentralPrintService;
 import no.nav.dokdistavstemming.config.ApplicationTestConfig;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.consumer.Consumer;

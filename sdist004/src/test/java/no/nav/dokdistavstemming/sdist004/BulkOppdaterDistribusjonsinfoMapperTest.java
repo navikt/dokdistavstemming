@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist004;
 
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentEkspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.journalpostapi.BulkOppdaterDistribusjonsinfoRequest;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
-import static no.nav.dokdistavstemming.utils.DataUtils.getHentEkspederteForsendelserFromJson;
+import static no.nav.dokdistavstemming.sdist004.utils.DataUtils.getHentEkspederteForsendelserFromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

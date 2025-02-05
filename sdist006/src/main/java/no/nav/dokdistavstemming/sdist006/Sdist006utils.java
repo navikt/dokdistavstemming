@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.utils;
+package no.nav.dokdistavstemming.sdist006;
 
 import org.slf4j.MDC;
 

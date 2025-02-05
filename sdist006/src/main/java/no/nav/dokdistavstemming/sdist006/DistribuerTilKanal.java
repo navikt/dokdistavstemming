@@ -3,9 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package no.nav.dokdistavstemming;
-
-import lombok.AllArgsConstructor;
+package no.nav.dokdistavstemming.sdist006;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -15,6 +13,7 @@ import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.AllArgsConstructor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

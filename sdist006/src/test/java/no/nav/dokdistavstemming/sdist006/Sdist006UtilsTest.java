@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming;
+package no.nav.dokdistavstemming.sdist006;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static java.time.Month.AUGUST;
-import static no.nav.dokdistavstemming.utils.Sdist006utils.determineEkspedertTil;
+import static no.nav.dokdistavstemming.sdist006.Sdist006utils.determineEkspedertTil;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class Sdist006UtilsTest {

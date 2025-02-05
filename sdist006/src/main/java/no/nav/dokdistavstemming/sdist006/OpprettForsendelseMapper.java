@@ -1,4 +1,4 @@
-package no.nav.dokdistavstemming.utils;
+package no.nav.dokdistavstemming.sdist006;
 
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
 

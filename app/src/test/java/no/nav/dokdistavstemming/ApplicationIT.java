@@ -4,6 +4,8 @@ import com.ibm.mq.jakarta.jms.MQQueue;
 import jakarta.jms.JMSException;
 import jakarta.jms.Queue;
 import no.nav.dokdistavstemming.sdist002.Sdist002Scheduler;
+import no.nav.dokdistavstemming.sdist004.Sdist004Scheduler;
+import no.nav.dokdistavstemming.sdist006.Sdist006Scheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
