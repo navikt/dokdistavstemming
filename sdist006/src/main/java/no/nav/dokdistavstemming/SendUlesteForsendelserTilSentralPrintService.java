@@ -63,7 +63,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				return;
 			}
 
-			log.info("Sdist006 fant antall={} uleste journalposter i Joark", ulesteJournalposter.size());
+			log.info("Sdist006 fant totalt {} uleste journalposter i Joark", ulesteJournalposter.size());
 
 			partition(ulesteJournalposter, HENTFORSENDELSER_MAX_JOURNALPOSTS).forEach(this::handleUlesteJournalposterList);
 		} finally {
@@ -72,7 +72,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
-		log.info("Sdist006 sender journalposter til print. journalpostIds={}", trunkertListeToString(ulesteJournalposter));
+		log.info("Sdist006 undersøker om den skal sende journalposter til print. journalpostIds={}", trunkertListeToString(ulesteJournalposter));
 
 		// 2. Finn forsendelser
 		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
@@ -82,8 +82,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		}
 
 		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
-		log.info("Sdist006 fant antall={} forsendelser tilhørende partisjonen av uleste journalposter", ulesteForsendelser.size());
-		log.info("Sdist006 vil feilregistrere og sende på nytt journalpostIds={}", trunkertListeToString(ulesteForsendelser.stream().map(ForsendelseTo::getBestillingsId).toList()));
+		log.info("Sdist006 vil feilregistrere {} journalposter og sende på nytt journalpostIds={}", ulesteForsendelser.size(),
+				trunkertListeToString(ulesteForsendelser.stream().map(forsendelseTo -> forsendelseTo.getArkivInformasjon().getArkivId()).toList()));
 
 		// 3. Behandle forsendelser
 		feilregistrerForsendelserOgSendTilQdist009(ulesteForsendelser);
