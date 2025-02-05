@@ -2,30 +2,28 @@ package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Configuration
+@Component
 public class Sdist004Scheduler {
 
-	private final BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterJournalpostDistInfo;
-	private final LeaderElectionConsumer leaderElection;
-	private final ThreadPoolTaskExecutor poolTaskExecutor;
+	private final BulkOppdaterJournalpostDistInfoService bulkOppdaterJournalpostDistInfoService;
+	private final LeaderElectionConsumer leaderElectionConsumer;
 
-	public Sdist004Scheduler(BulkOppdaterJournalpostDistInfoService sdist004BulkOppdaterJournalpostDistInfo, ThreadPoolTaskExecutor poolTaskExecutor,
-							 LeaderElectionConsumer leaderElection) {
-		this.sdist004BulkOppdaterJournalpostDistInfo = sdist004BulkOppdaterJournalpostDistInfo;
-		this.leaderElection = leaderElection;
-		this.poolTaskExecutor = poolTaskExecutor;
+	public Sdist004Scheduler(BulkOppdaterJournalpostDistInfoService bulkOppdaterJournalpostDistInfoService,
+							 LeaderElectionConsumer leaderElectionConsumer) {
+		this.bulkOppdaterJournalpostDistInfoService = bulkOppdaterJournalpostDistInfoService;
+		this.leaderElectionConsumer = leaderElectionConsumer;
 	}
 
 	@Scheduled(cron = "${sdist004.cron.job}")
 	public void configureTasks() {
-		if (leaderElection.isLeader()) {
-			log.info("Starter sdist004 cron-jobb");
-			poolTaskExecutor.execute(sdist004BulkOppdaterJournalpostDistInfo::oppdaterAvstemOgJournalpostDistInfo);
+		if (leaderElectionConsumer.isLeader()) {
+			log.info("Sdist004 cron-jobb starter");
+			bulkOppdaterJournalpostDistInfoService.oppdaterAvstemOgJournalpostDistInfo();
+			log.info("Sdist004 er ferdig");
 		}
 	}
 }

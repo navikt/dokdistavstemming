@@ -45,7 +45,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	void shouldHappilyOppretteJiraSak() throws Exception {
+	void shouldHappyOppretteJiraSak() throws Exception {
 		happilyHentUekspederteForsendelser("henteforsendelse-print-overfemdager.json");
 		jiraHappyHentProjectDetails();
 		jiraHappyOpprettSakForAvstemForsendelse();
@@ -67,7 +67,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 	}
 
 	@Test
-	void shouldHappOppretteJiraSakForEhandel() throws Exception {
+	void shouldHappyOppretteJiraSakForEhandel() throws Exception {
 		happilyHentUekspederteForsendelser("hentuekspederteforsendelser-ehandel.json");
 		jiraHappyOpprettSakForAvstemForsendelse();
 		jiraHappyHentProjectDetails();

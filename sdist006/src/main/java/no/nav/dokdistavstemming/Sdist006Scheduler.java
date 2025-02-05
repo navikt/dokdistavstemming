@@ -2,28 +2,28 @@ package no.nav.dokdistavstemming;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Configuration
+@Component
 public class Sdist006Scheduler {
 
-	private final LeaderElectionConsumer leaderElection;
-	private final ThreadPoolTaskExecutor poolTaskExecutor;
+	private final LeaderElectionConsumer leaderElectionConsumer;
 	private final SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService;
 
-	public Sdist006Scheduler(ThreadPoolTaskExecutor poolTaskExecutor, LeaderElectionConsumer leaderElection, SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService) {
-		this.leaderElection = leaderElection;
-		this.poolTaskExecutor = poolTaskExecutor;
+	public Sdist006Scheduler(LeaderElectionConsumer leaderElectionConsumer,
+							 SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService) {
+		this.leaderElectionConsumer = leaderElectionConsumer;
 		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
 	}
 
 	@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
-		if (leaderElection.isLeader()) {
-			poolTaskExecutor.execute(sendUlesteForsendelserTilSentralPrintService::sendUlesteForsendelserTilSentralPrint);
+		if (leaderElectionConsumer.isLeader()) {
+			log.info("Sdist006 cron-jobb starter");
+			sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+			log.info("Sdist006 er ferdig");
 		}
 	}
 }

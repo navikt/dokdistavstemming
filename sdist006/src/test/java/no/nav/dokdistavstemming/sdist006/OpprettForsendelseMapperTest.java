@@ -44,15 +44,15 @@ class OpprettForsendelseMapperTest {
 	public void shouldMapForsendelser() {
 		ForsendelseTo request = mapForsendelseToTilOpprettForsendelse(createHentForsendelseResponse(), BESTILLINGS_ID);
 
-		assertEquals(request.getBestillingsId(), BESTILLINGS_ID);
-		assertEquals(request.getForsendelseTittel(), FORSENDELSE_TITTEL);
-		assertEquals(request.getBatchId(), BATCH_ID);
-		assertEquals(request.getDokumentProdApp(), DOKUMENT_PROD_APP);
-		assertEquals(request.getBestillendeFagsystem(), BESTILLENDE_FAGSYSTEM);
-		assertEquals(request.getArkivInformasjon().getArkivId(), ARKIV_ID);
-		assertEquals(request.getMottaker().getMottakerId(), MOTTAKER_ID);
-		assertEquals(request.getMottaker().getMottakerNavn(), MOTTAKER_ID_NAVN);
-		assertEquals(request.getOriginalDistribusjonId(), OLD_BESTILLINGS_ID);
+		assertEquals(BESTILLINGS_ID, request.getBestillingsId());
+		assertEquals(FORSENDELSE_TITTEL, request.getForsendelseTittel());
+		assertEquals(BATCH_ID, request.getBatchId());
+		assertEquals(DOKUMENT_PROD_APP, request.getDokumentProdApp());
+		assertEquals(BESTILLENDE_FAGSYSTEM, request.getBestillendeFagsystem());
+		assertEquals(ARKIV_ID, request.getArkivInformasjon().getArkivId());
+		assertEquals(MOTTAKER_ID, request.getMottaker().getMottakerId());
+		assertEquals(MOTTAKER_ID_NAVN, request.getMottaker().getMottakerNavn());
+		assertEquals(OLD_BESTILLINGS_ID, request.getOriginalDistribusjonId());
 		assertPostadresseTo(request.getPostadresse());
 		assertDokument(request.getDokumenter().get(1));
 	}
@@ -62,15 +62,15 @@ class OpprettForsendelseMapperTest {
 		ForsendelseTo hentForsendelseResponse = createHentForsendelseResponseWithPostadresseNull();
 		ForsendelseTo request = mapForsendelseToTilOpprettForsendelse(hentForsendelseResponse, BESTILLINGS_ID);
 
-		assertEquals(request.getBestillingsId(), BESTILLINGS_ID);
-		assertEquals(request.getForsendelseTittel(), FORSENDELSE_TITTEL);
-		assertEquals(request.getBatchId(), BATCH_ID);
-		assertEquals(request.getDokumentProdApp(), DOKUMENT_PROD_APP);
-		assertEquals(request.getBestillendeFagsystem(), BESTILLENDE_FAGSYSTEM);
-		assertEquals(request.getArkivInformasjon().getArkivId(), ARKIV_ID);
-		assertEquals(request.getMottaker().getMottakerId(), MOTTAKER_ID);
-		assertEquals(request.getMottaker().getMottakerNavn(), MOTTAKER_ID_NAVN);
-		assertEquals(request.getOriginalDistribusjonId(), OLD_BESTILLINGS_ID);
+		assertEquals(BESTILLINGS_ID, request.getBestillingsId());
+		assertEquals(FORSENDELSE_TITTEL, request.getForsendelseTittel());
+		assertEquals(BATCH_ID, request.getBatchId());
+		assertEquals(DOKUMENT_PROD_APP, request.getDokumentProdApp());
+		assertEquals(BESTILLENDE_FAGSYSTEM, request.getBestillendeFagsystem());
+		assertEquals(ARKIV_ID, request.getArkivInformasjon().getArkivId());
+		assertEquals(MOTTAKER_ID, request.getMottaker().getMottakerId());
+		assertEquals(MOTTAKER_ID_NAVN, request.getMottaker().getMottakerNavn());
+		assertEquals(OLD_BESTILLINGS_ID, request.getOriginalDistribusjonId());
 		assertNull(request.getPostadresse());
 		assertDokument(request.getDokumenter().get(1));
 	}
@@ -78,30 +78,30 @@ class OpprettForsendelseMapperTest {
 	@Test
 	public void shouldThrowExceptionIfHentForsendelseResponseIsNull() {
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mapForsendelseToTilOpprettForsendelse(null, BESTILLINGS_ID));
-		assertEquals(exception.getMessage(), "HentForsendelseResponseTo kan ikke være null");
+		assertEquals("HentForsendelseResponseTo kan ikke være null", exception.getMessage());
 	}
 
 	@Test
 	public void shouldThrowExceptionIfMottakerIsNull() {
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mapForsendelseToTilOpprettForsendelse(createHentForsendelseResponseWithMottakerNull(), BESTILLINGS_ID));
-		assertEquals(exception.getMessage(), "HV000116: must not be null.");
+		assertEquals("HV000116: must not be null.", exception.getMessage());
 	}
 
 	private void assertPostadresseTo(ForsendelseTo.Postadresse postadresse) {
-		assertEquals(postadresse.getAdresselinje1(), ADRESSELINJE_1);
-		assertEquals(postadresse.getAdresselinje2(), ADRESSELINJE_2);
-		assertEquals(postadresse.getAdresselinje3(), ADRESSELINJE_3);
-		assertEquals(postadresse.getPostnummer(), POSTNUMMER);
-		assertEquals(postadresse.getPoststed(), POSTSTED);
-		assertEquals(postadresse.getLandkode(), LAND);
+		assertEquals(ADRESSELINJE_1, postadresse.getAdresselinje1());
+		assertEquals(ADRESSELINJE_2, postadresse.getAdresselinje2());
+		assertEquals(ADRESSELINJE_3, postadresse.getAdresselinje3());
+		assertEquals(POSTNUMMER, postadresse.getPostnummer());
+		assertEquals(POSTSTED, postadresse.getPoststed());
+		assertEquals(LAND, postadresse.getLandkode());
 	}
 
 	private void assertDokument(ForsendelseTo.Dokument dokumentTo) {
-		assertEquals(dokumentTo.getDokumenttypeId(), DOKUMENTTYPE_ID_2);
-		assertEquals(dokumentTo.getDokumentObjektReferanse(), OBJEKT_REFERANSE_2);
-		assertEquals(dokumentTo.getTilknyttetSom(), TILKNYTTET_SOM_VEDLEGG);
+		assertEquals(DOKUMENTTYPE_ID_2, dokumentTo.getDokumenttypeId());
+		assertEquals(OBJEKT_REFERANSE_2, dokumentTo.getDokumentObjektReferanse());
+		assertEquals(TILKNYTTET_SOM_VEDLEGG, dokumentTo.getTilknyttetSom());
 		//assertEquals(dokumentTo.getRekkefolge(), 2);
-		assertEquals(dokumentTo.getArkivDokumentInfoId(), ARKIV_DOKUMENTINFO_ID_2);
+		assertEquals(ARKIV_DOKUMENTINFO_ID_2, dokumentTo.getArkivDokumentInfoId());
 	}
 
 	private ForsendelseTo createHentForsendelseResponse() {

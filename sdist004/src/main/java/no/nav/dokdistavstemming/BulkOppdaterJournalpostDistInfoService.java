@@ -73,8 +73,6 @@ public class BulkOppdaterJournalpostDistInfoService {
 
 			});
 		}
-
-		log.info("Avslutter sdist004 cron-jobb");
 	}
 
 	private boolean isForsendelseNullOrEmpy(HentEkspederteForsendelserResponse hentEkspederteForsendelser) {
