@@ -23,7 +23,7 @@ import static com.ibm.msg.client.jakarta.wmq.common.CommonConstants.WMQ_CM_CLIEN
 import static com.ibm.msg.client.jakarta.wmq.compat.base.internal.MQC.MQENC_NATIVE;
 
 @Configuration
-@Profile({"nais"})
+@Profile({"nais", "local"})
 public class JmsConfig {
 
 	private static final int UTF_8_WITH_PUA = 1208;
@@ -35,7 +35,7 @@ public class JmsConfig {
 	}
 
 	@Bean
-	public ConnectionFactory wmqConnectionFactory(MqGatewayAlias mqGatewayAlias, DokdistavstemmingServiceuser serviceuserAlias) throws JMSException {
+	public ConnectionFactory connectionFactory(MqGatewayAlias mqGatewayAlias, DokdistavstemmingServiceuser serviceuserAlias) throws JMSException {
 		MQConnectionFactory connectionFactory = new MQConnectionFactory();
 		connectionFactory.setHostName(mqGatewayAlias.hostname());
 		connectionFactory.setPort(mqGatewayAlias.port());
