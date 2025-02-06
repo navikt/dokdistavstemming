@@ -61,6 +61,7 @@ public class DokarkivConsumer {
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
 				})
 				.onErrorMap(this::mapErrors)
+				.defaultIfEmpty(List.of())
 				.block();
 	}
 

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Forsendelse {
 
-	private Long forsendelseId;
+	private long forsendelseId;
 }
