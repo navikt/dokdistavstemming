@@ -9,13 +9,9 @@
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "http://dokdistadmin.teamdokumenthandtering.svc.nais.local/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
-
   "SRVJIRADOKDISTAVSTEMMING": "/serviceuser/data/dev/srvjiradokdistavstemming",
   "SRVDOKDISTAVSTEMMING": "/serviceuser/data/dev/srvdokdistavstemming",
-
   "DOKDISTAVSTEMMING_VAULT": "/kv/preprod/fss/dokdistavstemming/teamdokumenthandtering",
-  "DOKDISTAVSTEMMINGCERT": "/kv/preprod/fss/dokdistavstemming/certificate",
-
   "KAFKA_POOL": "nav-dev",
   "MQGATEWAY01_CHANNELNAME": "Q2_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",
