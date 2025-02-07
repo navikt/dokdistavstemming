@@ -25,7 +25,6 @@ public class DistribuerTilSentralPrintRoute extends RouteBuilder {
 		this.qdist009 = qdist009;
 	}
 
-
 	@Override
 	public void configure() throws Exception {
 		errorHandler(defaultErrorHandler()

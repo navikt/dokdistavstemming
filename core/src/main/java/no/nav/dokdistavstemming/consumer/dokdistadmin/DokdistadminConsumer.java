@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -143,22 +142,23 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 
 	@Override
 	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	public Optional<ForsendelseTos> hentForsendelser(List<String> journalpostListe) {
-		return Optional.ofNullable(
-				webClient.method(GET)
-						.uri(uriBuilder -> uriBuilder
-								.path("/hentForsendelser")
-								.queryParam("distribusjonstyper", List.of(VIKTIG, VEDTAK))
-								.queryParam("dokumentstatus", EKSPEDERT)
-								.queryParam("distribusjonkanal", DITTNAV)
-								.queryParam("journalpostliste", journalpostListe)
-								.build()
-						)
-						.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKDISTADMIN))
-						.retrieve()
-						.bodyToMono(ForsendelseTos.class)
-						.onErrorMap(this::mapError)
-						.block());
+	public List<ForsendelseTo> hentForsendelser(List<String> journalpostListe) {
+		return webClient.method(GET)
+				.uri(uriBuilder -> uriBuilder
+						.path("/hentForsendelser")
+						.queryParam("distribusjonstyper", List.of(VIKTIG, VEDTAK))
+						.queryParam("dokumentstatus", EKSPEDERT)
+						.queryParam("distribusjonkanal", DITTNAV)
+						.queryParam("journalpostliste", journalpostListe)
+						.build()
+				)
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKDISTADMIN))
+				.retrieve()
+				.bodyToMono(ForsendelseTos.class)
+				.map(ForsendelseTos::forsendelseListe)
+				.defaultIfEmpty(List.of())
+				.onErrorMap(this::mapError)
+				.block();
 	}
 
 	@Override

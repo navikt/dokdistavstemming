@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.FeilregistrerForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTo;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.to.ForsendelseTos;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.OppdaterForsendelseRequest;
 import no.nav.dokdistavstemming.consumer.journalpostapi.DokarkivConsumer;
 import no.nav.dokdistavstemming.consumer.journalpostapi.OppdaterDistribusjonsinfoRequest;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
@@ -30,6 +28,9 @@ import static no.nav.dokdistavstemming.sdist006.Sdist006utils.DOKDISTDITTNAV;
 import static no.nav.dokdistavstemming.sdist006.Sdist006utils.determineEkspedertTil;
 import static no.nav.dokdistavstemming.utils.LoggingUtils.trunkertListeToString;
 
+/**
+ * Implementasjon av <a href="https://confluence.adeo.no/display/BOA/SDIST006+-+SendIkkeLesteForsendelserTilSentralPrint">Sdist006</a>
+ */
 @Slf4j
 @Component
 public class SendUlesteForsendelserTilSentralPrintService {
@@ -58,7 +59,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 
 			// 1. Finn journalposter
 			List<String> ulesteJournalposter = finnUlesteJournalposter();
-			if (ulesteJournalposter == null || ulesteJournalposter.isEmpty()) {
+			if (ulesteJournalposter.isEmpty()) {
 				log.info("Sdist006 fant ingen uleste journalposter i Joark. Avslutter sdist006 cron-jobb.");
 				return;
 			}
@@ -74,14 +75,13 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private void handleUlesteJournalposterList(List<String> ulesteJournalposter) {
 		log.info("Sdist006 undersøker om den skal sende journalposter til print. journalpostIds={}", trunkertListeToString(ulesteJournalposter));
 
-		// 2. Finn forsendelser
-		Optional<ForsendelseTos> ulesteForsendelserOptional = hentForsendelser(ulesteJournalposter);
-		if (ulesteForsendelserOptional.isEmpty() || ulesteForsendelserOptional.get().forsendelseListe().isEmpty()) {
+		// 2. Hent forsendelser
+		List<ForsendelseTo> ulesteForsendelser = hentForsendelser(ulesteJournalposter);
+		if (ulesteForsendelser.isEmpty()) {
 			log.info("Sdist006 fant ingen forsendelser for partisjonen av uleste journalposter");
 			return;
 		}
 
-		List<ForsendelseTo> ulesteForsendelser = ulesteForsendelserOptional.get().forsendelseListe();
 		log.info("Sdist006 vil feilregistrere {} journalposter og sende på nytt journalpostIds={}", ulesteForsendelser.size(),
 				trunkertListeToString(ulesteForsendelser.stream().map(forsendelseTo -> forsendelseTo.getArkivInformasjon().getArkivId()).toList()));
 
@@ -90,20 +90,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
-		ulesteForsendelser.forEach(gammelForsendelse -> {
-			String gammelDistribusjonId = gammelForsendelse.getBestillingsId();
-			String journalpostId = gammelForsendelse.getArkivInformasjon().getArkivId();
+		ulesteForsendelser.forEach(ulestForsendelse -> {
+			String ulestBestillingsId = ulestForsendelse.getBestillingsId();
+			String journalpostId = ulestForsendelse.getArkivInformasjon().getArkivId();
 			String nyBestillingsId = UUID.randomUUID().toString();
-			MDC.put(MDC_CALL_ID, gammelDistribusjonId);
-			log.info("Sdist006 behandler forsendelser med bestillingsId/distribusjonsId={} som ikke har blitt lest etter 40 timer",
-					gammelDistribusjonId);
+			MDC.put(MDC_CALL_ID, ulestBestillingsId);
+			log.info("Sdist006 behandler forsendelser med bestillingsId={} som ikke har blitt lest etter 40 timer", ulestBestillingsId);
 			try {
 				// 3.1 Opprett ny forsendelse
-				long nyForsendelsesId = opprettForsendelse(gammelForsendelse, nyBestillingsId);
-				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, gammelDistribusjonId);
+				long nyForsendelsesId = opprettForsendelse(ulestForsendelse, nyBestillingsId);
+				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, ulestBestillingsId);
 
 				// 3.2 Feilregistrer original forsendelse
-				feilregistrerForsendelse(gammelForsendelse.getForsendelseId(), nyBestillingsId);
+				feilregistrerForsendelse(ulestForsendelse.getForsendelseId(), nyBestillingsId);
 
 				// 3.3 Sett status på ny forsendelse
 				oppdaterForsendelse(nyForsendelsesId);
@@ -115,13 +114,13 @@ public class SendUlesteForsendelserTilSentralPrintService {
 				distribuerTilSentralPrintService.sendToQdist009(nyForsendelsesId);
 
 				// 3.6 stopp renotifikasjon av digital distribusjon
-				stoppRenotifikasjon(gammelForsendelse.getBestillingsId());
+				stoppRenotifikasjon(ulestForsendelse.getBestillingsId());
 
-				log.info("Sdist006 har håndtert forsendelse. journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
-						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
+				log.info("Sdist006 har håndtert forsendelse. journalpostId={}, ulestBestillingsId={}, ulestForsendelseId={}, nyBestillingsId={}, nyForsendelseId={}",
+						journalpostId, ulestBestillingsId, ulestForsendelse.getForsendelseId(), nyBestillingsId, nyForsendelsesId);
 			} catch (DokdistavstemmingFunctionalException e) {
-				log.error("Sdist006 feilet under håndteringen av journalpostId={}, gammelDistribusjonsId={}, gammelForsendelseId={}, nyBestillingsId={}. Feilmelding={}",
-						journalpostId, gammelDistribusjonId, gammelForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
+				log.error("Sdist006 feilet under håndteringen av journalpostId={}, ulestBestillingsId={}, ulestForsendelseId={}, nyBestillingsId={}. Feilmelding={}",
+						journalpostId, ulestBestillingsId, ulestForsendelse.getForsendelseId(), nyBestillingsId, e.getMessage());
 			} finally {
 				MDC.clear();
 			}
@@ -132,19 +131,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(ANTALL_DAGER_TILBAKE_MAX), determineEkspedertTil(now().minusHours(ANTALL_TIMER_TILBAKE_MIN)));
 	}
 
-	private Optional<ForsendelseTos> hentForsendelser(List<String> ulesteJournalposter) {
+	private List<ForsendelseTo> hentForsendelser(List<String> ulesteJournalposter) {
 		return dokdistadminConsumer.hentForsendelser(ulesteJournalposter);
 	}
 
-	private Long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
+	private long opprettForsendelse(ForsendelseTo oldForsendelse, String nyBestillingsId) {
 		return dokdistadminConsumer
 				.opprettForsendelse(mapForsendelseToTilOpprettForsendelse(oldForsendelse, nyBestillingsId))
 				.getForsendelseId();
 	}
 
-	private void feilregistrerForsendelse(long gammelForsendelseId, String nyBestillingsId) {
+	private void feilregistrerForsendelse(long ulestForsendelseId, String nyBestillingsId) {
 		FeilregistrerForsendelseRequest feilregistrerForsendelseRequest = FeilregistrerForsendelseRequest.builder()
-				.forsendelseId(gammelForsendelseId)
+				.forsendelseId(ulestForsendelseId)
 				.feilTypeCode("MELDINGSFEIL")
 				.tidspunkt(now())
 				.detaljer("Forsendelse til NAV.NO er ikke lest innen frist.")

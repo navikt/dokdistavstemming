@@ -30,7 +30,7 @@ public class JmsItestConfig {
 
 	@Bean
 	@DependsOn("activeMQServer")
-	public ConnectionFactory activemqConnectionFactory() {
+	public ConnectionFactory connectionFactory() {
 		ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("vm://0");
 		JmsPoolConnectionFactory pooledFactory = new JmsPoolConnectionFactory();
 		pooledFactory.setConnectionFactory(activeMQConnectionFactory);
