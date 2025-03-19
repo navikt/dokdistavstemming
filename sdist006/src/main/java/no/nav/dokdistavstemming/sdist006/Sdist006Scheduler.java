@@ -2,6 +2,7 @@ package no.nav.dokdistavstemming.sdist006;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
+import no.nav.dokdistavstemming.service.SlackService;
 import org.springframework.boot.availability.ApplicationAvailability;
 import org.springframework.boot.availability.ReadinessState;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
@@ -17,24 +18,37 @@ public class Sdist006Scheduler {
 	private final ApplicationAvailability applicationAvailability;
 	private final LeaderElectionConsumer leaderElectionConsumer;
 	private final SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService;
+	private final SlackService slackService;
 
 	public Sdist006Scheduler(ApplicationAvailability applicationAvailability,
 							 LeaderElectionConsumer leaderElectionConsumer,
-							 SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService) {
+							 SendUlesteForsendelserTilSentralPrintService sendUlesteForsendelserTilSentralPrintService,
+							 SlackService slackService) {
 		this.applicationAvailability = applicationAvailability;
 		this.leaderElectionConsumer = leaderElectionConsumer;
 		this.sendUlesteForsendelserTilSentralPrintService = sendUlesteForsendelserTilSentralPrintService;
+		this.slackService = slackService;
 	}
 
 	@Scheduled(cron = "${sdist006.cron.job}")
 	public void runSdist006() {
 		if (leaderElectionConsumer.isLeader()) {
-			if (applicationAvailability.getReadinessState() == ACCEPTING_TRAFFIC) {
-				log.info("Sdist006 cron-jobb starter");
-				sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
-				log.info("Sdist006 er ferdig");
-			} else {
+			if (applicationAvailability.getReadinessState() != ACCEPTING_TRAFFIC) {
 				handleRefusingTraffic();
+				return;
+			}
+
+			log.info("Sdist006 cron-jobb starter");
+
+			try {
+				sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+			} catch (Exception e) {
+				var feilmelding = "Sdist006 cron-jobb feilet med feilmelding=%s".formatted(e.getMessage());
+
+				log.error(feilmelding, e);
+				slackService.sendMelding(feilmelding);
+			} finally {
+				log.info("Sdist006 er ferdig");
 			}
 		}
 	}
