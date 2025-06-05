@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.2</version>
+		<version>3.5.0</version>
 	</parent>
 
 	<groupId>no.nav.dokdistavstemming</groupId>
@@ -25,14 +25,14 @@
 	<properties>
 		<java.version>21</java.version>
 
-		<logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
-		<ibm.mq.client.version>9.4.1.1</ibm.mq.client.version>
-		<camel.version>4.9.0</camel.version>
-		<guava.version>33.2.1-jre</guava.version>
+		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
+		<com.ibm.mq.jakarta.client.version>9.4.2.1</com.ibm.mq.jakarta.client.version>
+		<camel.version>4.12.0</camel.version>
+		<guava.version>33.4.8-jre</guava.version>
 		<jiraapi.version>1.1.0</jiraapi.version>
-		<kafka-avro-serializer.version>7.8.0</kafka-avro-serializer.version>
+		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
-		<spring-cloud-wiremock.version>4.1.4</spring-cloud-wiremock.version>
+		<spring-cloud-wiremock.version>4.3.0</spring-cloud-wiremock.version>
 		<slack-api-client.version>1.45.3</slack-api-client.version>
 
 		<!-- Plugins -->
@@ -79,7 +79,7 @@
 			<dependency>
 				<groupId>com.ibm.mq</groupId>
 				<artifactId>com.ibm.mq.jakarta.client</artifactId>
-				<version>${ibm.mq.client.version}</version>
+				<version>${com.ibm.mq.jakarta.client.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
