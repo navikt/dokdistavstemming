@@ -55,10 +55,9 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      cpu: 3000m
       memory: 3072Mi
     requests:
-      cpu: 250m
+      cpu: 20m
       memory: 2304Mi
   vault:
     enabled: true
@@ -73,3 +72,8 @@ spec:
   webproxy: true
   envFrom:
     - secret: slack-alerts
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
