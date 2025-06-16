@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static com.google.common.collect.Lists.partition;
 import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_BATCH_ID;
 import static no.nav.dokdistavstemming.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer.HENTFORSENDELSER_MAX_JOURNALPOSTS;
@@ -128,7 +129,8 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private List<String> finnUlesteJournalposter() {
-		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now().minusDays(ANTALL_DAGER_TILBAKE_MAX), determineEkspedertTil(now().minusHours(ANTALL_TIMER_TILBAKE_MIN)));
+		LocalDateTime now = now().truncatedTo(SECONDS);
+		return dokarkivConsumer.finnUlesteJournalposter(NAV_NO, now.minusDays(ANTALL_DAGER_TILBAKE_MAX), determineEkspedertTil(now.minusHours(ANTALL_TIMER_TILBAKE_MIN)));
 	}
 
 	private List<ForsendelseTo> hentForsendelser(List<String> ulesteJournalposter) {
