@@ -12,7 +12,6 @@ import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,20 +27,20 @@ public class Sdist002Service {
 	private final DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
 	private final UekspedertForsendelseMapper uekspedertForsendelseMapper;
-	private final CSVProdusere csvProdusere;
+	private final CSVProducer csvProducer;
 	private final MeterRegistry meterRegistry;
 	private final JiraOppgaveService jiraOppgaveService;
 	private final DokdistavstemmingProperties dokdistavstemmingProp;
 
 	public Sdist002Service(DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt,
-						   CSVProdusere csvProdusere,
+						   CSVProducer csvProducer,
 						   MeterRegistry meterRegistry,
 						   JiraOppgaveService jiraOppgaveService,
 						   DokdistavstemmingProperties dokdistavstemmingProp) {
 		this.hentForsendelseKvitteringIkkeMottatt = hentForsendelseKvitteringIkkeMottatt;
 		this.oppdaterForsendelserMapper = new OppdaterForsendelserAvstemtInfoMapper();
 		this.uekspedertForsendelseMapper = new UekspedertForsendelseMapper();
-		this.csvProdusere = csvProdusere;
+		this.csvProducer = csvProducer;
 		this.meterRegistry = meterRegistry;
 		this.jiraOppgaveService = jiraOppgaveService;
 		this.dokdistavstemmingProp = dokdistavstemmingProp;
@@ -56,8 +55,8 @@ public class Sdist002Service {
 						return;
 					}
 
-					File csvFil = csvProdusere.oppretteCsvFil(dokumenter);
-					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csvFil, dokumenter.size());
+					byte[] csv = csvProducer.oppretteCsv(dokumenter);
+					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csv, dokumenter.size());
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
 	}

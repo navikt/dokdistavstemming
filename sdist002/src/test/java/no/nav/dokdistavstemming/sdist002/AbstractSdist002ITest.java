@@ -38,7 +38,7 @@ public abstract class AbstractSdist002ITest {
 
 	public static String CALL_ID = UUID.randomUUID().toString();
 	@Autowired
-	public CSVProdusere csvProdusere;
+	public CSVProducer csvProducer;
 	@Autowired
 	public Sdist002Service sdist002Service;
 

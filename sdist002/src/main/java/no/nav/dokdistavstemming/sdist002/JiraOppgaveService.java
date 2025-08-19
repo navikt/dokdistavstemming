@@ -12,12 +12,10 @@ import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.io.File;
 import java.util.List;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Slf4j
 @Component
@@ -32,21 +30,13 @@ public class JiraOppgaveService {
 		this.jiraService = jiraService;
 	}
 
-	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, File fil, int size) {
-		if (!isFilExistOgNotNull(fil)) {
-			log.error("sdist002 kan ikke opprette Jira-sak. Fant ingen csv-fil. Må undersøkes av utvikler");
-			return JiraSakResponseTo.builder()
-					.message("Kan ikke opprette Jira-sak. Fant ingen csv-fil")
-					.httpStatusCode(NO_CONTENT.value())
-					.build();
-		}
-
+	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, byte[] csv, int size) {
 		try {
-			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, fil);
+			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, csv);
 
 			log.info("opprettJirasak har mottatt kall om å opprette Jira-sak");
 
-			JiraResponse jiraResponse = jiraService.opprettJiraOppgaveVedVedlegg(jiraRequest);
+			JiraResponse jiraResponse = jiraService.opprettJiraMMAOppgaveMedVedlegg(jiraRequest);
 
 			log.info("Sdist002 har opprettet og oppdatert jira oppgaven med key={}, url={}", jiraResponse.jiraIssueKey(), jiraResponse.message());
 			return JiraSakResponseTo.builder()
@@ -63,17 +53,13 @@ public class JiraOppgaveService {
 		}
 	}
 
-	private JiraRequest mapJiraRequest(String title, int avvikSize, File file) {
+	private JiraRequest mapJiraRequest(String title, int avvikSize, byte[] file) {
 		return JiraRequest.builder()
 				.summary(format(SUMMARY, title, avvikSize))
 				.description(format(DESCRIPTION, avvikSize))
 				.reporterName(DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN)
 				.labels(List.of("dokumentdistribusjon_avvik"))
-				.file(file)
+				.vedlegg(file)
 				.build();
-	}
-
-	private boolean isFilExistOgNotNull(File fil) {
-		return fil != null && fil.exists() && fil.length() > 0;
 	}
 }

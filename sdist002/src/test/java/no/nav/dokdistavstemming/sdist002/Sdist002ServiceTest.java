@@ -43,7 +43,7 @@ public class Sdist002ServiceTest {
 
 	private DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 
-	private CSVProdusere csvProdusere;
+	private CSVProducer csvProdusere;
 
 	@Mock
 	private MeterRegistry meterRegistry;
@@ -57,7 +57,7 @@ public class Sdist002ServiceTest {
 	@BeforeEach
 	public void setUp() {
 		hentForsendelseKvitteringIkkeMottatt = mock(DokdistadminConsumer.class);
-		csvProdusere = mock(CSVProdusereImpl.class);
+		csvProdusere = mock(CSVProducer.class);
 		DokdistavstemmingProperties dokdistavstemmingProp = new DokdistavstemmingProperties();
 
 		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraOppgaveService, dokdistavstemmingProp);

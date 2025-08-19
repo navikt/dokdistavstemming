@@ -11,13 +11,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @ExtendWith(MockitoExtension.class)
 class JiraOppgaveServiceTest {
@@ -34,8 +31,8 @@ class JiraOppgaveServiceTest {
 
 	@Test
 	public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
-		when(jiraService.opprettJiraOppgaveVedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
-		File avvikFil = new File(new ClassPathResource("__files/csv/csvfil_print.csv").getFile().toString());
+		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
+		byte[] avvikFil = new ClassPathResource("__files/csv/csvfil_print.csv").getContentAsByteArray();
 
 		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), avvikFil, 10);
 
@@ -44,24 +41,13 @@ class JiraOppgaveServiceTest {
 
 	@Test
 	public void shouldUpdateStatusToKlarForArbeid() throws Exception {
-		when(jiraService.opprettJiraOppgaveVedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID)
+		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID)
 				.message(JIRA_SAK_URL).build());
 
-		File avvikFil = new File(new ClassPathResource("__files/csv/dokdist1.csv").getFile().toString());
+		byte[] avvikFil = new ClassPathResource("__files/csv/dokdist1.csv").getContentAsByteArray();
 
 		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), avvikFil, 10);
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_SAK_URL);
 	}
-
-	@Test
-	public void opprettJiraSakThrowsExceptionIfAvstemmingFrosendelseErUtenVedlegg() {
-		File avvikFil = new File("");
-
-		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), avvikFil, 0);
-
-		assertThat(jiraSakResponseTo.getMessage()).isEqualTo("Kan ikke opprette Jira-sak. Fant ingen csv-fil");
-		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(NO_CONTENT.value());
-	}
-
 }
