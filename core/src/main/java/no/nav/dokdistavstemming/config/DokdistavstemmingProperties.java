@@ -18,7 +18,6 @@ public class DokdistavstemmingProperties {
 	private final JiraUser jira = new JiraUser();
 	private final Sdist002Properties sdist002 = new Sdist002Properties();
 	private final Sdist004Properties sdist004 = new Sdist004Properties();
-	private final SlackProperties slack = new SlackProperties();
 
 	@Data
 	@Validated
@@ -61,20 +60,5 @@ public class DokdistavstemmingProperties {
 	public static class JiraUser {
 		@NotEmpty
 		private String url;
-		@NotEmpty
-		private String username;
-		@NotEmpty
-		private String password;
-	}
-
-	@Data
-	@Validated
-	public static class SlackProperties {
-		@NotEmpty
-		@ToString.Exclude
-		private String token;
-		@NotEmpty
-		private String channel;
-		private boolean enabled;
 	}
 }

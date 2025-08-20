@@ -6,7 +6,6 @@ import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -45,11 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Sdist002ServiceIT extends AbstractSdist002ITest {
-
-	@Autowired
-	private Sdist002Service sdist002Service;
-	@Autowired
-	private CSVProdusere csvProdusere;
 
 	@Override
 	protected void setupResources() {
@@ -94,9 +88,8 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
-		File csvFiler = csvProdusere.oppretteCsvFil(result);
-		assertThat(csvFiler.isFile()).isTrue();
-		assertThat(csvFiler.length() != 0).isTrue();
+		byte[] csv = csvProducer.oppretteCsv(result);
+		assertThat(csv.length != 0).isTrue();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
 	}
 

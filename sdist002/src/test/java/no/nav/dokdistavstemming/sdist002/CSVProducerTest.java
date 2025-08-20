@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,9 +13,9 @@ import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createHentUekspede
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-class CSVProdusereImplTest {
+class CSVProducerTest {
 
-	private final CSVProdusere csvProdusere = new CSVProdusereImpl();
+	private final CSVProducer csvProdusere = new CSVProducer();
 
 	@Test
 	public void shouldProdusereCSVFil() {
@@ -26,9 +25,8 @@ class CSVProdusereImplTest {
 				.flatMap(Collection::stream)
 				.toList();
 
-		File fil = csvProdusere.oppretteCsvFil(dokDistAvStemmingResponseTo);
+		byte[] csv = csvProdusere.oppretteCsv(dokDistAvStemmingResponseTo);
 
-		assertTrue(fil.exists());
-		assertTrue(fil.length() > 0);
+		assertTrue(csv.length > 0);
 	}
 }

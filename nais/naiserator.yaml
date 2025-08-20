@@ -62,8 +62,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SRVJIRADOKDISTAVSTEMMING }}
-        mountPath: "/var/run/secrets/nais.io/srvjiradokdistavstemming"
       - kvPath: {{ SRVDOKDISTAVSTEMMING }}
         mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
   azure:
@@ -72,6 +70,7 @@ spec:
   webproxy: true
   envFrom:
     - secret: slack-alerts
+    - secret: jira-service-user
   observability:
     logging:
       destinations:
