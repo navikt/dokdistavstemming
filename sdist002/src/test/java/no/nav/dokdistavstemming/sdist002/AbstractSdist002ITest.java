@@ -3,6 +3,8 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dokdistavstemming.config.AzureProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.DokdistavstemmingServiceuser;
+import no.nav.dokdistavstemming.config.JiraAuthProperties;
+import no.nav.dokdistavstemming.config.SlackProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @EnableConfigurationProperties({
 		DokdistavstemmingProperties.class,
 		DokdistavstemmingServiceuser.class,
+		JiraAuthProperties.class,
+		SlackProperties.class,
 		AzureProperties.class
 })
 @EnableAutoConfiguration

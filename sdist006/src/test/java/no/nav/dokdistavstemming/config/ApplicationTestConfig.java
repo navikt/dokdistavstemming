@@ -17,6 +17,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,
 		DokdistavstemmingServiceuser.class,
+		JiraAuthProperties.class,
+		SlackProperties.class,
 		AzureProperties.class
 })
 @Import({

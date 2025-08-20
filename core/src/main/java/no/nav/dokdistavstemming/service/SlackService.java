@@ -8,8 +8,7 @@ import com.slack.api.model.block.SectionBlock;
 import com.slack.api.model.block.composition.MarkdownTextObject;
 import com.slack.api.model.block.composition.PlainTextObject;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.config.DokdistavstemmingProperties.SlackProperties;
+import no.nav.dokdistavstemming.config.SlackProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -21,13 +20,13 @@ public class SlackService {
 	private final MethodsClient slackClient;
 	private final SlackProperties slackProperties;
 
-	SlackService(DokdistavstemmingProperties dokdistavstemmingProperties) {
-		slackProperties = dokdistavstemmingProperties.getSlack();
-		slackClient = Slack.getInstance().methods(slackProperties.getToken());
+	SlackService(SlackProperties slackProperties) {
+		this.slackProperties = slackProperties;
+		slackClient = Slack.getInstance().methods(slackProperties.token());
 	}
 
 	public void sendMelding(String melding) {
-		if (slackProperties.isEnabled()) {
+		if (slackProperties.enabled()) {
 			try {
 				log.info("Sender melding til Slack med melding={}", melding);
 
@@ -50,7 +49,7 @@ public class SlackService {
                  """.formatted(feilmelding).stripIndent();
 
 		return ChatPostMessageRequest.builder()
-				.channel(slackProperties.getChannel())
+				.channel(slackProperties.channel())
 				.text(bodyText) //fallback tekst
 				.blocks(Arrays.asList(
 						HeaderBlock.builder()
