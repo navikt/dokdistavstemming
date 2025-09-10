@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 
+import java.time.LocalDate;
+
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,7 +36,7 @@ class JiraOppgaveServiceTest {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
 		byte[] avvikFil = new ClassPathResource("__files/csv/csvfil_print.csv").getContentAsByteArray();
 
-		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT, avvikFil, 10, LocalDate.now());
 
 		assertThat(jiraSakResponseTo.getJiraSakKey()).isEqualTo(MMA_OPPGAVE_ID);
 	}
@@ -46,7 +48,7 @@ class JiraOppgaveServiceTest {
 
 		byte[] avvikFil = new ClassPathResource("__files/csv/dokdist1.csv").getContentAsByteArray();
 
-		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), avvikFil, 10);
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT, avvikFil, 10, LocalDate.now());
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_SAK_URL);
 	}

@@ -6,12 +6,15 @@ import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiracore.exception.JiraClientException;
 import no.nav.dok.jiracore.exception.JiraServerException;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -21,8 +24,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 @Component
 public class JiraOppgaveService {
 
+	private static final DateTimeFormatter NORSK_LOCAL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static final String DESCRIPTION = "Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.";
-	public static final String SUMMARY = "Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering";
+	private static final String SUMMARY = "Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering";
+	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
 	private static final String DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN = "srvjiradokdistavstemming";
 	private final JiraService jiraService;
 
@@ -30,9 +35,9 @@ public class JiraOppgaveService {
 		this.jiraService = jiraService;
 	}
 
-	public JiraSakResponseTo opprettJirasak(String distribusjonKanal, byte[] csv, int size) {
+	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int size, LocalDate avstemmingsfilDato) {
 		try {
-			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, csv);
+			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, csv, avstemmingsfilDato);
 
 			log.info("opprettJirasak har mottatt kall om å opprette Jira-sak");
 
@@ -53,12 +58,13 @@ public class JiraOppgaveService {
 		}
 	}
 
-	private JiraRequest mapJiraRequest(String title, int avvikSize, byte[] file) {
+	private JiraRequest mapJiraRequest(DistribusjonKanalCode distribusjonskanal, int avvikSize, byte[] file, LocalDate avstemmingsfilDato) {
 		return JiraRequest.builder()
-				.summary(format(SUMMARY, title, avvikSize))
+				.summary(format(SUMMARY, distribusjonskanal.name(), avvikSize))
 				.description(format(DESCRIPTION, avvikSize))
 				.reporterName(DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN)
 				.labels(List.of("dokumentdistribusjon_avvik"))
+				.filnavn(format(AVVIK_CSV_FILNAVN, distribusjonskanal.name(), NORSK_LOCAL_DATE_FORMAT.format(avstemmingsfilDato)))
 				.vedlegg(file)
 				.build();
 	}

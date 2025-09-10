@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 
 	private static final String JIRA_MESSAGE = "https://jira-q1.adeo.no/browse/MMA-134";
+	private static final LocalDate AVSTEMMINGSDATO = LocalDate.of(2025,1,1);
 
 	@Autowired
 	private JiraOppgaveService jiraOppgaveService;
@@ -54,9 +56,9 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
-		byte[] csv = csvProducer.oppretteCsv(result);
+		byte[] csv = csvProducer.oppretteCsv(result, PRINT);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT.name(), csv, result.size());
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(PRINT, csv, result.size(), AVSTEMMINGSDATO);
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
 		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
@@ -75,9 +77,9 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		jiraHappyUpdateSak("MMA-134");
 		jiraHappyGetIssue();
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(E_HANDEL);
-		byte[] csv = csvProducer.oppretteCsv(result);
+		byte[] csv = csvProducer.oppretteCsv(result, E_HANDEL);
 
-		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(E_HANDEL.name(), csv, result.size());
+		JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(E_HANDEL, csv, result.size(), AVSTEMMINGSDATO);
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
 		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
@@ -94,9 +96,9 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		jiraHappyHentProjectDetails();
 		jiraFeilToOpprettSakForAvstemForsendelse();
 		jiraHappyPostVedleggDokument();
-		byte[] csv = csvProducer.oppretteCsv(result);
+		byte[] csv = csvProducer.oppretteCsv(result, PRINT);
 
-		var exception = assertThrows(JiraFunctionalException.class, () -> jiraOppgaveService.opprettJirasak(PRINT.name(), csv, result.size()));
+		var exception = assertThrows(JiraFunctionalException.class, () -> jiraOppgaveService.opprettJirasak(PRINT, csv, result.size(), AVSTEMMINGSDATO));
 
 		assertThat(exception.getMessage()).contains("opprettJira feilet med status=400 feilmelding");
 		assertTrue(csv.length != 0);

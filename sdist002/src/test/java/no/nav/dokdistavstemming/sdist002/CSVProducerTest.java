@@ -1,6 +1,7 @@
 package no.nav.dokdistavstemming.sdist002;
 
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class CSVProducerTest {
 				.flatMap(Collection::stream)
 				.toList();
 
-		byte[] csv = csvProdusere.oppretteCsv(dokDistAvStemmingResponseTo);
+		byte[] csv = csvProdusere.oppretteCsv(dokDistAvStemmingResponseTo, DistribusjonKanalCode.PRINT);
 
 		assertTrue(csv.length > 0);
 	}

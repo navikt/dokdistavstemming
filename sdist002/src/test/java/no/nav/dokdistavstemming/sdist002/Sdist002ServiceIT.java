@@ -4,7 +4,6 @@ import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -88,7 +87,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
-		byte[] csv = csvProducer.oppretteCsv(result);
+		byte[] csv = csvProducer.oppretteCsv(result, PRINT);
 		assertThat(csv.length != 0).isTrue();
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
 	}

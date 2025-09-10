@@ -10,13 +10,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
+import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,9 +24,8 @@ import java.util.List;
 public class CSVProducer {
 
 	private static final String CSV_FILTER_FIL = "dokdistcsv";
-	private static final String BASE_TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
 
-	public byte[] oppretteCsv(List<UekspedertForsendelseDokument> uekspedertForsendelseDokument) {
+	public byte[] oppretteCsv(List<UekspedertForsendelseDokument> uekspedertForsendelseDokument, DistribusjonKanalCode distribusjonskanal) {
 		HashSet<String> kolonneNavn = new HashSet<>();
 		CsvMapper csvMapper = new CsvMapper();
 		CsvSchema csvSchema = csvMapper.schemaFor(UekspedertForsendelseDokument.class)
@@ -41,12 +38,9 @@ public class CSVProducer {
 
 		SimpleBeanPropertyFilter csvResponseFiler = new SimpleBeanPropertyFilter.FilterExceptFilter(kolonneNavn);
 		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(CSV_FILTER_FIL, csvResponseFiler);
-		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-		String distribusjonKanal = uekspedertForsendelseDokument.get(0).getDistribusjonKanal();
 
-		File produced = new File(BASE_TMP_DIRECTORY + "/dokdistavstemming-" + distribusjonKanal + "-" + localDate + ".csv");
 		try (ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
-			log.info("Konverterer dokumentliste til CSV-fil med filnavn={}", produced.getName());
+			log.info("Konverterer dokumentliste til CSV-fil for distribusjonskanal={}", distribusjonskanal);
 			csvMapper.setFilterProvider(filterProvider);
 			csvMapper.setAnnotationIntrospector(new CsvAnnotationIntrospector());
 			ObjectWriter objectWriter = csvMapper.writer(csvSchema);

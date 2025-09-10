@@ -12,6 +12,8 @@ import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,6 +25,7 @@ public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
 	private static final String UKJENT = "Ukjent";
+	private static final DateTimeFormatter LOCAL_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private final DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
@@ -55,8 +58,15 @@ public class Sdist002Service {
 						return;
 					}
 
-					byte[] csv = csvProducer.oppretteCsv(dokumenter);
-					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csv, dokumenter.size());
+					LocalDate eldsteAvstemteDokumentDato = dokumenter.stream()
+							.map(UekspedertForsendelseDokument::getDistribusjonDato)
+							.map(LOCAL_DATE_TIME_FORMAT::parse)
+							.map(LocalDate::from)
+							.min(Comparator.naturalOrder())
+							.orElse(LocalDate.now());
+
+					byte[] csv = csvProducer.oppretteCsv(dokumenter, distribusjonskanal);
+					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal, csv, dokumenter.size(), eldsteAvstemteDokumentDato);
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
 	}
