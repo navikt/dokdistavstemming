@@ -25,8 +25,8 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class JiraOppgaveService {
 
 	private static final DateTimeFormatter NORSK_LOCAL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-	private static final String DESCRIPTION = "Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status.";
-	private static final String SUMMARY = "Dokumentdistribusjon Kanal-%s: Utsendelse av %s dokumenter/brev har ikke mottatt kvittering";
+	private static final String DESCRIPTION = "Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status fra utsendingskanal %s.";
+	private static final String SUMMARY = "Dokumentdistribusjon: %s dokumenter/brev har ikke mottatt kvittering fra utsendingskanal %s";
 	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
 	private static final String DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN = "srvjiradokdistavstemming";
 	private final JiraService jiraService;
@@ -35,9 +35,9 @@ public class JiraOppgaveService {
 		this.jiraService = jiraService;
 	}
 
-	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int size, LocalDate avstemmingsfilDato) {
+	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int avvikCount, LocalDate avstemmingsfilDato) {
 		try {
-			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, size, csv, avstemmingsfilDato);
+			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, avvikCount, csv, avstemmingsfilDato);
 
 			log.info("opprettJirasak har mottatt kall om å opprette Jira-sak");
 
@@ -58,10 +58,10 @@ public class JiraOppgaveService {
 		}
 	}
 
-	private JiraRequest mapJiraRequest(DistribusjonKanalCode distribusjonskanal, int avvikSize, byte[] file, LocalDate avstemmingsfilDato) {
+	private JiraRequest mapJiraRequest(DistribusjonKanalCode distribusjonskanal, int avvikCount, byte[] file, LocalDate avstemmingsfilDato) {
 		return JiraRequest.builder()
-				.summary(format(SUMMARY, distribusjonskanal.name(), avvikSize))
-				.description(format(DESCRIPTION, avvikSize))
+				.summary(format(SUMMARY, avvikCount, distribusjonskanal.name()))
+				.description(format(DESCRIPTION, avvikCount, distribusjonskanal.name()))
 				.reporterName(DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN)
 				.labels(List.of("dokumentdistribusjon_avvik"))
 				.filnavn(format(AVVIK_CSV_FILNAVN, distribusjonskanal.name(), NORSK_LOCAL_DATE_FORMAT.format(avstemmingsfilDato)))
