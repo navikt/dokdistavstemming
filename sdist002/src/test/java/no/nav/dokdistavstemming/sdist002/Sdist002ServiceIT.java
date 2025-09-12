@@ -56,7 +56,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
-		assertThat(uekspedertForsendelseDokumentList.getFirst().getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_SDP);
+		assertThat(uekspedertForsendelseDokumentList.getFirst().distribusjonId()).isEqualTo(DISTRIBUSJON_ID_SDP);
 	}
 
 	@Test
@@ -75,10 +75,10 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 		List<UekspedertForsendelseDokument> result = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/PRINT/120")));
-		assertThat(result.getFirst().getDistribusjonId()).isEqualTo(DISTRIBUSJON_ID_PRINT);
-		assertThat(result.getFirst().getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_J);
-		assertThat(result.getFirst().getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_P_J.name());
-		assertThat(result.getFirst().getDistribusjonDato()).isEqualTo(DISRIBUSJON_DATO_J);
+		assertThat(result.getFirst().distribusjonId()).isEqualTo(DISTRIBUSJON_ID_PRINT);
+		assertThat(result.getFirst().distribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_J);
+		assertThat(result.getFirst().distribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_P_J.name());
+		assertThat(result.getFirst().distribusjonDato()).isEqualTo(DISRIBUSJON_DATO_J);
 	}
 
 	@Test

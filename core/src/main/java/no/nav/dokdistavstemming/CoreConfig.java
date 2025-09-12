@@ -1,5 +1,7 @@
 package no.nav.dokdistavstemming;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.dok.jiraapi.JiraProperties;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiraapi.client.JiraClient;
@@ -25,5 +27,10 @@ public class CoreConfig {
 	@Bean
 	public JiraService jiraService(JiraClient jiraClient) {
 		return new JiraService(jiraClient);
+	}
+
+	@Bean
+	public Module javaTimeModule() {
+		return new JavaTimeModule();
 	}
 }

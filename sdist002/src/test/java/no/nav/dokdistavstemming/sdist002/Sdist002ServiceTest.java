@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -38,11 +39,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class Sdist002ServiceTest {
 
-	@InjectMocks
+	// @InjectMocks
 	private Sdist002Service sdist002Service;
 
+	@Mock
 	private DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 
+	@Mock
 	private CSVProducer csvProdusere;
 
 	@Mock
@@ -56,8 +59,9 @@ public class Sdist002ServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		hentForsendelseKvitteringIkkeMottatt = mock(DokdistadminConsumer.class);
-		csvProdusere = mock(CSVProducer.class);
+		MockitoAnnotations.openMocks(this);
+		// hentForsendelseKvitteringIkkeMottatt = mock(DokdistadminConsumer.class);
+		// csvProdusere = mock(CSVProducer.class);
 		DokdistavstemmingProperties dokdistavstemmingProp = new DokdistavstemmingProperties();
 
 		sdist002Service = new Sdist002Service(hentForsendelseKvitteringIkkeMottatt, csvProdusere, meterRegistry, jiraOppgaveService, dokdistavstemmingProp);
@@ -86,8 +90,8 @@ public class Sdist002ServiceTest {
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(PRINT);
 
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal()).isEqualTo(TestDataUtils.DISTRIBUSJON_KANAL.name());
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS);
+		assertThat(uekspedertForsendelseDokumenter.getFirst().distribusjonKanal()).isEqualTo(TestDataUtils.DISTRIBUSJON_KANAL.name());
+		assertThat(uekspedertForsendelseDokumenter.getFirst().distribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS);
 		verify(hentForsendelseKvitteringIkkeMottatt, times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 	}
 
@@ -111,8 +115,8 @@ public class Sdist002ServiceTest {
 
 		List<UekspedertForsendelseDokument> uekspedertForsendelseDokumenter = sdist002Service.getForsendelserByDistribusjonKanal(SDP);
 
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_3.name());
-		assertThat(uekspedertForsendelseDokumenter.get(0).getDistribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_3);
+		assertThat(uekspedertForsendelseDokumenter.getFirst().distribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_3.name());
+		assertThat(uekspedertForsendelseDokumenter.getFirst().distribusjonStatus()).isEqualTo(DISTRIBUSJON_STATUS_3);
 		verify(hentForsendelseKvitteringIkkeMottatt, times(1)).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 	}
 

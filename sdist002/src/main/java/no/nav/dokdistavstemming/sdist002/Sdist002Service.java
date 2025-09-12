@@ -25,7 +25,6 @@ public class Sdist002Service {
 
 	private static final String DOK_REQUEST_FUNCTIONAL_COUNTER = "dokdist_antall_delay_kvittering_counter";
 	private static final String UKJENT = "Ukjent";
-	private static final DateTimeFormatter LOCAL_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private final DokdistadminRdist001Api hentForsendelseKvitteringIkkeMottatt;
 	private final OppdaterForsendelserAvstemtInfoMapper oppdaterForsendelserMapper;
@@ -59,8 +58,8 @@ public class Sdist002Service {
 					}
 
 					LocalDate eldsteAvstemteDokumentDato = dokumenter.stream()
-							.map(UekspedertForsendelseDokument::getDistribusjonDato)
-							.map(LOCAL_DATE_TIME_FORMAT::parse)
+							.map(UekspedertForsendelseDokument::distribusjonDato)
+							// .map(LOCAL_DATE_TIME_FORMAT::parse)
 							.map(LocalDate::from)
 							.min(Comparator.naturalOrder())
 							.orElse(LocalDate.now());
@@ -81,9 +80,9 @@ public class Sdist002Service {
 				.filter(forsendelse -> forsendelse != null && forsendelse.getDokumenter() != null)
 				.map(uekspedertForsendelseMapper::mapUekspederteForsendelser)
 				.flatMap(Collection::stream)
-				.sorted(Comparator.comparing(UekspedertForsendelseDokument::getOpprettetDato))
+				.sorted(Comparator.comparing(UekspedertForsendelseDokument::opprettetDato))
 				.peek(avstemForsendelse -> {
-					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
+					incrementFunctionalMetrics(avstemForsendelse.distribusjonKanal(), avstemForsendelse.distribusjonStatus());
 					logInfo(avstemForsendelse);
 				})
 				.toList();
@@ -91,12 +90,12 @@ public class Sdist002Service {
 
 	private static void logInfo(UekspedertForsendelseDokument avstemForsendelse) {
 		log.debug("Sdist002 fant uekspedert forsendelse med forsendelseId={}, dokumentId={}, dokumentStatus={}, opprettetDato={}, distribusjonKanal={}, journalpostId={}",
-				avstemForsendelse.getForsendelseId(),
-				avstemForsendelse.getDokumentId(),
-				avstemForsendelse.getDokumentStatus(),
-				avstemForsendelse.getOpprettetDato(),
-				avstemForsendelse.getDistribusjonKanal(),
-				avstemForsendelse.getJournalpostId());
+				avstemForsendelse.forsendelseId(),
+				avstemForsendelse.dokumentId(),
+				avstemForsendelse.dokumentStatus(),
+				avstemForsendelse.opprettetDato(),
+				avstemForsendelse.distribusjonKanal(),
+				avstemForsendelse.journalpostId());
 	}
 
 	HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode distribusjonKanal) {

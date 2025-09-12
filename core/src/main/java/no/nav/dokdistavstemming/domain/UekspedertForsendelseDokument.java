@@ -1,25 +1,28 @@
 package no.nav.dokdistavstemming.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
 
-@Data
+import java.time.LocalDateTime;
+
+import static no.nav.dokdistavstemming.constants.DokdistavstemmingConstants.NAV_LOCAL_DATE_TIME_FORMAT;
+
 @Builder
-@ToString
-public class UekspedertForsendelseDokument {
-
-	private String distribusjonId;
-	private String distribusjonKanal;
-	private String distribusjonStatus;
-	private String opprettetDato;
-	private String distribusjonDato;
-	private String forsendelseId;
-	private String dokumentId;
-	private String dokumentStatus;
-	private String konversasjonId;
-	private String bestillendeFagsystem;
-	private String fagomradeCode;
-	private String journalpostId;
-	private final String brevProduksjonApplikasjon;
+public record UekspedertForsendelseDokument(
+		String distribusjonId,
+		String distribusjonKanal,
+		String distribusjonStatus,
+		@JsonFormat(pattern = NAV_LOCAL_DATE_TIME_FORMAT)
+		LocalDateTime opprettetDato,
+		@JsonFormat(pattern = NAV_LOCAL_DATE_TIME_FORMAT)
+		LocalDateTime distribusjonDato,
+		Long forsendelseId,
+		String dokumentId,
+		String dokumentStatus,
+		String konversasjonId,
+		String bestillendeFagsystem,
+		String fagomradeCode,
+		Long journalpostId,
+		String brevProduksjonApplikasjon
+) {
 }
