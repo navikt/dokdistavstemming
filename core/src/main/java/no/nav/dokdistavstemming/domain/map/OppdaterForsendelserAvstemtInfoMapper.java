@@ -20,7 +20,7 @@ public class OppdaterForsendelserAvstemtInfoMapper {
 	List<Forsendelse> mapForsendelseIder(List<UekspedertForsendelseDokument> uekspedertForsendelseDokumentList) {
 
 		return uekspedertForsendelseDokumentList.stream()
-				.map(uekspedertForsendelseDokument -> new Forsendelse(Long.valueOf(uekspedertForsendelseDokument.getForsendelseId())))
+				.map(uekspedertForsendelseDokument -> new Forsendelse(uekspedertForsendelseDokument.forsendelseId()))
 				.toList();
 	}
 

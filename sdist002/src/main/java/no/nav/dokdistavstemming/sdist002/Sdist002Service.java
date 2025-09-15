@@ -12,6 +12,8 @@ import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -55,8 +57,15 @@ public class Sdist002Service {
 						return;
 					}
 
-					byte[] csv = csvProducer.oppretteCsv(dokumenter);
-					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal.name(), csv, dokumenter.size());
+					LocalDate eldsteAvstemteDokumentDato = dokumenter.stream()
+							.map(UekspedertForsendelseDokument::distribusjonDato)
+							// .map(LOCAL_DATE_TIME_FORMAT::parse)
+							.map(LocalDate::from)
+							.min(Comparator.naturalOrder())
+							.orElse(LocalDate.now());
+
+					byte[] csv = csvProducer.oppretteCsv(dokumenter, distribusjonskanal);
+					JiraSakResponseTo jiraSakResponseTo = jiraOppgaveService.opprettJirasak(distribusjonskanal, csv, dokumenter.size(), eldsteAvstemteDokumentDato);
 					hentForsendelseKvitteringIkkeMottatt.oppdaterForsendelserAvstemtDatoOgReferanse(oppdaterForsendelserMapper.map(dokumenter, jiraSakResponseTo));
 				});
 	}
@@ -71,9 +80,9 @@ public class Sdist002Service {
 				.filter(forsendelse -> forsendelse != null && forsendelse.getDokumenter() != null)
 				.map(uekspedertForsendelseMapper::mapUekspederteForsendelser)
 				.flatMap(Collection::stream)
-				.sorted(Comparator.comparing(UekspedertForsendelseDokument::getOpprettetDato))
+				.sorted(Comparator.comparing(UekspedertForsendelseDokument::opprettetDato))
 				.peek(avstemForsendelse -> {
-					incrementFunctionalMetrics(avstemForsendelse.getDistribusjonKanal(), avstemForsendelse.getDistribusjonStatus());
+					incrementFunctionalMetrics(avstemForsendelse.distribusjonKanal(), avstemForsendelse.distribusjonStatus());
 					logInfo(avstemForsendelse);
 				})
 				.toList();
@@ -81,12 +90,12 @@ public class Sdist002Service {
 
 	private static void logInfo(UekspedertForsendelseDokument avstemForsendelse) {
 		log.debug("Sdist002 fant uekspedert forsendelse med forsendelseId={}, dokumentId={}, dokumentStatus={}, opprettetDato={}, distribusjonKanal={}, journalpostId={}",
-				avstemForsendelse.getForsendelseId(),
-				avstemForsendelse.getDokumentId(),
-				avstemForsendelse.getDokumentStatus(),
-				avstemForsendelse.getOpprettetDato(),
-				avstemForsendelse.getDistribusjonKanal(),
-				avstemForsendelse.getJournalpostId());
+				avstemForsendelse.forsendelseId(),
+				avstemForsendelse.dokumentId(),
+				avstemForsendelse.dokumentStatus(),
+				avstemForsendelse.opprettetDato(),
+				avstemForsendelse.distribusjonKanal(),
+				avstemForsendelse.journalpostId());
 	}
 
 	HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottattService(DistribusjonKanalCode distribusjonKanal) {

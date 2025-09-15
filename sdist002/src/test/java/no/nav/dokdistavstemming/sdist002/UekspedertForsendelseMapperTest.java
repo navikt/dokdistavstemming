@@ -4,7 +4,6 @@ import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;
 import org.junit.jupiter.api.Test;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import static no.nav.dokdistavstemming.sdist002.TestDataUtils.ARKIV_KODE;
@@ -23,7 +22,6 @@ import static no.nav.dokdistavstemming.sdist002.TestDataUtils.KONVERSASJON_ID;
 import static no.nav.dokdistavstemming.sdist002.TestDataUtils.PRODUKSJON_DATO;
 import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createDokumentInfoWithForsendelseId;
 import static no.nav.dokdistavstemming.sdist002.TestDataUtils.createUekspedertForsendelseWithDokumenter;
-import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,37 +39,24 @@ public class UekspedertForsendelseMapperTest {
 
 		assertEquals(2, dokumenter.size());
 		assertThat(dokumenter)
-				.extracting(UekspedertForsendelseDokument::getForsendelseId)
+				.extracting(UekspedertForsendelseDokument::forsendelseId)
 				.containsExactlyInAnyOrder(FORSENDELSE_ID_1, FORSENDELSE_ID_2);
 
 		dokumenter.forEach(this::assertDokument);
 	}
 
 	private void assertDokument(UekspedertForsendelseDokument dokument) {
-		assertEquals(DISTRIBUSJON_ID, dokument.getDistribusjonId());
-		assertEquals(BESTILLENDE_FAGSYSTEM, dokument.getBestillendeFagsystem());
-		assertEquals(DOKUMENT_STATUS, dokument.getDokumentStatus());
-		assertEquals(KONVERSASJON_ID, dokument.getKonversasjonId());
-		assertEquals(ARKIV_KODE, dokument.getJournalpostId());
-		assertEquals(FAGOMRADE_CODE, dokument.getFagomradeCode());
-		assertEquals(DISTRIBUSJON_KANAL.name(), dokument.getDistribusjonKanal());
-		assertEquals(DISTRIBUSJON_STATUS, dokument.getDistribusjonStatus());
-		assertEquals(PRODUKSJON_DATO, dokument.getOpprettetDato());
-		assertEquals(DISTRIBUSJON_DATO, dokument.getDistribusjonDato());
-		assertEquals(DOKUMENT_ID, dokument.getDokumentId());
-		assertEquals(BREVPRODUKSJONAPPLIKASJON, dokument.getBrevProduksjonApplikasjon());
-	}
-
-	@Test
-	public void shouldConvertStringToDateTime() {
-		String time = "2023-01-16T15:20:13.000";
-		OffsetDateTime distribusjonsdato = convertStringToDateTime(time);
-
-		assertEquals(2023, distribusjonsdato.getYear());
-		assertEquals(1, distribusjonsdato.getMonthValue());
-		assertEquals(16, distribusjonsdato.getDayOfMonth());
-		assertEquals(15, distribusjonsdato.getHour());
-		assertEquals(20, distribusjonsdato.getMinute());
-		assertEquals(13, distribusjonsdato.getSecond());
+		assertEquals(DISTRIBUSJON_ID, dokument.distribusjonId());
+		assertEquals(BESTILLENDE_FAGSYSTEM, dokument.bestillendeFagsystem());
+		assertEquals(DOKUMENT_STATUS, dokument.dokumentStatus());
+		assertEquals(KONVERSASJON_ID, dokument.konversasjonId());
+		assertEquals(ARKIV_KODE, dokument.journalpostId());
+		assertEquals(FAGOMRADE_CODE, dokument.fagomradeCode());
+		assertEquals(DISTRIBUSJON_KANAL.name(), dokument.distribusjonKanal());
+		assertEquals(DISTRIBUSJON_STATUS, dokument.distribusjonStatus());
+		assertEquals(PRODUKSJON_DATO, dokument.opprettetDato());
+		assertEquals(DISTRIBUSJON_DATO, dokument.distribusjonDato());
+		assertEquals(DOKUMENT_ID, dokument.dokumentId());
+		assertEquals(BREVPRODUKSJONAPPLIKASJON, dokument.brevProduksjonApplikasjon());
 	}
 }

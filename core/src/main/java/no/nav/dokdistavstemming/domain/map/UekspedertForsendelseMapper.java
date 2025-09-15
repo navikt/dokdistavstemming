@@ -17,7 +17,7 @@ public class UekspedertForsendelseMapper {
 						.distribusjonId(uekspedertForsendelse.getDistribusjonId())
 						.dokumentId(dok.getDokumentId())
 						.konversasjonId(dok.getKonversasjonId())
-						.journalpostId(dok.getJournalpostId() == null ? null : dok.getJournalpostId())
+						.journalpostId(dok.getJournalpostId())
 						.distribusjonDato(uekspedertForsendelse.getDistribusjonDato())
 						.opprettetDato(uekspedertForsendelse.getOpprettetDato())
 						.distribusjonKanal(uekspedertForsendelse.getDistribusjonKanal())

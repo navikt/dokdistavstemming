@@ -28,7 +28,7 @@ class OppdaterForsendelserAvstemtInfoMapperTest {
 		OppdaterForsendelserAvstemtInfo forsendelserAvstemtInfo = oppdaterForsendelserAvstemtInfoMapper.map(uekspedertForsendelseDokumentList, TestDataUtils.createJiraSakResponseTo());
 
 		assertOppdaterForsendelserAvstemtInfoMapper(forsendelserAvstemtInfo);
-		assertThat(Long.valueOf(uekspedertForsendelseDokumentList.get(1).getForsendelseId())).isEqualTo(forsendelserAvstemtInfo.getForsendelser().get(1).getForsendelseId());
+		assertThat(uekspedertForsendelseDokumentList.get(1).forsendelseId()).isEqualTo(forsendelserAvstemtInfo.getForsendelser().get(1).getForsendelseId());
 	}
 
 	public void assertOppdaterForsendelserAvstemtInfoMapper(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {

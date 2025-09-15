@@ -15,6 +15,9 @@ import no.nav.dokdistavstemming.domain.Varsel;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +25,6 @@ import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNA
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.SDP;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.valueOf;
-import static no.nav.dokdistavstemming.utils.ConverterUtils.convertStringToDateTime;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class BulkOppdaterDistribusjonsinfoMapper {
@@ -49,7 +51,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 		return JournalpostWithDistribusjonsinfo.builder()
 				.journalpostId(Long.valueOf(ekspederteForsendelse.getJournalpostId()))
 				.forsendelseId(ekspederteForsendelse.getForsendelseId())
-				.ekspedertDato(convertStringToDateTime(ekspederteForsendelse.getEkspedertDato()))
+				.ekspedertDato(convertLocalToOffsetNorwayTime(ekspederteForsendelse.getEkspedertDato()))
 				.utsendingsKanal(mapUtsendingsKanalCode(ekspederteForsendelse.getDistribusjonsKanal()))
 				.settStatusEkspedert(true)
 				.digitalpostkasse(mapDigitalpostkasse(ekspederteForsendelse.getDigitalpostkasse(), ekspederteForsendelse.getDistribusjonsKanal()))
@@ -115,5 +117,9 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 			case DPVT -> UtsendingsKanalCode.DPVT.name();
 			default -> null;
 		};
+	}
+
+	private static OffsetDateTime convertLocalToOffsetNorwayTime(LocalDateTime localDateTime) {
+		return localDateTime == null ? null : OffsetDateTime.of(localDateTime, ZoneId.of("Europe/Oslo").getRules().getOffset(localDateTime));
 	}
 }

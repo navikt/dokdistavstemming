@@ -10,6 +10,8 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
@@ -55,6 +57,7 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -64,8 +67,15 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getRecords;
 		topics = {RENOTIFIKASJON_STOPP_TOPIC},
 		partitions = 1
 )
+@SpringBootTest(
+		classes = {
+				ApplicationTestConfig.class
+		},
+		webEnvironment = RANDOM_PORT
+)
+@AutoConfigureWireMock(port = 0)
 @ActiveProfiles("itest")
-class SendUlesteForsendelserTilSentralPrintServiceITest extends ApplicationTestConfig {
+class SendUlesteForsendelserTilSentralPrintServiceITest {
 
 	private static final String NY_FORSENDELSE_ID1 = "33333";
 	private static final String NY_FORSENDELSE_ID2 = "44444";
