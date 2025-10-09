@@ -33,7 +33,7 @@
 		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
 		<spring-cloud-wiremock.version>4.3.0</spring-cloud-wiremock.version>
-		<slack-api-client.version>1.45.3</slack-api-client.version>
+		<slack-api-client.version>1.45.4</slack-api-client.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
