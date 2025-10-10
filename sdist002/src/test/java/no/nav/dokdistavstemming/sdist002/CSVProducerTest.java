@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.sdist002;
 
-import no.nav.dokdistavstemming.constants.DokdistavstemmingConstants;
 import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.map.UekspedertForsendelseMapper;

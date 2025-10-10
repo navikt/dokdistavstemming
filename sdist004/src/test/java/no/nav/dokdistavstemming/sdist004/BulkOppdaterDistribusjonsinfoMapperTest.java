@@ -56,19 +56,19 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertNull(jpDistInfoPrint.getDigitalpostkasse());
 
 		EkspedertForsendelse dittNavEkspedertForsendelse = hentEkspederteForsendelserFromJson.getForsendelser().get(14);
-		Epostvarsel ekspedertForsendelseEpostvarsel = dittNavEkspedertForsendelse.getVarsel().getEpostvarsel().get(0);
-		Smsvarsel ekspedertForsendelseSmsvarsel = dittNavEkspedertForsendelse.getVarsel().getSmsvarsel().get(0);
+		Epostvarsel ekspedertForsendelseEpostvarsel = dittNavEkspedertForsendelse.getVarsel().getEpostvarsel().getFirst();
+		Smsvarsel ekspedertForsendelseSmsvarsel = dittNavEkspedertForsendelse.getVarsel().getSmsvarsel().getFirst();
 		JournalpostWithDistribusjonsinfo jpDistInfoDittNav = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(14);
 
 		assertEquals(Long.valueOf(dittNavEkspedertForsendelse.getJournalpostId()), jpDistInfoDittNav.getJournalpostId());
 		assertEquals(NAV_NO.name(), jpDistInfoDittNav.getUtsendingsKanal());
-		assertEquals(ekspedertForsendelseEpostvarsel.getAdresse(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).epostadresse());
-		assertEquals(ekspedertForsendelseEpostvarsel.getTittel(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).tittel());
-		assertEquals(ekspedertForsendelseEpostvarsel.getTekst(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).tekst());
-		assertEquals(ekspedertForsendelseEpostvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().epostvarsel().get(0).varslingstidspunkt());
-		assertEquals(ekspedertForsendelseSmsvarsel.getTelefonnummer(), jpDistInfoDittNav.getVarsel().smsvarsel().get(0).mobilnummer());
-		assertEquals(ekspedertForsendelseSmsvarsel.getTekst(), jpDistInfoDittNav.getVarsel().smsvarsel().get(0).tekst());
-		assertEquals(ekspedertForsendelseSmsvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().smsvarsel().get(0).varslingstidspunkt());
+		assertEquals(ekspedertForsendelseEpostvarsel.getAdresse(), jpDistInfoDittNav.getVarsel().epostvarsel().getFirst().epostadresse());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTittel(), jpDistInfoDittNav.getVarsel().epostvarsel().getFirst().tittel());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTekst(), jpDistInfoDittNav.getVarsel().epostvarsel().getFirst().tekst());
+		assertEquals(ekspedertForsendelseEpostvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().epostvarsel().getFirst().varslingstidspunkt());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTelefonnummer(), jpDistInfoDittNav.getVarsel().smsvarsel().getFirst().mobilnummer());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTekst(), jpDistInfoDittNav.getVarsel().smsvarsel().getFirst().tekst());
+		assertEquals(ekspedertForsendelseSmsvarsel.getTidspunkt(), jpDistInfoDittNav.getVarsel().smsvarsel().getFirst().varslingstidspunkt());
 		assertTrue(jpDistInfoDittNav.getSettStatusEkspedert());
 		assertNull(jpDistInfoDittNav.getPostadresse());
 		assertNull(jpDistInfoDittNav.getDigitalpostkasse());
@@ -91,7 +91,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 
 		BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest = mapper.map(hentEkspederteForsendelserFromJson);
 
-		assertEquals(bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size(), 0);
+		assertEquals(0, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
 	}
 
 }
