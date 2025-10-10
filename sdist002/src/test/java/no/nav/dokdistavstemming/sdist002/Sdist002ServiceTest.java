@@ -3,7 +3,6 @@ package no.nav.dokdistavstemming.sdist002;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
-import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminConsumer;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.DokdistadminRdist001Api;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse;
 import no.nav.dokdistavstemming.consumer.dokdistadmin.to.HentUekspederteForsendelserResponse.UekspedertForsendelse;
@@ -11,7 +10,6 @@ import no.nav.dokdistavstemming.domain.UekspedertForsendelseDokument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,7 +69,7 @@ public class Sdist002ServiceTest {
 		when(hentForsendelseKvitteringIkkeMottatt.hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt())).thenReturn(TestDataUtils.createHentUekspederteForsendelserResponseSDP());
 
 		HentUekspederteForsendelserResponse result = sdist002Service.hentForsendelserKvitteringIkkeMottattService(SDP);
-		UekspedertForsendelse uekspedertForsendelse = result.getUekspederteForsendelser().get(0);
+		UekspedertForsendelse uekspedertForsendelse = result.getUekspederteForsendelser().getFirst();
 
 		verify(hentForsendelseKvitteringIkkeMottatt).hentForsendelserKvitteringIkkeMottatt(anyString(), anyInt());
 		assertThat(uekspedertForsendelse.getDistribusjonKanal()).isEqualTo(DISTRIBUSJON_KANAL_3.name());

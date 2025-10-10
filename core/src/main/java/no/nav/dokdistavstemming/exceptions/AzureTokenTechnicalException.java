@@ -1,7 +1,0 @@
-package no.nav.dokdistavstemming.exceptions;
-
-public class AzureTokenTechnicalException extends DokdistavstemmingTechnicalException {
-	public AzureTokenTechnicalException(String message, Throwable cause) {
-		super(message, cause);
-	}
-}
