@@ -29,6 +29,8 @@ spec:
       value: "{{ MQGATEWAY01_PORT }}"
     - name: MQGATEWAY01_NAME
       value: {{ MQGATEWAY01_NAME }}
+    - name: JDK_JAVA_OPTIONS
+      value: "$(JAVA_PROXY_OPTIONS) -Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH) -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD) -Djavax.net.ssl.keyStoreType=jks"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -59,11 +61,6 @@ spec:
     requests:
       cpu: 20m
       memory: 2304Mi
-  vault:
-    enabled: true
-    paths:
-      - kvPath: {{ SRVDOKDISTAVSTEMMING }}
-        mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
   azure:
     application:
       enabled: true
@@ -71,6 +68,7 @@ spec:
   envFrom:
     - secret: slack-alerts
     - secret: jira-service-user
+    - secret: {{ DOKDISTAVSTEMMING_SECRET }}
   observability:
     logging:
       destinations:
