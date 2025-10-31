@@ -9,6 +9,15 @@ spec:
   kafka:
     pool: {{KAFKA_POOL}}
   env:
+    - name: JAVA_TRUSTSTORE_OPTIONS
+      value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=75
+              -Djavax.net.ssl.keyStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.keyStorePassword=$(NAV_TRUSTSTORE_PASSWORD)
+              -Djavax.net.ssl.keyStoreType=jks
+              $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDISTAVSTEMMING_JIRA_URL
       value: {{ DOKDISTAVSTEMMING_JIRA_URL }}
     - name: DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL
@@ -59,11 +68,6 @@ spec:
     requests:
       cpu: 20m
       memory: 2304Mi
-  vault:
-    enabled: true
-    paths:
-      - kvPath: {{ SRVDOKDISTAVSTEMMING }}
-        mountPath: "/var/run/secrets/nais.io/srvdokdistavstemming"
   azure:
     application:
       enabled: true
@@ -71,6 +75,7 @@ spec:
   envFrom:
     - secret: slack-alerts
     - secret: jira-service-user
+    - secret: {{ DOKDISTAVSTEMMING_SECRET }}
   observability:
     logging:
       destinations:
