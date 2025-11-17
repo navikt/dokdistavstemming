@@ -104,7 +104,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 
 		sdist002Service.oppretteAvstemmingForsendelseJiraSakByDistribusjonKanal();
 
-		verify(6, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL))
+		verify(7, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL))
 				.withRequestBody(equalToJson(classpathToString("__files/rdist001/oppdaterForsendelserAvstemtInfo_Ok.json"))));
 	}
 
