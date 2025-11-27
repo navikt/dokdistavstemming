@@ -196,6 +196,15 @@
           }
         ]
       }
+    },
+    {
+      "forsendelseId": "2607104",
+      "journalpostId": "453818935",
+      "distribusjonsKanal": "DPO",
+      "ekspedertDato": "2022-11-01T18:34:32.000",
+      "postadresse": null,
+      "digitalpostkasse": null,
+      "varsel": null
     }
   ]
 }

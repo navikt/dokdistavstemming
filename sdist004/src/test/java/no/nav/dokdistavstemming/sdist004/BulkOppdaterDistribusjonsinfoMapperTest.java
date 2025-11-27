@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.DPO;
 import static no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode.NAV_NO;
 import static no.nav.dokdistavstemming.sdist004.utils.DataUtils.getHentEkspederteForsendelserFromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,7 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		JournalpostWithDistribusjonsinfo jpDistInfoSdp = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(0);
 		JournalpostWithDistribusjonsinfo jpDistInfoPrint = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().get(2);
 
-		assertEquals(15, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
+		assertEquals(16, bulkOppdaterDistribusjonsinfoRequest.getJournalposter().size());
 
 		assertEquals(sdpEkspederteForsendelse.getForsendelseId(), jpDistInfoSdp.getForsendelseId());
 		assertEquals(Long.valueOf(sdpEkspederteForsendelse.getJournalpostId()), jpDistInfoSdp.getJournalpostId());
@@ -82,6 +83,15 @@ class BulkOppdaterDistribusjonsinfoMapperTest {
 		assertEquals(printLandkode.getPostadresse().getPostnummer(), printJpLandkode.getPostadresse().getPostnummer());
 		assertEquals(printLandkode.getPostadresse().getPoststed(), printJpLandkode.getPostadresse().getPoststed());
 		assertEquals("??", printJpLandkode.getPostadresse().getLandkode());
+
+		EkspedertForsendelse dokdistDpo = hentEkspederteForsendelserFromJson.getForsendelser().stream()
+				.filter(ekspedertForsendelse -> DPO.name().equals(ekspedertForsendelse.getDistribusjonsKanal()))
+				.findAny().get();
+		JournalpostWithDistribusjonsinfo jpDpo = bulkOppdaterDistribusjonsinfoRequest.getJournalposter().stream()
+				.filter(jpd -> DPO.name().equals(jpd.getUtsendingsKanal()))
+				.findAny().get();
+		assertEquals(Long.valueOf(dokdistDpo.getJournalpostId()), jpDpo.getJournalpostId());
+		assertEquals(dokdistDpo.getDistribusjonsKanal(), jpDpo.getUtsendingsKanal());
 
 	}
 
