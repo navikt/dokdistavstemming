@@ -48,5 +48,9 @@ public enum UtsendingsKanalCode {
 	/**
 	 * Taushetsbelagt digital post til virksomhet
 	 */
-	DPVT
+	DPVT,
+	/**
+	 * Digital Post Offentlig
+	 */
+	DPO
 }

@@ -107,6 +107,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 				.map(SmsvarselTo::fromSmsvarsel)
 				.toList();
 	}
+
 	private String mapUtsendingsKanalCode(String distKanal) {
 		DistribusjonKanalCode distribusjonKanalCode = valueOf(distKanal);
 		return switch (distribusjonKanalCode) {
@@ -115,6 +116,7 @@ public class BulkOppdaterDistribusjonsinfoMapper {
 			case PRINT -> UtsendingsKanalCode.S.name();
 			case TRYGDERETTEN -> UtsendingsKanalCode.TRYGDERETTEN.name();
 			case DPVT -> UtsendingsKanalCode.DPVT.name();
+			case DPO -> UtsendingsKanalCode.DPO.name();
 			default -> null;
 		};
 	}
