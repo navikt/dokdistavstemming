@@ -22,6 +22,14 @@
 		<module>sdist006</module>
 	</modules>
 
+	<repositories>
+		<repository>
+			<id>confluent</id>
+			<name>confluent</name>
+			<url>https://packages.confluent.io/maven/</url>
+		</repository>
+	</repositories>
+
 	<properties>
 		<java.version>25</java.version>
 
