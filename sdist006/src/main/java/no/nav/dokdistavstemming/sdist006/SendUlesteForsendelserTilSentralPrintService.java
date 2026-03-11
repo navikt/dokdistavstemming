@@ -91,13 +91,19 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	}
 
 	private void feilregistrerForsendelserOgSendTilQdist009(List<ForsendelseTo> ulesteForsendelser) {
-		ulesteForsendelser.forEach(ulestForsendelse -> {
+		for (ForsendelseTo ulestForsendelse : ulesteForsendelser) {
 			String ulestBestillingsId = ulestForsendelse.getBestillingsId();
 			String journalpostId = ulestForsendelse.getArkivInformasjon().getArkivId();
 			String nyBestillingsId = UUID.randomUUID().toString();
 			MDC.put(MDC_CALL_ID, ulestBestillingsId);
 			log.info("Sdist006 behandler forsendelser med bestillingsId={} som ikke har blitt lest etter 40 timer", ulestBestillingsId);
 			try {
+				// 3.0 Forsendelser med mer enn 100 vedlegg behandles ikke
+				if (ulestForsendelse.getDokumenter().size()>101) {
+					log.warn("Sdist006 vil ikke sende forsendelse med bestillingsId={} til sentralprint fordi det er mer enn {} vedlegg som er mer enn grensen på 100.", ulestBestillingsId, ulestForsendelse.getDokumenter().size()-1);
+					continue;
+				}
+
 				// 3.1 Opprett ny forsendelse
 				long nyForsendelsesId = opprettForsendelse(ulestForsendelse, nyBestillingsId);
 				log.info("Sdist006 opprettet ny forsendelse med forsendelsesId={} for forsendelse med bestillingsId={}", nyForsendelsesId, ulestBestillingsId);
@@ -125,7 +131,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			} finally {
 				MDC.clear();
 			}
-		});
+		}
 	}
 
 	private List<String> finnUlesteJournalposter() {
