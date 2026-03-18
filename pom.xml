@@ -40,7 +40,7 @@
 		<jiraapi.version>1.7.0</jiraapi.version>
 		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
-		<slack-api-client.version>1.47.0</slack-api-client.version>
+		<slack-api-client.version>1.48.0</slack-api-client.version>
 
 		<!-- Test -->
 		<spring-cloud-wiremock.version>4.3.0</spring-cloud-wiremock.version>
