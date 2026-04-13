@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -182,6 +183,58 @@ class SendUlesteForsendelserTilSentralPrintServiceITest {
 		verify(exactly(2), putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
 		verify(exactly(2), putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
 		verify(exactly(2), patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
+	}
+
+	@Test
+	public void shouldSkipForsendelseWithMoreThan100Vedlegg() {
+		// 102 documents = 101 vedlegg + 1 main (size() > 101 → skipped entirely)
+		stubGetFinnUlesteForsendelser("[" + JOURNALPOSTID1 + "]");
+		stubFor(get(urlPathMatching(HENTFORSENDELSER_URL))
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBody(forsendelseResponseWithDokumenter(OLD_FORSENDELSEID1, JOURNALPOSTID1, GAMMEL_BESTILLINGSID1, 102))));
+
+		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+
+		verify(exactly(0), postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));
+		verify(exactly(0), putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
+		verify(exactly(0), putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
+		verify(exactly(0), patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
+	}
+
+	@Test
+	public void shouldProcessForsendelseWithExactly100Vedlegg() throws IOException {
+		// 101 total documents = 100 vedlegg + 1 main (size() == 101, NOT > 101 → processed)
+		stubGetFinnUlesteForsendelser("[" + JOURNALPOSTID1 + "]");
+		stubFor(get(urlPathMatching(HENTFORSENDELSER_URL))
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBody(forsendelseResponseWithDokumenter(OLD_FORSENDELSEID1, JOURNALPOSTID1, GAMMEL_BESTILLINGSID1, 101))));
+		stubPostOpprettForsendelse("__files/rdist001/opprettForsendelseResponse1-happy.json", GAMMEL_BESTILLINGSID1);
+		stubPutFeilregistrerforsendelse(OLD_FORSENDELSEID1);
+		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID1);
+		stubPatchOppdaterDistribusjonsinfo();
+
+		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+
+		verify(exactly(1), postRequestedFor(urlMatching("/rest/v1/administrerforsendelse")));
+		verify(exactly(1), putRequestedFor(urlMatching(FEILREGISTRERFORSENDELSE_URL)));
+		verify(exactly(1), putRequestedFor(urlEqualTo(OPPDATERFORSENDELSE_URL)));
+		verify(exactly(1), patchRequestedFor(urlMatching(OPPDATERDISTRIBUSJONSINFO_URL)));
+	}
+
+	private static String forsendelseResponseWithDokumenter(String forsendelseId, String journalpostId, String bestillingsId, int antallDokumenter) {
+		String dokumenter = IntStream.range(0, antallDokumenter)
+				.mapToObj(i -> """
+						{"tilknyttetSom":"%s","dokumentObjektReferanse":"testKey%d","arkivDokumentInfoId":"%d","dokumenttypeId":"U000001"}"""
+						.formatted(i == 0 ? "HOVEDDOKUMENT" : "VEDLEGG", i, 1000 + i))
+				.collect(Collectors.joining(","));
+
+		return """
+				{"forsendelseListe":[{"forsendelseId":"%s","bestillingsId":"%s","distribusjonKanal":"DITTNAV","forsendelseStatus":"OVERSENDT","tema":"FS22","forsendelseTittel":"Tittel","mottaker":{"mottakerId":"22222222222","mottakerNavn":"TEST PERSON","mottakerType":"PERSON"},"arkivInformasjon":{"arkivSystem":"JOARK","arkivId":"%s"},"postadresse":{"adresselinje1":"Adresslinje 1","postnummer":"1111","poststed":"Oslo","landkode":"NO"},"dokumenter":[%s]}]}"""
+				.formatted(forsendelseId, bestillingsId, journalpostId, dokumenter);
 	}
 
 	private void stubGetFinnUlesteForsendelser(String journalpostListe) {
