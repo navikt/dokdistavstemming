@@ -100,7 +100,7 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			try {
 				// 3.0 Forsendelser med mer enn 100 vedlegg behandles ikke
 				if (ulestForsendelse.getDokumenter().size()>101) {
-					log.warn("Sdist006 vil ikke sende forsendelse med bestillingsId={} til sentralprint fordi det er mer enn {} vedlegg som er mer enn grensen på 100.", ulestBestillingsId, ulestForsendelse.getDokumenter().size()-1);
+					log.warn("Sdist006 sender ikke forsendelse med bestillingsId={} til sentralprint fordi den inneholder {} vedlegg som er mer enn grensen på 100.", ulestBestillingsId, ulestForsendelse.getDokumenter().size()-1);
 					continue;
 				}
 
