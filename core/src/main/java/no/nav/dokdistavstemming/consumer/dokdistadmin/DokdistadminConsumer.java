@@ -15,8 +15,7 @@ import no.nav.dokdistavstemming.domain.Forsendelse;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.slf4j.MDC;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -62,7 +61,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public HentUekspederteForsendelserResponse hentForsendelserKvitteringIkkeMottatt(String distribusjonskanal, int antallTimer) {
 		log.info("hentForsendelserKvitteringIkkeMottatt henter forsendelser fra rdist001 (dokdistadmin) med distribusjonskanal={}, antallTimer={}",
 				distribusjonskanal, antallTimer);
@@ -82,7 +81,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public void oppdaterForsendelserAvstemtDatoOgReferanse(OppdaterForsendelserAvstemtInfo oppdaterForsendelserAvstemtInfo) {
 		log.info("oppdaterForsendelserAvstemDatoOgReferanse har mottatt kall om å oppdatere {} forsendelser fra rdist001 med avstemtReferanse={}",
 				oppdaterForsendelserAvstemtInfo.getForsendelser().size(), oppdaterForsendelserAvstemtInfo.getAvstemtReferanse());
@@ -100,7 +99,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public void oppdaterAvstemEkspederteForsendelser(AvstemEkspederteForsendelserRequest avstemEkspederteForsendelserRequest) {
 		log.info("oppdaterAvstemEkspederteForsendelser har mottatt kall om å oppdatere {} forsendelser med avstemArkivDato i dokdist-databasen", avstemEkspederteForsendelserRequest.getForsendelser().size());
 
@@ -141,7 +140,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public List<ForsendelseTo> hentForsendelser(List<String> journalpostListe) {
 		return webClient.method(GET)
 				.uri(uriBuilder -> uriBuilder
@@ -162,7 +161,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public Forsendelse opprettForsendelse(ForsendelseTo forsendelseTo) {
 		log.info("opprettForsendelse oppretter forsendelse for bestillingsId={}", forsendelseTo.getBestillingsId());
 
@@ -176,7 +175,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public void feilregistrerForsendelse(FeilregistrerForsendelseRequest feilregistrerForsendelseRequest) {
 		log.info("feilregistrerForsendelse feilregistrerer forsendelsesId={}", feilregistrerForsendelseRequest.getForsendelseId());
 
@@ -192,7 +191,7 @@ public class DokdistadminConsumer implements DokdistadminRdist001Api {
 	}
 
 	@Override
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public void oppdaterForsendelse(OppdaterForsendelseRequest oppdaterForsendelseRequest) {
 		log.info("oppdaterForsendelse oppdaterer forsendelse med forsendelsesId={}", oppdaterForsendelseRequest.getForsendelseId());
 

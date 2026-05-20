@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.7</version>
+		<version>4.0.6</version>
 	</parent>
 
 	<groupId>no.nav.dokdistavstemming</groupId>
@@ -33,7 +33,7 @@
 	<properties>
 		<java.version>25</java.version>
 
-		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
+		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 		<com.ibm.mq.jakarta.client.version>9.4.5.1</com.ibm.mq.jakarta.client.version>
 		<camel-spring-boot-bom.version>4.20.0</camel-spring-boot-bom.version>
 		<guava.version>33.6.0-jre</guava.version>
@@ -41,9 +41,6 @@
 		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
 		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
 		<slack-api-client.version>1.48.1</slack-api-client.version>
-
-		<!-- Test -->
-		<spring-cloud-wiremock.version>4.3.0</spring-cloud-wiremock.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
@@ -99,6 +96,13 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-spring-boot-dependencies</artifactId>
+				<version>${camel-spring-boot-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>io.confluent</groupId>
 				<artifactId>kafka-avro-serializer</artifactId>
 				<version>${kafka-avro-serializer.version}</version>
@@ -122,9 +126,9 @@
 				<type>test-jar</type>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-wiremock</artifactId>
-				<version>${spring-cloud-wiremock.version}</version>
+				<groupId>org.wiremock.integrations</groupId>
+				<artifactId>wiremock-spring-boot</artifactId>
+				<version>4.2.1</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -143,6 +147,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<argLine>-Dio.netty.allocator.type=pooled</argLine>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

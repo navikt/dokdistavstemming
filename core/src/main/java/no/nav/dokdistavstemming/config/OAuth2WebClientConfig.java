@@ -32,6 +32,11 @@ public class OAuth2WebClientConfig {
 	private static final int MAX_BUFFER_SIZE = 16 * 1024 * 1024;
 
 	@Bean
+	WebClient.Builder webClientBuilder() {
+		return WebClient.builder();
+	}
+
+	@Bean
 	@Primary
 	WebClient webClient(WebClient.Builder webClientBuilder, ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
 		var filter = new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);

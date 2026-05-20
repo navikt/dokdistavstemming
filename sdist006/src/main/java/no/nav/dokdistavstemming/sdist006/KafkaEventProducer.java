@@ -7,8 +7,7 @@ import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -31,7 +30,7 @@ class KafkaEventProducer {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-	@Retryable(backoff = @Backoff(delay = 500))
+	@Retryable(delay = 500)
 	void publish(DoknotifikasjonStopp event) {
 
 		ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(

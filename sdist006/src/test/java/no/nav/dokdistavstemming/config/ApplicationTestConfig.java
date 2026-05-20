@@ -4,11 +4,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("itest")
-@EnableRetry
 @EnableConfigurationProperties({
 		DokdistavstemmingProperties.class,
 		MqGatewayAlias.class,

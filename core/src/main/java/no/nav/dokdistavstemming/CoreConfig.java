@@ -1,7 +1,5 @@
 package no.nav.dokdistavstemming;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.dok.jiraapi.JiraProperties;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiraapi.client.JiraClient;
@@ -9,9 +7,9 @@ import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.resilience.annotation.EnableResilientMethods;
 
-@EnableRetry
+@EnableResilientMethods
 @Configuration
 public class CoreConfig {
 
@@ -27,10 +25,5 @@ public class CoreConfig {
 	@Bean
 	public JiraService jiraService(JiraClient jiraClient) {
 		return new JiraService(jiraClient);
-	}
-
-	@Bean
-	public Module javaTimeModule() {
-		return new JavaTimeModule();
 	}
 }

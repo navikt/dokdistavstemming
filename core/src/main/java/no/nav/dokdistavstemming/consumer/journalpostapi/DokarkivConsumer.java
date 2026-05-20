@@ -6,8 +6,7 @@ import no.nav.dokdistavstemming.domain.enums.UtsendingsKanalCode;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingFunctionalException;
 import no.nav.dokdistavstemming.exceptions.DokdistavstemmingTechnicalException;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -65,7 +64,7 @@ public class DokarkivConsumer {
 				.block();
 	}
 
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
@@ -79,7 +78,7 @@ public class DokarkivConsumer {
 				.block();
 	}
 
-	@Retryable(retryFor = DokdistavstemmingTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
 		log.info("oppdaterDistribusjonsinfo oppdaterer distribusjonsinfo for journalpost={}.", journalpostId);
 

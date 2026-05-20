@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -29,15 +31,13 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		SlackProperties.class,
 		AzureProperties.class
 })
-@EnableAutoConfiguration
-@ComponentScan(basePackages = "no.nav.dokdistavstemming")
 @SpringBootTest(
 		classes = {
-				AbstractSdist002ITest.class
+				AbstractSdist002ITest.TestConfig.class
 		},
 		webEnvironment = RANDOM_PORT
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock(@ConfigureWireMock(port = 0))
 public abstract class AbstractSdist002ITest {
 
 	public static String CALL_ID = UUID.randomUUID().toString();
@@ -53,4 +53,10 @@ public abstract class AbstractSdist002ITest {
 	}
 
 	protected abstract void setupResources();
+
+	@Configuration
+	@EnableAutoConfiguration
+	@ComponentScan(basePackages = "no.nav.dokdistavstemming")
+	static class TestConfig {
+	}
 }

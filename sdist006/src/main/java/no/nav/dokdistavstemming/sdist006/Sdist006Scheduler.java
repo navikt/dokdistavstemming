@@ -5,7 +5,7 @@ import no.nav.dokdistavstemming.consumer.leaderelection.LeaderElectionConsumer;
 import no.nav.dokdistavstemming.service.SlackService;
 import org.springframework.boot.availability.ApplicationAvailability;
 import org.springframework.boot.availability.ReadinessState;
-import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.boot.web.server.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

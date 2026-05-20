@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
@@ -44,6 +44,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -57,7 +58,6 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
@@ -74,7 +74,7 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getRecords;
 		},
 		webEnvironment = RANDOM_PORT
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 @ActiveProfiles("itest")
 class SendUlesteForsendelserTilSentralPrintServiceITest {
 
@@ -277,7 +277,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest {
 				.withRequestBody(containing("\"originalDistribusjonId\":" + "\"" + oldBestillingsId + "\""))
 				.withRequestBody(containing("\"distribusjonsKanal\":\"PRINT\""))
 				.withRequestBody(containing("\"dokumenttypeId\":\"U000001\""))
-				.withRequestBody(containing("\"bestillingsId\":" + anyString()))
+				.withRequestBody(matchingJsonPath("$.bestillingsId"))
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withStatus(OK.value())
