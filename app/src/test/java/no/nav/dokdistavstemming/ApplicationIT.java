@@ -12,20 +12,19 @@ import org.junit.jupiter.api.Test;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.resttestclient.TestRestTemplate;
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.client.RestTestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(classes = {Application.class, ApplicationIT.Config.class}, webEnvironment = RANDOM_PORT)
-@AutoConfigureTestRestTemplate
+@AutoConfigureRestTestClient
 @ActiveProfiles("itest")
 public class ApplicationIT {
 
@@ -54,21 +53,17 @@ public class ApplicationIT {
 		}
 	}
 
-	private final TestRestTemplate testRestTemplate;
-	private final Sdist002Scheduler sdist002Scheduler;
-	private final Sdist004Scheduler sdist004Scheduler;
-	private final Sdist006Scheduler sdist006Scheduler;
+	@Autowired
+	private RestTestClient restTestClient;
 
 	@Autowired
-	public ApplicationIT(TestRestTemplate testRestTemplate,
-						 Sdist002Scheduler sdist002Scheduler,
-						 Sdist004Scheduler sdist004Scheduler,
-						 Sdist006Scheduler sdist006Scheduler) {
-		this.testRestTemplate = testRestTemplate;
-		this.sdist002Scheduler = sdist002Scheduler;
-		this.sdist004Scheduler = sdist004Scheduler;
-		this.sdist006Scheduler = sdist006Scheduler;
-	}
+	private Sdist002Scheduler sdist002Scheduler;
+
+	@Autowired
+	private Sdist004Scheduler sdist004Scheduler;
+
+	@Autowired
+	private Sdist006Scheduler sdist006Scheduler;
 
 	@Test
 	void shouldStartApp() {
@@ -77,13 +72,15 @@ public class ApplicationIT {
 		assertThat(sdist004Scheduler).isNotNull();
 		assertThat(sdist006Scheduler).isNotNull();
 
-		// verifisere at appen klarer starte opp
-		var liveness = testRestTemplate.getForEntity("/actuator/health/liveness", String.class);
-		assertThat(liveness.getStatusCode()).isEqualTo(OK);
-		assertThat(liveness.getBody()).contains("UP");
+		doHealthCheck("/actuator/health/liveness");
+		doHealthCheck("/actuator/health/readiness");
+	}
 
-		var readiness = testRestTemplate.getForEntity("/actuator/health/readiness", String.class);
-		assertThat(readiness.getStatusCode()).isEqualTo(OK);
-		assertThat(readiness.getBody()).contains("UP");
+	private void doHealthCheck(String uri) {
+		restTestClient.get()
+			.uri(uri)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody().json("{\"status\":\"UP\"}");
 	}
 }

@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class DataUtils {
+	private static final JsonMapper OBJECT_MAPPER = new JsonMapper();
 
 	public static HentEkspederteForsendelserResponse getHentEkspederteForsendelserFromJson(String file) throws IOException {
-		JsonMapper objectMapper = new JsonMapper();
 		InputStream inputStream = new ClassPathResource(file).getInputStream();
-		return objectMapper.readValue( inputStream, HentEkspederteForsendelserResponse.class);
+		return OBJECT_MAPPER.readValue(inputStream, HentEkspederteForsendelserResponse.class);
 	}
 }

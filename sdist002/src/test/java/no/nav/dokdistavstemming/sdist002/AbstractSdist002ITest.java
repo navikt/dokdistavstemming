@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,7 +36,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		},
 		webEnvironment = RANDOM_PORT
 )
-@EnableWireMock(@ConfigureWireMock(port = 0))
+@EnableWireMock
 public abstract class AbstractSdist002ITest {
 
 	public static String CALL_ID = UUID.randomUUID().toString();

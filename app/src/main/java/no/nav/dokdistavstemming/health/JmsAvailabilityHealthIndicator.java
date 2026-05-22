@@ -10,11 +10,17 @@ import org.springframework.boot.availability.AvailabilityChangeEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import static org.springframework.boot.availability.ReadinessState.ACCEPTING_TRAFFIC;
 import static org.springframework.boot.availability.ReadinessState.REFUSING_TRAFFIC;
 
 @Component
 public class JmsAvailabilityHealthIndicator implements HealthIndicator {
+	private static final long JMS_HEALTH_CHECK_TIMEOUT_SECONDS = 10;
 
 	private final ConnectionFactory connectionFactory;
 	private final ApplicationAvailability applicationAvailability;
@@ -31,7 +37,7 @@ public class JmsAvailabilityHealthIndicator implements HealthIndicator {
 	@Override
 	public Health health() {
 		try {
-			doHealthCheck(Health.up());
+			doHealthCheck();
 			if (applicationAvailability.getReadinessState() == REFUSING_TRAFFIC) {
 				AvailabilityChangeEvent.publish(applicationEventPublisher, "JMS Connection OK", ACCEPTING_TRAFFIC);
 			}
@@ -46,9 +52,25 @@ public class JmsAvailabilityHealthIndicator implements HealthIndicator {
 		}
 	}
 
-	private void doHealthCheck(Health.Builder builder) throws Exception {
-		try (Connection connection = connectionFactory.createConnection()) {
-			connection.start();
+	private void doHealthCheck() throws Exception {
+		try (var executor = Executors.newSingleThreadExecutor()) {
+			var check = executor.submit(() -> {
+				try (Connection connection = connectionFactory.createConnection()) {
+					connection.start();
+				}
+				return null;
+			});
+			try {
+				check.get(JMS_HEALTH_CHECK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+			} catch (ExecutionException e) {
+				if (e.getCause() instanceof Exception exception) {
+					throw exception;
+				}
+				throw new IllegalStateException("Uventet feil ved health check av JMS connection", e.getCause());
+			} catch (TimeoutException e) {
+				check.cancel(true);
+				throw new IllegalStateException("Timeout ved health check av JMS connection", e);
+			}
 		}
 	}
 }

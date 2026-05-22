@@ -19,8 +19,6 @@ import java.util.List;
 import static java.lang.String.format;
 import static java.time.Duration.ofSeconds;
 import static no.nav.dokdistavstemming.config.OAuth2WebClientConfig.CLIENT_REGISTRATION_DOKARKIV;
-import static no.nav.dokdistavstemming.constants.RetryConstants.DELAY_SHORT;
-import static no.nav.dokdistavstemming.constants.RetryConstants.MULTIPLIER_SHORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
@@ -64,7 +62,7 @@ public class DokarkivConsumer {
 				.block();
 	}
 
-	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
+	@Retryable(includes = DokdistavstemmingTechnicalException.class)
 	public BulkOppdaterDistribusjonsinfoResponse bulkOppdaterJournalpostDistribusjonsInfo(BulkOppdaterDistribusjonsinfoRequest bulkOppdaterDistribusjonsinfoRequest) {
 		log.info("bulkOppdaterJournalpostDistribusjonsInfo har mottatt kall om å oppdatere distribusjonsinfo på journalposter.");
 
@@ -78,7 +76,7 @@ public class DokarkivConsumer {
 				.block();
 	}
 
-	@Retryable(includes = DokdistavstemmingTechnicalException.class, delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT)
+	@Retryable(includes = DokdistavstemmingTechnicalException.class)
 	public void oppdaterDistribusjonsinfo(OppdaterDistribusjonsinfoRequest oppdaterDistribusjonsinfoRequest, String journalpostId) {
 		log.info("oppdaterDistribusjonsinfo oppdaterer distribusjonsinfo for journalpost={}.", journalpostId);
 
