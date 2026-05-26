@@ -91,7 +91,7 @@ public class BulkOppdaterJournalpostDistInfoServiceIT extends AbstractSdist004IT
 		assertThrows(DokdistavstemmingTechnicalException.class, () -> sdist004BulkOppdaterService.oppdaterAvstemOgJournalpostDistInfo());
 
 		verify(1, getRequestedFor(urlEqualTo(HENT_EKSPEDERTE_FORSENDELSER_URL)));
-		verify(3, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
+		verify(4, postRequestedFor(urlEqualTo(JOURNALPOST_API_URL)));
 		verify(0, putRequestedFor(urlEqualTo(AVSTEM_EKSPEDERTE_FORSENDELSER_URL)));
 	}
 }

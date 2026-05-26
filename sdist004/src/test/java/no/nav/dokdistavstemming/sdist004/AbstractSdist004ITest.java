@@ -11,7 +11,8 @@ import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -29,15 +30,13 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		SlackProperties.class,
 		AzureProperties.class
 })
-@EnableAutoConfiguration
-@ComponentScan(basePackages = "no.nav.dokdistavstemming")
 @SpringBootTest(
 		classes = {
-				AbstractSdist004ITest.class
+				AbstractSdist004ITest.TestConfig.class
 		},
 		webEnvironment = RANDOM_PORT
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 public abstract class AbstractSdist004ITest {
 	public static String CALL_ID = UUID.randomUUID().toString();
 
@@ -46,5 +45,11 @@ public abstract class AbstractSdist004ITest {
 		WireMock.resetAllRequests();
 		WireMock.reset();
 		MDC.put(MDC_CALL_ID, CALL_ID);
+	}
+
+	@Configuration
+	@EnableAutoConfiguration
+	@ComponentScan(basePackages = "no.nav.dokdistavstemming")
+	static class TestConfig {
 	}
 }

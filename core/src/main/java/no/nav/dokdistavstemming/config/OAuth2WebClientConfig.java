@@ -107,4 +107,3 @@ public class OAuth2WebClientConfig {
 				.responseTimeout(Duration.ofSeconds(20));
 	}
 }
-

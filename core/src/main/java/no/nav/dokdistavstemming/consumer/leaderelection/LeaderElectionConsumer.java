@@ -1,6 +1,6 @@
 package no.nav.dokdistavstemming.consumer.leaderelection;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,10 @@ import static java.net.InetAddress.getLocalHost;
 @Component
 public class LeaderElectionConsumer {
 	private final WebClient webClient;
-	private final ObjectMapper mapper;
+	private final JsonMapper mapper;
 
 	public LeaderElectionConsumer(WebClient.Builder webClientBuilder,
-								  ObjectMapper mapper,
+								  JsonMapper mapper,
 								  @Value("${elector.path}") String electorPath) {
 		this.webClient = webClientBuilder
 				.baseUrl(electorPath.startsWith("http") ? electorPath : "http://" + electorPath)
