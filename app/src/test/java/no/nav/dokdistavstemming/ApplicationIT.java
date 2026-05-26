@@ -53,17 +53,18 @@ public class ApplicationIT {
 		}
 	}
 
-	@Autowired
-	private RestTestClient restTestClient;
+	private final RestTestClient restTestClient;
+	private final Sdist002Scheduler sdist002Scheduler;
+	private final Sdist004Scheduler sdist004Scheduler;
+	private final Sdist006Scheduler sdist006Scheduler;
 
 	@Autowired
-	private Sdist002Scheduler sdist002Scheduler;
-
-	@Autowired
-	private Sdist004Scheduler sdist004Scheduler;
-
-	@Autowired
-	private Sdist006Scheduler sdist006Scheduler;
+	public ApplicationIT(RestTestClient restTestClient, Sdist002Scheduler sdist002Scheduler, Sdist004Scheduler sdist004Scheduler, Sdist006Scheduler sdist006Scheduler) {
+		this.restTestClient = restTestClient;
+		this.sdist002Scheduler = sdist002Scheduler;
+		this.sdist004Scheduler = sdist004Scheduler;
+		this.sdist006Scheduler = sdist006Scheduler;
+	}
 
 	@Test
 	void shouldStartApp() {
