@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DITTNAV;
+import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DPO;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.DPVT;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.E_HANDEL;
 import static no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode.PRINT;
@@ -116,7 +117,14 @@ public class BulkOppdaterJournalpostDistInfoService {
 		Map<DistribusjonKanalCode, Long> collectByKanal = forsendelserResponse.getForsendelser().stream()
 				.map(forsendelse -> DistribusjonKanalCode.valueOf(forsendelse.getDistribusjonsKanal()))
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-		log.info("Sdist004 hentet {} ekspederte forsendelser fra dokdistadmin fordelt på følgende kanaler: DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}",
-				forsendelserResponse.getForsendelser().size(), collectByKanal.get(DPVT), collectByKanal.get(E_HANDEL), collectByKanal.get(DITTNAV), collectByKanal.get(PRINT), collectByKanal.get(SDP), collectByKanal.get(TRYGDERETTEN));
+		log.info("Sdist004 hentet {} ekspederte forsendelser fra dokdistadmin fordelt på følgende kanaler: DPVT={}, E_HANDEL={}, DITTNAV={}, PRINT={}, SDP={}, TRYGDERETTEN={}, DPO={}",
+				forsendelserResponse.getForsendelser().size(),
+				collectByKanal.getOrDefault(DPVT, 0L),
+				collectByKanal.getOrDefault(E_HANDEL, 0L),
+				collectByKanal.getOrDefault(DITTNAV, 0L),
+				collectByKanal.getOrDefault(PRINT, 0L),
+				collectByKanal.getOrDefault(SDP, 0L),
+				collectByKanal.getOrDefault(TRYGDERETTEN, 0L),
+				collectByKanal.getOrDefault(DPO, 0L));
 	}
 }
