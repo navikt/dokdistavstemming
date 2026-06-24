@@ -34,7 +34,7 @@
 		<java.version>25</java.version>
 
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
-		<com.ibm.mq.jakarta.client.version>9.4.5.1</com.ibm.mq.jakarta.client.version>
+		<com.ibm.mq.jakarta.client.version>10.0.0.0</com.ibm.mq.jakarta.client.version>
 		<camel-spring-boot-bom.version>4.20.0</camel-spring-boot-bom.version>
 		<guava.version>33.6.0-jre</guava.version>
 		<jiraapi.version>1.7.0</jiraapi.version>
