@@ -91,7 +91,7 @@ class SendUlesteForsendelserTilSentralPrintServiceITest {
 	private static final String GAMMEL_BESTILLINGSID2 = "811c0c5d-e74c-491a-8b8c-dette-er-en-annen";
 
 	private static final String HENTFORSENDELSER_URL = "/rest/v1/administrerforsendelse/hentForsendelser.*";
-	private static final String FINNULESTEFORSENDELSER_URL = "/rest/internal/sikkerhetsnivaa/finnUlesteJournalposter/NAV_NO/202[\\d]-.*";
+	private static final String FINNULESTEFORSENDELSER_URL = "/rest/internal/finnUlesteJournalposter/NAV_NO/202[\\d]-.*";
 	private static final String OPPDATERDISTRIBUSJONSINFO_URL = "/rest/journalpostapi/v1/journalpost/.*/oppdaterDistribusjonsinfo";
 	private static final String OPPDATERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/oppdaterforsendelse";
 	private static final String FEILREGISTRERFORSENDELSE_URL = "/rest/v1/administrerforsendelse/feilregistrerforsendelse";
