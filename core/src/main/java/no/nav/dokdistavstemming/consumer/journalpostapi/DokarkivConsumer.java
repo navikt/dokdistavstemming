@@ -27,10 +27,10 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @Component
 public class DokarkivConsumer {
 
-	private final WebClient webClient;
 	private final String JOURNALPOST_API_URL = "/journalpostapi/v1";
 	private final String JOURNALPOST_API_JOURNALPOST_URL = JOURNALPOST_API_URL + "/journalpost";
-	private final String SIKKERHETSNIVAA_API_URL = "/internal/sikkerhetsnivaa";
+
+	private final WebClient webClient;
 
 	public DokarkivConsumer(WebClient webClient,
 							DokdistavstemmingProperties dokdistavstemmingProp) {
@@ -46,7 +46,7 @@ public class DokarkivConsumer {
 
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder
-						.path(SIKKERHETSNIVAA_API_URL + "/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
+						.path("/internal/finnUlesteJournalposter/{kanalCode}/{ekspedertFra}/{ekspedertTil}")
 						.build(kanalCode, ekspedertFra, ekspedertTil)
 				)
 				.httpRequest(httpRequest -> {
