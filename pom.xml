@@ -35,7 +35,7 @@
 
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 		<com.ibm.mq.jakarta.client.version>9.4.5.1</com.ibm.mq.jakarta.client.version>
-		<camel-spring-boot-bom.version>4.21.0</camel-spring-boot-bom.version>
+		<camel-spring-boot-bom.version>4.22.0</camel-spring-boot-bom.version>
 		<guava.version>33.6.0-jre</guava.version>
 		<jiraapi.version>1.7.0</jiraapi.version>
 		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
