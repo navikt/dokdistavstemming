@@ -35,6 +35,7 @@ import static no.nav.dokdistavstemming.utils.LoggingUtils.trunkertListeToString;
 @Slf4j
 @Component
 public class SendUlesteForsendelserTilSentralPrintService {
+
 	private static final int ANTALL_DAGER_TILBAKE_MAX = 13;
 	private static final int ANTALL_TIMER_TILBAKE_MIN = 40;
 	private static final DateTimeFormatter BATCH_ID_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.HH.mm:ss");
@@ -44,10 +45,11 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private final DistribuerTilSentralPrintMQService distribuerTilSentralPrintService;
 	private final KafkaEventProducer kafkaEventProducer;
 
-	public SendUlesteForsendelserTilSentralPrintService(DokdistadminConsumer dokdistadminConsumer,
-														DokarkivConsumer dokarkivConsumer,
-														DistribuerTilSentralPrintMQService distribuerTilSentralPrintService,
-														KafkaEventProducer kafkaEventProducer) {
+	public SendUlesteForsendelserTilSentralPrintService(
+			DokdistadminConsumer dokdistadminConsumer,
+			DokarkivConsumer dokarkivConsumer,
+			DistribuerTilSentralPrintMQService distribuerTilSentralPrintService,
+			KafkaEventProducer kafkaEventProducer) {
 		this.dokarkivConsumer = dokarkivConsumer;
 		this.dokdistadminConsumer = dokdistadminConsumer;
 		this.distribuerTilSentralPrintService = distribuerTilSentralPrintService;
@@ -96,11 +98,13 @@ public class SendUlesteForsendelserTilSentralPrintService {
 			String journalpostId = ulestForsendelse.getArkivInformasjon().getArkivId();
 			String nyBestillingsId = UUID.randomUUID().toString();
 			MDC.put(MDC_CALL_ID, ulestBestillingsId);
+
 			log.info("Sdist006 behandler forsendelser med bestillingsId={} som ikke har blitt lest etter 40 timer", ulestBestillingsId);
+
 			try {
 				// 3.0 Forsendelser med mer enn 100 vedlegg behandles ikke
-				if (ulestForsendelse.getDokumenter().size()>101) {
-					log.warn("Sdist006 sender ikke forsendelse med bestillingsId={} til sentralprint fordi den inneholder {} vedlegg som er mer enn grensen på 100.", ulestBestillingsId, ulestForsendelse.getDokumenter().size()-1);
+				if (ulestForsendelse.getDokumenter().size() > 101) {
+					log.info("Sdist006 sender ikke forsendelse med bestillingsId={} til sentralprint fordi den inneholder {} vedlegg som er mer enn grensen på 100.", ulestBestillingsId, ulestForsendelse.getDokumenter().size() - 1);
 					continue;
 				}
 
@@ -180,5 +184,5 @@ public class SendUlesteForsendelserTilSentralPrintService {
 	private void stoppRenotifikasjon(String bestillingsId) {
 		kafkaEventProducer.publish(new DoknotifikasjonStopp(bestillingsId, DOKDISTDITTNAV));
 	}
-}
 
+}
