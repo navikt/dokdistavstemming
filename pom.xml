@@ -38,8 +38,11 @@
 		<camel-spring-boot-bom.version>4.21.0</camel-spring-boot-bom.version>
 		<guava.version>33.6.0-jre</guava.version>
 		<jiraapi.version>1.7.0</jiraapi.version>
-		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
-		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
+		<kafka-avro-serializer.version>8.3.1</kafka-avro-serializer.version>
+		<!-- Eksplisitt avro.versjon kan fjernes når kafka-avro-serializer bruker Avro 1.12.2 eller nyere. -->
+		<avro.version>1.12.2</avro.version>
+		<avro.serializable.classes>no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp</avro.serializable.classes>
+		<teamdokumenthandtering-avro-schemas.version>2.0.0</teamdokumenthandtering-avro-schemas.version>
 		<slack-api-client.version>1.49.0</slack-api-client.version>
 		<wiremock-spring-boot.version>4.2.2</wiremock-spring-boot.version>
 
@@ -109,6 +112,11 @@
 				<version>${kafka-avro-serializer.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro</artifactId>
+				<version>${avro.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>no.nav.teamdokumenthandtering</groupId>
 				<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
 				<version>${teamdokumenthandtering-avro-schemas.version}</version>
@@ -150,6 +158,18 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<argLine>-Dio.netty.allocator.type=pooled</argLine>
+					<systemPropertyVariables>
+						<org.apache.avro.SERIALIZABLE_CLASSES>${avro.serializable.classes}</org.apache.avro.SERIALIZABLE_CLASSES>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<org.apache.avro.SERIALIZABLE_CLASSES>${avro.serializable.classes}</org.apache.avro.SERIALIZABLE_CLASSES>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 			<plugin>
