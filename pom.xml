@@ -36,7 +36,7 @@
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 		<com.ibm.mq.jakarta.client.version>9.4.5.1</com.ibm.mq.jakarta.client.version>
 		<camel-spring-boot-bom.version>4.22.0</camel-spring-boot-bom.version>
-		<guava.version>33.6.0-jre</guava.version>
+		<guava.version>33.7.1-jre</guava.version>
 		<jiraapi.version>1.7.0</jiraapi.version>
 		<kafka-avro-serializer.version>8.3.1</kafka-avro-serializer.version>
 		<!-- Eksplisitt avro.versjon kan fjernes når kafka-avro-serializer bruker Avro 1.12.2 eller nyere. -->
