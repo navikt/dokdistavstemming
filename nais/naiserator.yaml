@@ -78,8 +78,8 @@ spec:
   webproxy: true
   envFrom:
     - secret: slack-alerts
-    - secret: jira-service-user
-    - secret: {{ DOKDISTAVSTEMMING_SECRET }}
+    - secret: jira-cloud
+    - secret: dokdistavstemming
     - configmap: dokdistavstemming
   observability:
     logging:

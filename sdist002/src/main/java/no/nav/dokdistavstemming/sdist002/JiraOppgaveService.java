@@ -6,11 +6,13 @@ import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiracore.exception.JiraClientException;
 import no.nav.dok.jiracore.exception.JiraServerException;
+import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDate;
@@ -21,7 +23,7 @@ import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
-@Component
+@Service
 public class JiraOppgaveService {
 
 	private static final DateTimeFormatter NORSK_LOCAL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -30,9 +32,12 @@ public class JiraOppgaveService {
 	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
 	private static final String DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN = "srvjiradokdistavstemming";
 	private final JiraService jiraService;
+	private final JiraAuthProperties jiraAuthProperties;
 
-	public JiraOppgaveService(JiraService jiraService) {
+	public JiraOppgaveService(JiraService jiraService,
+							  JiraAuthProperties jiraAuthProperties) {
 		this.jiraService = jiraService;
+		this.jiraAuthProperties = jiraAuthProperties;
 	}
 
 	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int avvikCount, LocalDate avstemmingsfilDato) {
@@ -62,7 +67,7 @@ public class JiraOppgaveService {
 		return JiraRequest.builder()
 				.summary(format(SUMMARY, avvikCount, distribusjonskanal.name()))
 				.description(format(DESCRIPTION, avvikCount, distribusjonskanal.name()))
-				.reporterName(DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN)
+				.reporter(new JiraRequest.Reporter(jiraAuthProperties.username(), DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN))
 				.labels(List.of("dokumentdistribusjon_avvik"))
 				.filnavn(format(AVVIK_CSV_FILNAVN, distribusjonskanal.name(), NORSK_LOCAL_DATE_FORMAT.format(avstemmingsfilDato)))
 				.vedlegg(file)
