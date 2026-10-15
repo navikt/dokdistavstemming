@@ -5,13 +5,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties("jira")
+@ConfigurationProperties("jira.cloud")
 public record JiraAuthProperties(
 		@NotEmpty String username,
-		@NotEmpty String password
+		@NotEmpty String accessToken
 ) {
 	@Override
 	public String toString() {
-		return "username=" + username + ", password=****";
+		return "username=" + username + ", accessToken=****";
 	}
 }

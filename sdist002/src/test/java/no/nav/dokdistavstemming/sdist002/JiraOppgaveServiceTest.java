@@ -3,7 +3,9 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dok.jiraapi.JiraRequest;
 import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
+import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,12 +29,19 @@ class JiraOppgaveServiceTest {
 	@Mock
 	private JiraService jiraService;
 
+	@Mock
+	private JiraAuthProperties jiraAuthProperties;
 
 	@InjectMocks
 	private JiraOppgaveService jiraOppgaveService;
 
+	@BeforeEach
+	void setUp() {
+		jiraAuthProperties = new JiraAuthProperties("username", "accessToken");
+	}
+
 	@Test
-	public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
+	void shoudOpprettetJiraSakwithVedlegg() throws Exception {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
 		byte[] avvikFil = new ClassPathResource("__files/csv/csvfil_print.csv").getContentAsByteArray();
 
@@ -42,7 +51,7 @@ class JiraOppgaveServiceTest {
 	}
 
 	@Test
-	public void shouldUpdateStatusToKlarForArbeid() throws Exception {
+	void shouldUpdateStatusToKlarForArbeid() throws Exception {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID)
 				.message(JIRA_SAK_URL).build());
 
