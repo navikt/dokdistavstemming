@@ -2,10 +2,13 @@ package no.nav.dokdistavstemming.sdist002;
 
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.JiraAuthProperties;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestClient;
 
-import static java.util.Objects.requireNonNull;
+import java.nio.charset.StandardCharsets;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
@@ -27,11 +30,15 @@ public class JiraCloudClient {
 	}
 
 	public Project hentJiraCloudProject() {
-		return requireNonNull(restClient.get()
+		return restClient.get()
 				.uri("/rest/api/3/project/MMA")
 				.accept(APPLICATION_JSON)
 				.retrieve()
-				.body(Project.class), "Jira Cloud returnerte en tom prosjektrespons");
+				.onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
+					throw new RuntimeException(String.format("Jira Cloud returnerte 4xx-feil: %s, %s, body=%s", res.getHeaders(), res.getStatusCode(),
+							StreamUtils.copyToString(res.getBody(), StandardCharsets.UTF_8)));
+				})
+				.body(Project.class);
 	}
 
 }
