@@ -3,13 +3,16 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dokdistavstemming.config.DokdistavstemmingProperties;
 import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 @Component
 public class JiraCloudClient {
@@ -25,6 +28,14 @@ public class JiraCloudClient {
 					httpHeaders.setBasicAuth(jiraAuthProperties.username(), jiraAuthProperties.accessToken());
 					httpHeaders.set("X-Atlassian-Token", "no-check");
 					httpHeaders.setContentType(APPLICATION_JSON);
+				})
+				.configureMessageConverters(converters -> {
+					// Jira kan returnere JSON uten korrekt Content-Type.
+					var converter = new JacksonJsonHttpMessageConverter();
+					var mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
+					mediaTypes.add(APPLICATION_OCTET_STREAM);
+					converter.setSupportedMediaTypes(mediaTypes);
+					converters.withJsonConverter(converter);
 				})
 				.build();
 	}
