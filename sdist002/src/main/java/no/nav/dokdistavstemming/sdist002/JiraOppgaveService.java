@@ -1,6 +1,5 @@
 package no.nav.dokdistavstemming.sdist002;
 
-import com.atlassian.jira.project.RemoteProject;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dok.jiraapi.JiraRequest;
 import no.nav.dok.jiraapi.JiraResponse;

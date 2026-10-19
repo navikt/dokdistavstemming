@@ -20,11 +20,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-restclient</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.atlassian.jira</groupId>
-			<artifactId>jira-api</artifactId>
-			<version>11.3.12</version>
-		</dependency>
 		<!-- test -->
 		<dependency>
 			<groupId>no.nav.dokdistavstemming</groupId>
