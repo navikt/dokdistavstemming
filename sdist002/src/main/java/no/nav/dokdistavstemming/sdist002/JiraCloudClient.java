@@ -37,6 +37,8 @@ public class JiraCloudClient {
 					converter.setSupportedMediaTypes(mediaTypes);
 					converters.withJsonConverter(converter);
 				})
+				.requestInterceptor((request, body, execution) ->
+						new JiraResponseDiagnostics(execution.execute(request, body)))
 				.build();
 	}
 
