@@ -51,9 +51,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
 import static no.nav.dokdistavstemming.sdist006.SendUlesteForsendelserTilSentralPrintServiceITest.RENOTIFIKASJON_STOPP_TOPIC;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_INSTANCE_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -130,18 +128,24 @@ class SendUlesteForsendelserTilSentralPrintServiceITest {
 		stubPutOppdaterForsendelse(NY_FORSENDELSE_ID2);
 		stubPatchOppdaterDistribusjonsinfo();
 
-		sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
+		try (Consumer<String, DoknotifikasjonStopp> consumer = setUpConsumerForTopicNotifikasjonStopp()) {
+			sendUlesteForsendelserTilSentralPrintService.sendUlesteForsendelserTilSentralPrint();
 
-		//Sjekk at riktig forsendelseId blir sendt til qdist009/print
-		String message = receive(qdist009).toString();
-		assertThat(message).contains(NY_FORSENDELSE_ID1);
-		String message2 = receive(qdist009).toString();
-		assertThat(message2).contains(NY_FORSENDELSE_ID2);
+			//Sjekk at riktig forsendelseId blir sendt til qdist009/print
+			String message = receive(qdist009).toString();
+			assertThat(message).contains(NY_FORSENDELSE_ID1);
+			String message2 = receive(qdist009).toString();
+			assertThat(message2).contains(NY_FORSENDELSE_ID2);
 
-		List<DoknotifikasjonStopp> records = this.getAllCurrentRecordsOnTopicRenotifikasjonStopp();
-		assertEquals(2, records.size());
-		assertRecord(records.get(0), GAMMEL_BESTILLINGSID1);
-		assertRecord(records.get(1), GAMMEL_BESTILLINGSID2);
+			List<DoknotifikasjonStopp> records = StreamSupport.stream(
+							getRecords(consumer, Duration.ofSeconds(10), 2)
+									.records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
+					.map(ConsumerRecord::value)
+					.toList();
+			assertEquals(2, records.size());
+			assertRecord(records.get(0), GAMMEL_BESTILLINGSID1);
+			assertRecord(records.get(1), GAMMEL_BESTILLINGSID2);
+		}
 
 		verifyAndCountForsendelse();
 	}
@@ -303,24 +307,16 @@ class SendUlesteForsendelserTilSentralPrintServiceITest {
 		return (T) response;
 	}
 
-	public List<DoknotifikasjonStopp> getAllCurrentRecordsOnTopicRenotifikasjonStopp() {
-		Consumer<String, DoknotifikasjonStopp> consumer = setUpConsumerForTopicNotifikasjonStopp();
-		return StreamSupport.stream(getRecords(consumer, Duration.ofSeconds(10))
-						.records(RENOTIFIKASJON_STOPP_TOPIC).spliterator(), false)
-				.map(ConsumerRecord::value)
-				.collect(Collectors.toList());
-	}
-
 	public Consumer<String, DoknotifikasjonStopp> setUpConsumerForTopicNotifikasjonStopp() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("test", "true", kafkaEmbedded);
 		consumerProps.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 		consumerProps.put(VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
 		consumerProps.put(SCHEMA_REGISTRY_URL_CONFIG, "mock://localhost");
 		consumerProps.put(SPECIFIC_AVRO_READER_CONFIG, "true");
-		consumerProps.put(GROUP_INSTANCE_ID_CONFIG, "itest-group-instance");
 
 		var consumer = new DefaultKafkaConsumerFactory<String, DoknotifikasjonStopp>(consumerProps).createConsumer();
-		consumer.subscribe(singletonList(RENOTIFIKASJON_STOPP_TOPIC));
+		kafkaEmbedded.consumeFromEmbeddedTopics(consumer, true, RENOTIFIKASJON_STOPP_TOPIC);
+		consumer.assignment().forEach(consumer::position);
 		return consumer;
 	}
 

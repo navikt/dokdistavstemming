@@ -138,7 +138,7 @@ public class Sdist002ServiceIT extends AbstractSdist002ITest {
 
 		verify(1, getRequestedFor(urlEqualTo("/administrerforsendelse/hentuekspederteforsendelser/SDP/10")));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
-		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
+		verify(2, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
 		verify(1, postRequestedFor(urlEqualTo(STATUS_TRANSITION)));
 		verify(4, putRequestedFor(urlEqualTo(AVSTEM_FORSENDELSER_URL)));

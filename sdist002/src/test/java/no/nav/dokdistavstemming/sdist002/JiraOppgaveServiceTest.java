@@ -8,7 +8,6 @@ import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
@@ -30,14 +29,21 @@ class JiraOppgaveServiceTest {
 	private JiraService jiraService;
 
 	@Mock
-	private JiraAuthProperties jiraAuthProperties;
+	private JiraCloudClient jiraCloudClient;
 
-	@InjectMocks
 	private JiraOppgaveService jiraOppgaveService;
 
 	@BeforeEach
 	void setUp() {
-		jiraAuthProperties = new JiraAuthProperties("username", "accessToken");
+		jiraOppgaveService = new JiraOppgaveService(
+				jiraService,
+				jiraCloudClient,
+				new JiraAuthProperties("username", "accessToken"));
+		when(jiraCloudClient.hentJiraCloudProject()).thenReturn(Project.builder()
+				.id("12345")
+				.key("MMA")
+				.name("Dokumentdistribusjon")
+				.build());
 	}
 
 	@Test

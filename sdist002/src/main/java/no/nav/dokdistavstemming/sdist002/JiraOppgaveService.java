@@ -1,5 +1,6 @@
 package no.nav.dokdistavstemming.sdist002;
 
+import com.atlassian.jira.project.RemoteProject;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dok.jiraapi.JiraRequest;
 import no.nav.dok.jiraapi.JiraResponse;
@@ -11,7 +12,6 @@ import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -32,16 +32,23 @@ public class JiraOppgaveService {
 	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
 	private static final String DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN = "srvjiradokdistavstemming";
 	private final JiraService jiraService;
+	private final JiraCloudClient jiraCloudClient;
 	private final JiraAuthProperties jiraAuthProperties;
 
 	public JiraOppgaveService(JiraService jiraService,
+							  JiraCloudClient jiraCloudClient,
 							  JiraAuthProperties jiraAuthProperties) {
 		this.jiraService = jiraService;
+		this.jiraCloudClient = jiraCloudClient;
 		this.jiraAuthProperties = jiraAuthProperties;
 	}
 
 	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int avvikCount, LocalDate avstemmingsfilDato) {
 		try {
+			Project project = jiraCloudClient.hentJiraCloudProject();
+
+			log.info("Hentet Jira-cloud-prosjekt med key={}, name={}", project.key(), project.name());
+
 			JiraRequest jiraRequest = mapJiraRequest(distribusjonKanal, avvikCount, csv, avstemmingsfilDato);
 
 			log.info("opprettJirasak har mottatt kall om å opprette Jira-sak");
