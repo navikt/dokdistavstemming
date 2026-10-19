@@ -2,12 +2,16 @@ package no.nav.dokdistavstemming.sdist002;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,6 +19,7 @@ import java.util.stream.IntStream;
 import static org.springframework.http.HttpHeaders.CONTENT_ENCODING;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.LOCATION;
 
 @Slf4j
 final class JiraResponseDiagnostics implements ClientHttpResponse {
@@ -55,9 +60,9 @@ final class JiraResponseDiagnostics implements ClientHttpResponse {
 					.filter(index -> prefix[index] == 0)
 					.mapToObj(Integer::toString)
 					.collect(Collectors.joining(",", "[", "]"));
-			log.info("Jira Cloud responsdiagnostikk: status={}, contentType={}, contentEncoding={}, contentLength={}, prefixLength={}, encodingHint={}, nulByteOffsets={}",
+			log.info("Jira Cloud responsdiagnostikk: status={}, contentType={}, contentEncoding={}, contentLength={}, prefixLength={}, encodingHint={}, nulByteOffsets={}, location={}",
 					getStatusCode().value(), header(CONTENT_TYPE), header(CONTENT_ENCODING), header(CONTENT_LENGTH),
-					prefix.length, encodingHint(prefix), nulByteOffsets);
+					prefix.length, encodingHint(prefix), nulByteOffsets, redirectLocation());
 		}
 		return body;
 	}
@@ -69,6 +74,23 @@ final class JiraResponseDiagnostics implements ClientHttpResponse {
 
 	private String header(String name) {
 		return Objects.toString(getHeaders().getFirst(name), "<missing>").replace('\r', ' ').replace('\n', ' ');
+	}
+
+	private String redirectLocation() {
+		String location = getHeaders().getFirst(LOCATION);
+		if (location == null) {
+			return "<missing>";
+		}
+		try {
+			URI uri = new URI(location);
+			if (uri.isOpaque()) {
+				return "<opaque>";
+			}
+			return new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), null, null)
+					.toASCIIString();
+		} catch (URISyntaxException e) {
+			return "<invalid>";
+		}
 	}
 
 	private static String encodingHint(byte[] prefix) {
