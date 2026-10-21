@@ -24,7 +24,7 @@ public class JiraCloudClient {
 		this.restClient = restClientBuilder
 				.baseUrl(dokdistavstemmingProperties.getJira().getUrl())
 				.defaultHeaders(httpHeaders -> {
-					httpHeaders.setBearerAuth(jiraAuthProperties.accessToken());
+					httpHeaders.setBasicAuth(jiraAuthProperties.username(), jiraAuthProperties.accessToken());
 					httpHeaders.set("X-Atlassian-Token", "no-check");
 					httpHeaders.setContentType(APPLICATION_JSON);
 				})
