@@ -4,12 +4,11 @@
   "INGRESSES": [
     "https://dokdistavstemming.dev.intern.nav.no"
   ],
-  "DOKDISTAVSTEMMING_JIRA_URL": "https://nav-sandbox.atlassian.net",
+  "DOKDISTAVSTEMMING_JIRA_URL": "https://api.atlassian.com/ex/jira/e083e647-072b-4276-9112-8c18871dbafd",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "http://dokarkiv.teamdokumenthandtering.svc.nais.local/rest",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "http://dokdistadmin.teamdokumenthandtering.svc.nais.local/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://dev-fss.teamdokumenthandtering.dokdistadmin/.default",
-  "DOKDISTAVSTEMMING_SECRET": "dokdistavstemming",
   "KAFKA_POOL": "nav-dev",
   "MQGATEWAY01_CHANNELNAME": "Q2_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mqls01.preprod.local",

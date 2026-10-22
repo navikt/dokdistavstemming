@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JiraOppgaveServiceTest {
 
-	private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
+	private static final String JIRA_SAK_URL = "https://nav-sandbox.atlassian.net/browse/MMA-134";
 	private static final String MMA_OPPGAVE_ID = "MMA-134";
 
 	@Mock
@@ -37,11 +37,11 @@ class JiraOppgaveServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		jiraAuthProperties = new JiraAuthProperties("username", "accessToken");
+		jiraAuthProperties = new JiraAuthProperties("accessToken");
 	}
 
 	@Test
-	void shoudOpprettetJiraSakwithVedlegg() throws Exception {
+	void shouldOppretteJiraSakWithVedlegg() throws Exception {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
 		byte[] avvikFil = new ClassPathResource("__files/csv/csvfil_print.csv").getContentAsByteArray();
 
