@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JiraOppgaveServiceTest {
 
-	private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
+	private static final String JIRA_SAK_URL = "https://nav-sandbox.atlassian.net/browse/MMA-134";
 	private static final String MMA_OPPGAVE_ID = "MMA-134";
 
 	@Mock

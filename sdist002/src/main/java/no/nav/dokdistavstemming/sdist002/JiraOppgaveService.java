@@ -6,12 +6,10 @@ import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
 import no.nav.dok.jiracore.exception.JiraClientException;
 import no.nav.dok.jiracore.exception.JiraServerException;
-import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -30,13 +28,11 @@ public class JiraOppgaveService {
 	private static final String DESCRIPTION = "Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status fra utsendingskanal %s.";
 	private static final String SUMMARY = "Dokumentdistribusjon: %s dokumenter/brev har ikke mottatt kvittering fra utsendingskanal %s";
 	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
-	private final JiraService jiraService;
-	private final JiraAuthProperties jiraAuthProperties;
 
-	public JiraOppgaveService(JiraService jiraService,
-							  JiraAuthProperties jiraAuthProperties) {
+	private final JiraService jiraService;
+
+	public JiraOppgaveService(JiraService jiraService) {
 		this.jiraService = jiraService;
-		this.jiraAuthProperties = jiraAuthProperties;
 	}
 
 	public JiraSakResponseTo opprettJirasak(DistribusjonKanalCode distribusjonKanal, byte[] csv, int avvikCount, LocalDate avstemmingsfilDato) {
@@ -66,7 +62,6 @@ public class JiraOppgaveService {
 		return JiraRequest.builder()
 				.summary(format(SUMMARY, avvikCount, distribusjonskanal.name()))
 				.description(format(DESCRIPTION, avvikCount, distribusjonskanal.name()))
-				.reporter(new JiraRequest.Reporter(jiraAuthProperties.username(), jiraAuthProperties.username()))
 				.labels(List.of("dokumentdistribusjon_avvik"))
 				.filnavn(format(AVVIK_CSV_FILNAVN, distribusjonskanal.name(), NORSK_LOCAL_DATE_FORMAT.format(avstemmingsfilDato)))
 				.vedlegg(file)

@@ -30,14 +30,14 @@ import static no.nav.dokdistavstemming.sdist002.WireMockResponse.jiraHappyPostVe
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.jiraHappyUpdateSak;
 import static no.nav.dokdistavstemming.sdist002.WireMockResponse.postAzureToken;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Disse testene kjører OK lokalt, men feiler på GitHub. Disabler inntil videre.")
-public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
+class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 
-	private static final String JIRA_MESSAGE = "https://jira-q1.adeo.no/browse/MMA-134";
-	private static final LocalDate AVSTEMMINGSDATO = LocalDate.of(2025,1,1);
+	private static final String JIRA_MESSAGE = "https://nav-sandbox.atlassian.net/browse/MMA-134";
+	private static final LocalDate AVSTEMMINGSDATO = LocalDate.of(2025, 1, 1);
 
 	@Autowired
 	private JiraOppgaveService jiraOppgaveService;
@@ -62,7 +62,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
 		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
-		assertTrue(csv.length != 0);
+		assertNotEquals(0, csv.length);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)).withRequestBody(equalToJson(classpathToString("__files/jira/jirarequest-happy.json"))));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
@@ -83,7 +83,7 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 
 		assertThat(jiraSakResponseTo.getMessage()).isEqualTo(JIRA_MESSAGE);
 		assertThat(jiraSakResponseTo.getHttpStatusCode()).isEqualTo(201);
-		assertTrue(csv.length != 0);
+		assertNotEquals(0, csv.length);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)).withRequestBody(equalToJson(classpathToString("__files/jira/ehandel-request.json"))));
 		verify(1, postRequestedFor(urlEqualTo(JIRA_VEDLEGG_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
@@ -98,10 +98,12 @@ public class OpprettJiraSakServiceIT extends AbstractSdist002ITest {
 		jiraHappyPostVedleggDokument();
 		byte[] csv = csvProducer.oppretteCsv(result, PRINT);
 
-		var exception = assertThrows(JiraFunctionalException.class, () -> jiraOppgaveService.opprettJirasak(PRINT, csv, result.size(), AVSTEMMINGSDATO));
+		var exception = assertThrows(JiraFunctionalException.class, () ->
+				jiraOppgaveService.opprettJirasak(PRINT, csv, result.size(), AVSTEMMINGSDATO)
+		);
 
 		assertThat(exception.getMessage()).contains("opprettJira feilet med status=400 feilmelding");
-		assertTrue(csv.length != 0);
+		assertNotEquals(0, csv.length);
 		verify(1, postRequestedFor(urlEqualTo(JIRA_OPPRETTE_URL)));
 		verify(1, getRequestedFor(urlEqualTo(JIRA_MMA_URL)));
 	}

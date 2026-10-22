@@ -1,30 +1,37 @@
 {
   "fields" : {
     "project" : {
-      "expand" : null,
       "self" : null,
       "id" : null,
       "key" : "MMA",
+      "name" : "Team Dokumentløsninger",
       "description" : null,
-      "name" : "Team Dokument",
-      "url" : null,
       "components" : null,
       "issueTypes" : null
     },
-    "summary" : "Dokumentdistribusjon Kanal-E_HANDEL: Utsendelse av 5 dokumenter/brev har ikke mottatt kvittering",
+    "summary" : "Dokumentdistribusjon: 5 dokumenter/brev har ikke mottatt kvittering fra utsendingskanal E_HANDEL",
     "issuetype" : {
-      "self" : "https://jira-q1.adeo.no/rest/api/2/issuetype/10901",
-      "id" : "10901",
-      "description" : "En oppgave som må utføres.",
-      "name" : "Oppgave",
-      "subtask" : false
+      "self" : null,
+      "id" : "10011",
+      "description" : null,
+      "name" : "Task",
+      "subtask" : null
     },
+    "description" : {
+      "type" : "doc",
+      "version" : 1,
+      "content" : [ {
+        "type" : "paragraph",
+        "content" : [ {
+          "type" : "text",
+          "text" : "Se vedlegg for oversikt over 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status fra utsendingskanal E_HANDEL."
+        } ]
+      } ]
+    },
+    "labels" : [ "dokumentdistribusjon_avvik" ],
     "reporter" : {
-      "key" : null,
-      "name" : "srvjiradokdistavstemming",
-      "self" : null
-    },
-    "description" : "Se vedlegg for oversikt over 5 dokumenter/brev som skulle ha fått «ekspedert» kvittering status.",
-    "labels" : [ "dokumentdistribusjon_avvik" ]
+      "accountId" : "srvuser",
+      "displayName" : "srvuser"
+    }
   }
 }
