@@ -10,7 +10,7 @@ import no.nav.dokdistavstemming.domain.enums.DistribusjonKanalCode;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
 import no.nav.dokdistavstemming.exceptions.JiraFunctionalException;
 import no.nav.dokdistavstemming.exceptions.JiraTechnicalException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDate;
@@ -21,14 +21,14 @@ import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
-@Component
+@Service
 public class JiraOppgaveService {
 
 	private static final DateTimeFormatter NORSK_LOCAL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private static final String DESCRIPTION = "Se vedlegg for oversikt over %s dokumenter/brev som skulle ha fått «ekspedert» kvittering status fra utsendingskanal %s.";
 	private static final String SUMMARY = "Dokumentdistribusjon: %s dokumenter/brev har ikke mottatt kvittering fra utsendingskanal %s";
 	private static final String AVVIK_CSV_FILNAVN = "dokumentdistribusjon_avvik-%s-%s.csv";
-	private static final String DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN = "srvjiradokdistavstemming";
+
 	private final JiraService jiraService;
 
 	public JiraOppgaveService(JiraService jiraService) {
@@ -62,7 +62,6 @@ public class JiraOppgaveService {
 		return JiraRequest.builder()
 				.summary(format(SUMMARY, avvikCount, distribusjonskanal.name()))
 				.description(format(DESCRIPTION, avvikCount, distribusjonskanal.name()))
-				.reporterName(DOKDISTAVSTEMMING_JIRA_BRUKER_NAVN)
 				.labels(List.of("dokumentdistribusjon_avvik"))
 				.filnavn(format(AVVIK_CSV_FILNAVN, distribusjonskanal.name(), NORSK_LOCAL_DATE_FORMAT.format(avstemmingsfilDato)))
 				.vedlegg(file)

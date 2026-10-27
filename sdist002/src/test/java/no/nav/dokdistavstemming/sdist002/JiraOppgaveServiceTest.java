@@ -3,7 +3,9 @@ package no.nav.dokdistavstemming.sdist002;
 import no.nav.dok.jiraapi.JiraRequest;
 import no.nav.dok.jiraapi.JiraResponse;
 import no.nav.dok.jiraapi.JiraService;
+import no.nav.dokdistavstemming.config.JiraAuthProperties;
 import no.nav.dokdistavstemming.domain.to.JiraSakResponseTo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,18 +23,25 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JiraOppgaveServiceTest {
 
-	private static final String JIRA_SAK_URL = "https://jira-q1.adeo.no/browse/MMA-134";
+	private static final String JIRA_SAK_URL = "https://nav-sandbox.atlassian.net/browse/MMA-134";
 	private static final String MMA_OPPGAVE_ID = "MMA-134";
 
 	@Mock
 	private JiraService jiraService;
 
+	@Mock
+	private JiraAuthProperties jiraAuthProperties;
 
 	@InjectMocks
 	private JiraOppgaveService jiraOppgaveService;
 
+	@BeforeEach
+	void setUp() {
+		jiraAuthProperties = new JiraAuthProperties("accessToken");
+	}
+
 	@Test
-	public void shoudOpprettetJiraSakwithVedlegg() throws Exception {
+	void shouldOppretteJiraSakWithVedlegg() throws Exception {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID).build());
 		byte[] avvikFil = new ClassPathResource("__files/csv/csvfil_print.csv").getContentAsByteArray();
 
@@ -42,7 +51,7 @@ class JiraOppgaveServiceTest {
 	}
 
 	@Test
-	public void shouldUpdateStatusToKlarForArbeid() throws Exception {
+	void shouldUpdateStatusToKlarForArbeid() throws Exception {
 		when(jiraService.opprettJiraMMAOppgaveMedVedlegg(any(JiraRequest.class))).thenReturn(JiraResponse.builder().jiraIssueKey(MMA_OPPGAVE_ID)
 				.message(JIRA_SAK_URL).build());
 

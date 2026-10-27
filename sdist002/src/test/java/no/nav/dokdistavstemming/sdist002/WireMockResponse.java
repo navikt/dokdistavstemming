@@ -19,11 +19,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class WireMockResponse {
 
-	public static final String JIRA_OPPRETTE_URL = "/rest/api/2/issue";
-	public static final String JIRA_VEDLEGG_URL = "/rest/api/2/issue/MMA-134/attachments";
-	public static final String JIRA_MMA_URL = "/rest/api/2/project/MMA";
+	public static final String JIRA_OPPRETTE_URL = "/rest/api/3/issue";
+	public static final String JIRA_VEDLEGG_URL = "/rest/api/3/issue/MMA-134/attachments";
+	public static final String JIRA_MMA_URL = "/rest/api/3/project/MMA";
 	public static final String AVSTEM_FORSENDELSER_URL = "/administrerforsendelse/avstemforsendelser";
-	public static final String STATUS_TRANSITION = "/rest/api/2/issue/MMA-134/transitions";
+	public static final String STATUS_TRANSITION = "/rest/api/3/issue/MMA-134/transitions";
 
 	public static void happilyHentUekspederteForsendelser(String filename) {
 		stubFor(get(urlMatching("/administrerforsendelse/hentuekspederteforsendelser/.*"))

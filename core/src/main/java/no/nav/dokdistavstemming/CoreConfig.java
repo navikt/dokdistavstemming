@@ -17,7 +17,7 @@ public class CoreConfig {
 	public JiraClient jiraClient(DokdistavstemmingProperties dokdistavstemmingProperties, JiraAuthProperties jiraAuthProperties) {
 		DokdistavstemmingProperties.JiraUser jiraUser = dokdistavstemmingProperties.getJira();
 		return new JiraClient(JiraProperties.builder()
-				.jiraServiceUser(new JiraProperties.JiraServiceUser(jiraAuthProperties.username(), jiraAuthProperties.password()))
+				.jiraServiceUser(new JiraProperties.JiraServiceUser(jiraAuthProperties.accessToken()))
 				.url(jiraUser.getUrl())
 				.build());
 	}

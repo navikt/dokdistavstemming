@@ -4,12 +4,11 @@
   "INGRESSES": [
     "https://dokdistavstemming.intern.nav.no"
   ],
-  "DOKDISTAVSTEMMING_JIRA_URL": "https://jira.adeo.no",
+  "DOKDISTAVSTEMMING_JIRA_URL": "https://api.atlassian.com/ex/jira/7d29ce94-ede7-477f-8778-47676cd6d42f",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_URL": "http://dokarkiv.teamdokumenthandtering.svc.nais.local/rest",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_URL": "http://dokdistadmin.teamdokumenthandtering.svc.nais.local/rest/v1/administrerforsendelse",
   "DOKDISTAVSTEMMING_ENDPOINTS_DOKDISTADMIN_SCOPE": "api://prod-fss.teamdokumenthandtering.dokdistadmin/.default",
-  "DOKDISTAVSTEMMING_SECRET": "dokdistavstemming",
   "KAFKA_POOL": "nav-prod",
   "MQGATEWAY01_CHANNELNAME": "P_DOKDISTAVSTEMMING",
   "MQGATEWAY01_HOSTNAME": "mpls01.adeo.no",
